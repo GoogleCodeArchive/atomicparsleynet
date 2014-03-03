@@ -296,7 +296,7 @@ static const char* longHelp_text =
 "  --cnID             ,       (num)    Set iTunes Catalog ID, used for combining SD and HD encodes in iTunes on the \"cnID\" atom\n"
 "\n"
 "                                      To combine you must set \"hdvd\" atom on one file and must have same \"stik\" on both file\n"
-"                                      Must not use \"stik\" of value Movie(0), use Short Film(9)\n"
+"                                      Must not use \"stik\" of value Home Video(0), use Movie(9)\n"
 "\n"
 "                                      iTunes Catalog numbers can be obtained by finding the item in the iTunes Store.  Once item\n"
 "                                      is found in the iTunes Store right click on picture of item and select copy link.  Paste this link\n"
@@ -1201,6 +1201,7 @@ int real_main(int argc, char *argv[])
                     APar_ExtractDetails( APar_OpenISOBaseMediaFile(ISObasemediafile, true), SHOW_TRACK_INFO);
                 }
             }
+            APar_OpenISOBaseMediaFile(ISObasemediafile, false);
             break;
         }
 
@@ -1239,7 +1240,6 @@ int real_main(int argc, char *argv[])
                 }
             }
             APar_OpenISOBaseMediaFile(ISObasemediafile, false);
-            APar_FreeMemory();
             break;
         }
 
