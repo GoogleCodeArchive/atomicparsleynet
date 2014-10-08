@@ -74,11 +74,12 @@ namespace MP4
 
 		public static readonly Stik[] StikList = new Stik[]
 		{
-			new Stik( "Movie", 0 ),
+			new Stik( "Home Video", 0 ),
 			new Stik( "Normal", 1 ),
 			new Stik( "Audiobook", 2 ),
 			new Stik( "Whacked Bookmark", 5 ),
 			new Stik( "Music Video", 6 ),
+			new Stik( "Movie", 9 ),
 			new Stik( "Short Film", 9 ),
 			new Stik( "TV Show", 10 ),
 			new Stik( "Booklet", 11 )
@@ -165,8 +166,8 @@ namespace MP4
 			new MediaRating( "us-tv|TV-14|500|",       "TV-14" ),
 			new MediaRating( "us-tv|TV-PG|400|",       "TV-PG" ),
 			new MediaRating( "us-tv|TV-G|300|",        "TV-G" ),
-			new MediaRating( "us-tv|TV-Y|200|",        "TV-Y" ),
-			new MediaRating( "us-tv|TV-Y7|100|",       "TV-Y7" ),
+			new MediaRating( "us-tv|TV-Y7|200|",       "TV-Y7" ),
+			new MediaRating( "us-tv|TV-Y|100|",        "TV-Y" ),
 			              // "us-tv||0|",              "not-applicable" }, //though its a valid flag & some files have this, AP won't be setting it.
 			new MediaRating( "mpaa|UNRATED|600|",      "Unrated" ),
 			new MediaRating( "mpaa|NC-17|500|",        "NC-17" ),
