@@ -38,12 +38,20 @@ namespace MP4
 	/*AC3 config record*/
 	public struct AC3Config
 	{
+		[XmlAttribute]
 		public byte fscod;
+		[XmlAttribute]
 		public byte bsid;
+		[XmlAttribute]
 		public byte bsmod;
+		[XmlAttribute]
 		public byte acmod;
-		public byte lfon;
+		[XmlAttribute]
+		public bool lfon;
+		[XmlAttribute("bit_rate_code")]
 		public byte brcode;
+		[XmlAttribute, DefaultValue((byte)0)]
+		public byte Reserved;
 	}
 
 	[BinBlock(BinaryReaderType = "BinStringReader", BinaryWriterType = "BinStringWriter")]
@@ -72,12 +80,18 @@ namespace MP4
 
 		public abstract partial class ISOMUUIDBox: AtomicInfo
 		{
-			[XmlIgnore]
+			[XmlAttribute]
 			public Guid UUID;
 		}
 
 		public sealed partial class Box: AtomicInfo
 		{
+		}
+
+		public sealed partial class VoidBox : AtomicInfo
+		{
+			internal const string DefaultID = "VOID";
+			public VoidBox() : base(DefaultID) { }
 		}
 
 		public sealed partial class FullBox: ISOMFullBox
@@ -100,6 +114,7 @@ namespace MP4
 		public sealed partial class MediaDataBox: AtomicInfo
 		{
 			internal const string DefaultID = "mdat";
+			public MediaDataBox() : base(DefaultID) { }
 
 			[XmlIgnore, DefaultValue(0L)]
 			public long Offset;
@@ -118,7 +133,6 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class UnknownParentBox: AtomicInfo
 		{
-			[XmlIgnore]
 			[BinCustom]
 			BoxCollection boxList = new BoxCollection();
 		}
@@ -126,6 +140,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class UnknownUUIDBox : ISOMUUIDBox
 		{
+			internal const string DefaultID = "uuid";
+			public UnknownUUIDBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			public byte[] Data;
@@ -137,6 +154,9 @@ namespace MP4
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(Duration)")]
 		public sealed partial class MovieHeaderBox: ISOMFullBox
 		{
+			internal const string DefaultID = "mvhd";
+			public MovieHeaderBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the movie atom was created.
 			/// </summary>
@@ -231,7 +251,7 @@ namespace MP4
 			/// A 32-bit integer that indicates a value to use for the track ID number of the next track added to this movie. Note that 0 is not 
 			/// a valid track ID value.
 			/// </summary>
-			[XmlAttribute, DefaultValue(1)]
+			[XmlAttribute]
 			[BinData]
 			public int NextTrackID = 1;
 		}
@@ -239,6 +259,9 @@ namespace MP4
 		//TODO: ODF implementation
 		public sealed partial class ObjectDescriptorBox : ISOMFullBox
 		{
+			internal const string DefaultID = "iods";
+			public ObjectDescriptorBox() : base(DefaultID) { }
+
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			byte[] data;
 #line 382 "isomedia_dev.h"
@@ -250,15 +273,16 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Final)]
 		public sealed partial class EdtsEntry : IEntry<EditListBox>
 		{
+			[XmlIgnore]
 			public EditListBox Owner { get; set; }
-			[XmlAttribute]
+			[XmlAttribute("Duration")]
 			[BinData(BinFormat.Int64, Condition = "Owner.Version == 1")]
 			[BinData(BinFormat.UInt32)]
 			public long SegmentDuration;
 			[XmlAttribute]
-			[BinData(BinFormat.MacDate64, Condition = "Owner.Version == 1")]
-			[BinData(BinFormat.MacDate32)]
-			public DateTime MediaTime;
+			[BinData(BinFormat.Int64, Condition = "Owner.Version == 1")]
+			[BinData(BinFormat.UInt32)]
+			public long MediaTime;
 			[XmlAttribute]
 			[BinData(BinFormat.UInt16)]
 			public int MediaRate;
@@ -270,7 +294,9 @@ namespace MP4
 		[BinBlock(GetDataSizeMethod = "ResolveVersion()")]
 		public sealed partial class EditListBox : ISOMFullBox
 		{
-			[XmlIgnore]
+			internal const string DefaultID = "elst";
+			public EditListBox() : base(DefaultID) { CreateEntryCollection(out entryList, this); }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			Collection<EdtsEntry> entryList;
 		}
@@ -278,6 +304,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class EditBox : AtomicInfo
 		{
+			internal const string DefaultID = "edts";
+			public EditBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public EditListBox EditList { get { return boxList.Get<EditListBox>(); } set { boxList.Set(value); } }
 
@@ -291,7 +320,9 @@ namespace MP4
 		/// </summary>
 		public sealed partial class UserDataMap
 		{
+			[XmlIgnore]
 			public AtomicCode BoxType;
+			[XmlAttribute]
 			public Guid UUID;
 			BoxCollection boxList = new BoxCollection();
 		}
@@ -302,6 +333,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class UserDataBox: AtomicInfo
 		{
+			internal const string DefaultID = "udta";
+			public UserDataBox() : base(DefaultID) { }
+
 			[BinCustom]
 			MapList boxList = new MapList();
 		}
@@ -312,6 +346,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieBox : AtomicInfo
 		{
+			internal const string DefaultID = "moov";
+			public MovieBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Profile atom
 			/// </summary>
@@ -364,7 +401,6 @@ namespace MP4
 			/// <summary>
 			/// Other boxes
 			/// </summary>
-			[XmlIgnore]
 			[BinCustom]
 			TypedBoxList boxList = TypedBoxList.Create<
 				MovieHeaderBox,
@@ -384,8 +420,11 @@ namespace MP4
 		/// </summary>
 		public sealed partial class TrackHeaderBox : ISOMFullBox
 		{
+			internal const string DefaultID = "tkhd";
+			public TrackHeaderBox() : base(DefaultID) { }
+
 			[XmlAttribute]
-			public TrackFlags TrackFlags { get { return (TrackFlags)Flags & TrackFlags.ValidMask; } set { Flags = (int)value; } }
+			public TrackFlags TrackFlags { get { return Flags.ValidFlags<TrackFlags>(); } set { Flags = (int)value; } }
 
 			/// <summary>
 			/// Creation time
@@ -435,7 +474,7 @@ namespace MP4
 			/// <summary>
 			/// Alternate group
 			/// </summary>
-			[XmlAttribute, DefaultValue((ushort)0)]
+			[XmlAttribute("AlternateGroupID"), DefaultValue((ushort)0)]
 			[BinData]
 			public ushort AlternateGroup;
 			/// <summary>
@@ -476,6 +515,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackReferenceBox : AtomicInfo
 		{
+			internal const string DefaultID = "tref";
+			public TrackReferenceBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Track reference type atoms
 			/// </summary>
@@ -489,6 +531,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackBox : AtomicInfo
 		{
+			internal const string DefaultID = "trak";
+			public TrackBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Track profile atom
 			/// </summary>
@@ -573,6 +618,9 @@ namespace MP4
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(Duration)")]
 		public sealed partial class MediaHeaderBox: ISOMFullBox
 		{
+			internal const string DefaultID = "mdhd";
+			public MediaHeaderBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the media atom was created.
 			/// </summary>
@@ -619,6 +667,9 @@ namespace MP4
 		/// </summary>
 		public sealed partial class HandlerBox : ISOMFullBox
 		{
+			internal const string DefaultID = "hdlr";
+			public HandlerBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Component type
 			/// </summary>
@@ -652,7 +703,7 @@ namespace MP4
 			/// <summary>
 			/// Component name
 			/// </summary>
-			[XmlElement, DefaultValue("")]
+			[XmlAttribute("Name"), DefaultValue("")]
 			[BinData]
 			public string ComponentName;
 		}
@@ -660,6 +711,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MediaBox : AtomicInfo
 		{
+			internal const string DefaultID = "mdia";
+			public MediaBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public MediaHeaderBox MediaHeader { get { return boxList.Get<MediaHeaderBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
@@ -681,11 +735,14 @@ namespace MP4
 		/// </summary>
 		public sealed partial class VideoMediaHeaderBox: ISOMFullBox
 		{
+			internal const string DefaultID = "vmhd";
+			public VideoMediaHeaderBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// A 16-bit integer that specifies the transfer mode. The transfer mode specifies which Boolean operation QuickDraw should perform when
 			/// drawing or transferring an image from one location to another.
 			/// </summary>
-			[XmlAttribute, DefaultValue((ushort)0)]
+			[XmlAttribute, DefaultValue(GraphicsMode.SourceCopy)]
 			[BinData(BinFormat.UInt16)]
 			public GraphicsMode GraphicsMode;
 			/// <summary>
@@ -713,6 +770,9 @@ namespace MP4
 		/// </summary>
 		public sealed partial class SoundMediaHeaderBox: ISOMFullBox
 		{
+			internal const string DefaultID = "smhd";
+			public SoundMediaHeaderBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// A 16-bit integer that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
 			/// between the two speakers of a computer. This field is normally set to 0.
@@ -730,16 +790,19 @@ namespace MP4
 
 		public sealed partial class HintMediaHeaderBox: ISOMFullBox
 		{
-			[XmlAttribute, DefaultValue(0)]
+			internal const string DefaultID = "hmhd";
+			public HintMediaHeaderBox() : base(DefaultID) { }
+
+			[XmlAttribute("MaximumPDUSize"), DefaultValue(0)]
 			[BinData(BinFormat.UInt16)]
 			public int MaxPDUSize;
-			[XmlAttribute, DefaultValue(0)]
+			[XmlAttribute("AveragePDUSize"), DefaultValue(0)]
 			[BinData(BinFormat.UInt16)]
 			public int AvgPDUSize;
-			[XmlAttribute, DefaultValue(0)]
+			[XmlAttribute("MaxBitRate"), DefaultValue(0)]
 			[BinData]
 			public int MaxBitrate;
-			[XmlAttribute, DefaultValue(0)]
+			[XmlAttribute("AverageBitRate"), DefaultValue(0)]
 			[BinData]
 			public int AvgBitrate;
 			[XmlAttribute, DefaultValue(0)]
@@ -749,6 +812,8 @@ namespace MP4
 
 		public sealed partial class MPEGMediaHeaderBox: ISOMFullBox
 		{
+			internal const string DefaultID = "nmhd";
+			public MPEGMediaHeaderBox() : base(DefaultID) { }
 		}
 
 		public sealed partial class ODMediaHeaderBox : ISOMFullBox
@@ -768,6 +833,9 @@ namespace MP4
 		/// </summary>
 		public sealed partial class DataReferenceBox : ISOMFullBox
 		{
+			internal const string DefaultID = "dref";
+			public DataReferenceBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Data references
 			/// </summary>
@@ -781,6 +849,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DataInformationBox : AtomicInfo
 		{
+			internal const string DefaultID = "dinf";
+			public DataInformationBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Data reference atom
 			/// </summary>
@@ -794,30 +865,39 @@ namespace MP4
 
 		public abstract partial class ISOMDataEntryFields : ISOMFullBox
 		{
-			[XmlElement, DefaultValue("")]
-			//the flag set indicates we have a string (WE HAVE TO for URLs)
-			[BinData] //(Condition = "(Flags & AtomFlags.Text) == 0")
-			public string Location;
+			[XmlAttribute("URL"), DefaultValue("")]
+			public abstract string Location { get; set; }
 		}
 
 		public sealed partial class DataEntryBox : ISOMDataEntryFields
 		{
+			[XmlAttribute("URL"), DefaultValue("")]
+			public override string Location { get; set; }
 		}
 
 		public sealed partial class DataEntryURLBox : ISOMDataEntryFields
 		{
+			internal const string DefaultID = "url ";
+			public DataEntryURLBox() : base(DefaultID) { }
+
+			[XmlAttribute("URL"), DefaultValue("")]
+			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")] //(Condition = "(Flags & AtomFlags.Text) == 0")
+			public override string Location { get; set; }
 		}
 
-		public sealed partial class DataEntryURNBox : ISOMFullBox
+		public sealed partial class DataEntryURNBox : ISOMDataEntryFields
 		{
-			[XmlElement, DefaultValue("")]
+			internal const string DefaultID = "urn ";
+			public DataEntryURNBox() : base(DefaultID) { }
+
+			[XmlAttribute("URN"), DefaultValue("")]
 			//the flag set indicates we have a string (WE HAVE TO for URLs)
 			[BinData] //(Condition = "(Flags & AtomFlags.Text) == 0")
 			public string NameURN;
-			[XmlElement, DefaultValue("")]
+			[XmlAttribute("URL"), DefaultValue("")]
 			//the flag set indicates we have a string (WE HAVE TO for URLs)
 			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")] //(Condition = "(Flags & AtomFlags.Text) == 0")
-			public string Location;
+			public override string Location { get; set; }
 		}
 
 		public sealed partial class SttsEntry
@@ -832,6 +912,9 @@ namespace MP4
 
 		public sealed partial class TimeToSampleBox : ISOMFullBox
 		{
+			internal const string DefaultID = "stts";
+			public TimeToSampleBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			List<SttsEntry> entries = new List<SttsEntry>();
 		}
@@ -842,14 +925,16 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public int SampleCount;
-			[XmlAttribute]
+			[XmlAttribute("CompositionOffset")]
 			[BinData]
 			public int DecodingOffset;
 		}
 
 		public sealed partial class CompositionOffsetBox : ISOMFullBox
 		{
-			[XmlIgnore]
+			internal const string DefaultID = "ctts";
+			public CompositionOffsetBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			List<DttsEntry> entries = new List<DttsEntry>();
 
@@ -863,7 +948,7 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public int SampleNumber;
-			[XmlElement("FragmentSize")]
+			[XmlIgnore]
 			[BinArray(CountFormat = BinFormat.Int32)]
 			[BinData]
 			public ushort[] FragmentSizes;
@@ -871,6 +956,9 @@ namespace MP4
 
 		public sealed partial class SampleFragmentBox : ISOMFullBox
 		{
+			internal const string DefaultID = "STSF";
+			public SampleFragmentBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			List<StsfEntry> entries = new List<StsfEntry>();
 		}
@@ -897,17 +985,23 @@ namespace MP4
 
 		public sealed partial class GenericSampleEntryBox : ISOMSampleEntryFields
 		{
+			internal const string DefaultID = "gnrm";
+			public GenericSampleEntryBox() : base(DefaultID) { }
+
 			/*box type as specified in the file (not this box's type!!)*/
-			[XmlAttribute]
+			[XmlIgnore]
 			public AtomicCode EntryType;
 
-			[XmlElement(DataType = "hexBinary")]
+			[XmlElement("ExtensionData", DataType = "hexBinary")]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			public byte[] Data;
 		}
 
 		public sealed partial class ESDBox : ISOMFullBox
 		{
+			internal const string DefaultID = "esds";
+			public ESDBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			byte[] data;
@@ -925,10 +1019,10 @@ namespace MP4
 			public int BufferSizeDB;
 			[XmlAttribute]
 			[BinData]
-			public int MaxBitrate;
+			public int MaxBitRate;
 			[XmlAttribute]
 			[BinData]
-			public int AvgBitrate;
+			public int AvgBitRate;
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
@@ -957,13 +1051,19 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class LASeRConfigurationBox : AtomicInfo
 		{
-			[XmlAttribute, DefaultValue("")]
-			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")]
-			public string Header;
+			internal const string DefaultID = "lsrC";
+			public LASeRConfigurationBox() : base(DefaultID) { }
+
+			[XmlElement("LASeRHeader", DataType = "hexBinary"), DefaultValue("")]
+			[BinData(LengthCustomMethod = "reader.Length()")]
+			public byte[] Header;
 		}
 
 		public sealed partial class LASeRSampleEntryBox : ISOMSampleEntryFields
 		{
+			internal const string DefaultID = "lsr1";
+			public LASeRSampleEntryBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public LASeRConfigurationBox LsrConfig { get { return boxList.Get<LASeRConfigurationBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
@@ -984,6 +1084,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PixelAspectRatioBox : AtomicInfo
 		{
+			internal const string DefaultID = "pasp";
+			public PixelAspectRatioBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
 			public int HSpacing;
@@ -995,7 +1098,10 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RVCConfigurationBox : AtomicInfo
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "rvcc";
+			public RVCConfigurationBox() : base(DefaultID) { }
+
+			[XmlAttribute("Predefined")]
 			[BinData]
 			public ushort PredefinedRVCConfig;
 			[XmlAttribute]
@@ -1129,8 +1235,11 @@ namespace MP4
 		/*this is the default visual sdst (to handle unknown media)*/
 		public sealed partial class GenericVisualSampleEntryBox : ISOMVisualSampleEntry
 		{
+			internal const string DefaultID = "gnrv";
+			public GenericVisualSampleEntryBox() : base(DefaultID) { }
+
 			/*box type as specified in the file (not this box's type!!)*/
-			[XmlAttribute]
+			[XmlIgnore]
 			public AtomicCode EntryType;
 			/*opaque description data (ESDS in MP4, SMI in SVQ3, ...)*/
 			[XmlElement(DataType = "hexBinary")]
@@ -1149,7 +1258,7 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public int Vendor;
-			[XmlAttribute]
+			[XmlAttribute("Channels")]
 			[BinData]
 			public ushort ChannelCount = 2;
 			[XmlAttribute]
@@ -1161,12 +1270,12 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public ushort PacketSize;
+			[XmlAttribute("SampleRate")]
+			[BinData]
+			public ushort SampleRateHi;
 			[XmlAttribute]
 			[BinData]
-			public ushort SamplerateHi;
-			[XmlAttribute]
-			[BinData]
-			public ushort SamplerateLo;
+			public ushort SampleRateLo;
 			[XmlElement(DataType = "hexBinary")]
 			[BinData(LengthCustomMethod = "16", Condition = "Version == 1")]
 			[BinData(LengthCustomMethod = "36", Condition = "Version == 2")]
@@ -1202,7 +1311,7 @@ namespace MP4
 			byte[] unknownData;
 		}
 
-		public sealed partial class GF3GPPAudioSampleEntryBox : ISOMAudioSampleEntry
+		public abstract partial class GF3GPPAudioSampleEntryBox : ISOMAudioSampleEntry
 		{
 			[XmlIgnore]
 			public override ProtectionInfoBox ProtectionInfo { get { return boxList.Get<ProtectionInfoBox>(); } set { boxList.Set(value); } }
@@ -1213,7 +1322,31 @@ namespace MP4
 			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox);
 		}
 
-		public sealed partial class GF3GPPVisualSampleEntryBox : ISOMVisualSampleEntry
+		public sealed partial class AMRSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public sealed partial class AMRWBSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public sealed partial class EVRCSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public sealed partial class QCELPSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public sealed partial class SMVSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public sealed partial class GF3GPAudioSampleDescriptionBox : GF3GPPAudioSampleEntryBox
+		{
+		}
+
+		public abstract partial class GF3GPPVisualSampleEntryBox : ISOMVisualSampleEntry
 		{
 			[XmlIgnore]
 			public override ProtectionInfoBox ProtectionInfo { get { return null; } set { } }
@@ -1228,11 +1361,22 @@ namespace MP4
 			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox);
 		}
 
+		public sealed partial class H263SampleDescriptionBox : GF3GPPVisualSampleEntryBox
+		{
+		}
+
+		public sealed partial class GF3GPVisualSampleDescriptionBox : GF3GPPVisualSampleEntryBox
+		{
+		}
+
 		/*this is the default visual sdst (to handle unknown media)*/
 		public sealed partial class GenericAudioSampleEntryBox : ISOMAudioSampleEntry
 		{
+			internal const string DefaultID = "gnra";
+			public GenericAudioSampleEntryBox() : base(DefaultID) { }
+
 			/*box type as specified in the file (not this box's type!!)*/
-			[XmlAttribute]
+			[XmlIgnore]
 			public AtomicCode EntryType;
 			/*opaque description data (ESDS in MP4, ...)*/
 			[XmlElement(DataType = "hexBinary")]
@@ -1243,6 +1387,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class AC3ConfigBox : AtomicInfo
 		{
+			internal const string DefaultID = "dac3";
+			public AC3ConfigBox() : base(DefaultID) { }
+
 			[BinData(BinFormat.UInt24)]
 			int data;
 
@@ -1252,29 +1399,34 @@ namespace MP4
 				{
 					return new AC3Config
 					{
-						fscod = (byte)(data & 0x3),
-						bsid = (byte)((data >> 2) & 0x1F),
-						bsmod = (byte)((data >> 7) & 0x7),
-						acmod = (byte)((data >> 10) & 0x7),
-						lfon = (byte)((data >> 13) & 0x1),
-						brcode = (byte)((data >> 14) & 0x1F)
+						Reserved = (byte)data.Bits(5, 19),
+						brcode = (byte)data.Bits(5, 14),
+						lfon = data.Bit(13),
+						acmod = (byte)data.Bits(3, 10),
+						bsmod = (byte)data.Bits(3, 7),
+						bsid = (byte)data.Bits(5, 2),
+						fscod = (byte)data.Bits(2, 0)
 					};
 				}
 				set
 				{
-					data = (byte)(
-						value.fscod & 0x3 |
-						(value.bsid  & 0x1F) << 2 |
-						(value.bsmod & 0x7) << 7 |
-						(value.acmod & 0x7) << 10 |
-						(value.lfon & 0x1) << 13 |
-						(value.brcode & 0x1F << 14));
+					data = (byte)data
+						.Bits(5, 19, value.Reserved)
+						.Bits(5, 14, value.brcode)
+						.Bit(13, value.lfon)
+						.Bits(3, 10, value.acmod)
+						.Bits(3, 7, value.bsmod)
+						.Bits(5, 2, value.bsid)
+						.Bits(2, 0, value.fscod);
 				}
 			}
 		}
 
 		public sealed partial class AC3SampleEntryBox : ISOMAudioSampleEntry
 		{
+			internal const string DefaultID = "ac-3";
+			public AC3SampleEntryBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public AC3ConfigBox Info { get { return boxList.Get<AC3ConfigBox>(); } set { boxList.Set(value); } }
 
@@ -1293,7 +1445,7 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public byte PathComponents;
-			[XmlAttribute]
+			[XmlAttribute("UseFullRequestHosts")]
 			[BinData]
 			public bool FullRequestHost;
 			[XmlAttribute]
@@ -1313,6 +1465,7 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DIMSScriptTypesBox : AtomicInfo
 		{
+			[XmlAttribute("Types")]
 			[BinData]
 			public string ContentScriptTypes;
 		}
@@ -1342,7 +1495,7 @@ namespace MP4
 			[XmlAttribute, DefaultValue("")]
 			[BinData]
 			public string ContentEncoding; //optional
-			[XmlAttribute, DefaultValue("")]
+			[XmlAttribute, DefaultValue("")] //<namespace> or <mime_type>
 			[BinData]
 			public string MIMETypeOrNamespace; //not optional
 			[XmlAttribute, DefaultValue("")]
@@ -1359,40 +1512,75 @@ namespace MP4
 
 		public sealed partial class SampleDescriptionBox : ISOMFullBox
 		{
+			internal const string DefaultID = "stsd";
+			public SampleDescriptionBox() : base(DefaultID) { }
+
 			[BinCustom]
 			BoxCollection boxArray = new BoxCollection();
 		}
 
-		public sealed partial class SampleSizeBox : ISOMFullBox
+		public abstract partial class SampleSizeBox : ISOMFullBox
+		{
+			[XmlAttribute, DefaultValue(0)]
+			public virtual int ConstantSampleSize { get { return 0; } set { } }
+			/*if this is the compact version*/
+			[XmlAttribute, DefaultValue(32)]
+			public virtual byte SampleSizeBits { get { return 32; } set { } }
+
+			protected abstract int[] Sizes { get; set; }
+		}
+
+		public sealed partial class FixedSampleSizeBox : SampleSizeBox
 		{
 			internal const string DefaultID = "stsz";
+			public FixedSampleSizeBox() : base(DefaultID) { }
+
+			[XmlAttribute, DefaultValue(0)]
+			[BinData]
+			public override int ConstantSampleSize { get; set; }
+			[XmlIgnore]
+			[BinCustom(ReadMethod = "int sampleCount = reader.ReadInt32(); if (ConstantSampleSize != 0) sampleCount = 0",
+				GetDataSizeMethod = "4", WriteMethod = "writer.Write((int)Sizes.Length)")]
+			public int SampleCount { get { return Sizes.Length; } }
+			[BinArray(CountCustomMethod = "sampleCount")]
+			[BinData]
+			protected override int[] Sizes { get; set; }
+		}
+
+		public sealed partial class CompactSampleSizeBox : SampleSizeBox
+		{
+			internal const string DefaultID = "stz2";
+			public CompactSampleSizeBox() : base(DefaultID) { }
 
 			//24-reserved
 			[XmlAttribute, DefaultValue(0)]
-			[BinData(BinFormat.Int24, Condition = "AtomicID != DefaultID")]
+			[BinData(BinFormat.Int24)]
 			public int Reserverd;
-			/*if this is the compact version, sample size is actually fieldSize*/
-			[XmlAttribute, DefaultValue(0)]
-			[BinData(BinFormat.UInt8, Condition = "AtomicID != DefaultID")]
-			[BinData(BinFormat.Int32)]
-			public int SampleSize;
+			/*if this is the compact version*/
 			[XmlAttribute, DefaultValue(32)]
-			public int SizeLength = 32;
-			[XmlElement("Size")]
+			[BinData]
+			public override byte SampleSizeBits { get; set; }
+
 			[BinCustom]
-			public int[] Sizes;
+			protected override int[] Sizes { get; set; }
 		}
 
 		public sealed partial class ChunkOffsetBox : ISOMFullBox
 		{
-			[XmlElement("Offset")]
+			internal const string DefaultID = "stco";
+			public ChunkOffsetBox() : base(DefaultID) { }
+
+			[XmlIgnore]
 			[BinArray(CountFormat = BinFormat.Int32), BinData]
 			public int[] Offsets;
 		}
 
 		public sealed partial class ChunkLargeOffsetBox : ISOMFullBox
 		{
-			[XmlElement("Offset")]
+			internal const string DefaultID = "co64";
+			public ChunkLargeOffsetBox() : base(DefaultID) { }
+
+			[XmlIgnore]
 			[BinArray(CountFormat = BinFormat.Int32)]
 			[BinData]
 			public long[] Offsets;
@@ -1413,13 +1601,19 @@ namespace MP4
 
 		public sealed partial class SampleToChunkBox : ISOMFullBox
 		{
+			internal const string DefaultID = "stsc";
+			public SampleToChunkBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			List<StscEntry> entries = new List<StscEntry>();
 		}
 
 		public sealed partial class SyncSampleBox : ISOMFullBox
 		{
-			[XmlElement("SampleNumber")]
+			internal const string DefaultID = "stss";
+			public SyncSampleBox() : base(DefaultID) { }
+
+			[XmlIgnore]
 			[BinArray(CountFormat = BinFormat.Int32)]
 			[BinData]
 			public int[] SampleNumbers;
@@ -1427,25 +1621,31 @@ namespace MP4
 
 		public sealed partial class StshEntry
 		{
-			[XmlAttribute]
+			[XmlAttribute("ShadowedSample")]
 			[BinData]
 			public int ShadowedSampleNumber;
-			[XmlAttribute]
+			[XmlAttribute("SyncSample")]
 			[BinData]
 			public int SyncSampleNumber;//s32
 		}
 
 		public sealed partial class ShadowSyncBox : ISOMFullBox
 		{
+			internal const string DefaultID = "stsh";
+			public ShadowSyncBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			List<StshEntry> entries = new List<StshEntry>();
 		}
 
 		public sealed partial class DegradationPriorityBox : ISOMFullBox
 		{
+			internal const string DefaultID = "stdp";
+			public DegradationPriorityBox() : base(DefaultID) { }
+
 			//we need to read the DegPriority in a different way...
 			//this is called through stbl_read...
-			[XmlElement("Priority")]
+			[XmlIgnore]
 			[BinArray(CountCustomMethod = "reader.Length()/2")]
 			[BinData]
 			public short[] Priorities;
@@ -1453,14 +1653,20 @@ namespace MP4
 
 		public sealed partial class PaddingBitsBox : ISOMFullBox
 		{
-			[XmlElement]
+			internal const string DefaultID = "padb";
+			public PaddingBitsBox() : base(DefaultID) { }
+
+			[XmlIgnore]
 			public sbyte[] PadBits;
 		}
 
 		public sealed partial class SampleDependencyTypeBox : ISOMFullBox
 		{
+			internal const string DefaultID = "sdtp";
+			public SampleDependencyTypeBox() : base(DefaultID) { }
+
 			/*each dep type is packed on 1 byte*/
-			[XmlElement(DataType = "hexBinary")]
+			[XmlIgnore]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			public byte[] SampleInfo; /*out-of-order sdtp, assume no padding at the end*/
 		}
@@ -1477,12 +1683,13 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Final)]
 		public sealed partial class SubSampleEntry : IEntry<SubSampleInformationBox>
 		{
+			[XmlIgnore]
 			public SubSampleInformationBox Owner { get; set; }
-			[XmlAttribute]
+			[XmlAttribute("Size")]
 			[BinData(BinFormat.Int32, Condition = "Owner.Version == 1")]
 			[BinData(BinFormat.UInt16)]
 			public int SubSampleSize;
-			[XmlAttribute]
+			[XmlAttribute("Priority")]
 			[BinData]
 			public byte SubSamplePriority;
 			[XmlAttribute]
@@ -1495,6 +1702,9 @@ namespace MP4
 
 		public sealed partial class SubSampleInformationBox : ISOMFullBox
 		{
+			internal const string DefaultID = "subs";
+			public SubSampleInformationBox() : base(DefaultID) { CreateEntryCollection(out samples, this); }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			Collection<SampleEntry> samples;
 		}
@@ -1505,6 +1715,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class SampleTableBox : AtomicInfo
 		{
+			internal const string DefaultID = "stbl";
+			public SampleTableBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// Sample description atom
 			/// </summary>
@@ -1544,7 +1757,7 @@ namespace MP4
 			/// Sample size atom
 			/// </summary>
 			[XmlIgnore]
-			public SampleSizeBox SampleSize { get { return boxList.Get<SampleSizeBox>(); } set { boxList.Set(value); } }
+			public SampleSizeBox SampleSize { get { return (SampleSizeBox)boxList[typeof(SampleSizeBox), false]; } set { boxList.Set(value); } }
 			/// <summary>
 			/// Chunk offset atom
 			/// </summary>
@@ -1620,6 +1833,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MediaInformationBox : AtomicInfo
 		{
+			internal const string DefaultID = "minf";
+			public MediaInformationBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public AtomicInfo InfoHeader
 			{
@@ -1659,6 +1875,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class FreeSpaceBox: AtomicInfo
 		{
+			internal const string DefaultID = "free";
+			public FreeSpaceBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			public byte[] Data = EmptyData;
@@ -1669,20 +1888,23 @@ namespace MP4
 		/// </summary>
 		public sealed partial class CopyrightBox : ISOMFullBox
 		{
+			internal const string DefaultID = "cprt";
+			public CopyrightBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			[BinData(BinFormat.UInt16)]
 			public PackedLanguage Language;
-			[XmlElement, DefaultValue("")]
+			[XmlAttribute("CopyrightNotice"), DefaultValue("")]
 			[BinData]
 			public string Notice;
 		}
 
 		public sealed partial class ChapterEntry
 		{
-			[XmlAttribute]
+			[XmlIgnore]
 			[BinData]
 			public long StartTime;
-			[XmlElement, DefaultValue("")]
+			[XmlAttribute, DefaultValue("")]
 			[BinData(BinFormat.PString, LengthFormat = BinFormat.UInt8, LengthCustomMethod = "encoding.GetByteCount(Name)")]
 			public string Name;
 		}
@@ -1690,6 +1912,9 @@ namespace MP4
 		//this is using chpl format according to some NeroRecode samples
 		public sealed partial class ChapterListBox : ISOMFullBox
 		{
+			internal const string DefaultID = "chpl";
+			public ChapterListBox() : base(DefaultID, version: 1) { }
+
 			[XmlAttribute, DefaultValue(0)]
 			[BinData]
 			public int Reserved; //reserved or ???
@@ -1701,18 +1926,31 @@ namespace MP4
 		/// Track reference type atom
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
-		public sealed partial class TrackReferenceTypeBox : AtomicInfo
+		public partial class TrackReferenceTypeBox : AtomicInfo
 		{
+			internal const string DefaultID = "REFT";
+			public TrackReferenceTypeBox() : base(DefaultID) { }
+
 			/// <summary>
 			/// A list of track ID values (32-bit integers) specifying the related tracks. Note that this is one case where track ID values can be
 			/// set to 0. Unused entries in the atom may have a track ID value of 0. Setting the track ID to 0 may be more convenient than deleting
 			/// the reference.
 			/// </summary>
-			[XmlElement("TrackID")]
+			[XmlIgnore]
 			[BinArray(CountCustomMethod = "reader.Length() / 4")]
 			[BinData]
 			public int[] TrackIDs;
 		}
+
+		public sealed class HintTrackReferenceBox : TrackReferenceTypeBox { }
+
+		public sealed class StreamTrackReferenceBox : TrackReferenceTypeBox { }
+
+		public sealed class ODTrackReferenceBox : TrackReferenceTypeBox { }
+
+		public sealed class SyncTrackReferenceBox : TrackReferenceTypeBox { }
+
+		public sealed class ChapterTrackReferenceBox : TrackReferenceTypeBox { }
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class JPEG2000Atom: AtomicInfo
@@ -1732,6 +1970,7 @@ namespace MP4
 		public sealed partial class FileTypeBox: AtomicInfo
 		{
 			internal const string DefaultID = "ftyp";
+			public FileTypeBox() : base(DefaultID) { }
 
 			/// <summary>
 			/// A 32-bit unsigned integer that identifies compatible file format.
@@ -1756,10 +1995,23 @@ namespace MP4
 
 		public sealed partial class ProgressiveDownloadBox : ISOMFullBox
 		{
+			internal const string DefaultID = "pdin";
+			public ProgressiveDownloadBox() : base(DefaultID) { AtomFlags = AtomFlags.Text; /* 1 */ }
+
+			public struct DownloadInfo
+			{
+				[XmlAttribute]
+				public int Rate;
+				[XmlAttribute]
+				public int EstimatedTime;
+			}
+
+			DownloadInfo[] infos;
+
 			[XmlElement("Rate")]
-			public int[] Rates;
+			public int[] Rates { get { return infos.Select(info => info.Rate).ToArray(); } }
 			[XmlElement("Time")]
-			public int[] Times;
+			public int[] Times { get { return infos.Select(info => info.EstimatedTime).ToArray(); } }
 		}
 
 		/*
@@ -1791,7 +2043,7 @@ namespace MP4
 			[BinData]
 			public sbyte VerticalJustification;
 			/*ARGB*/
-			[XmlAttribute]
+			[XmlAttribute("BackgroundColor")]
 			[BinData]
 			public int BackColor;
 			//public BoxRecord DefaultBox;
@@ -1861,10 +2113,10 @@ namespace MP4
 		{
 			[XmlAttribute]
 			[BinData]
-			public ushort Startcharoffset;
+			public ushort StartCharOffset;
 			[XmlAttribute]
 			[BinData]
-			public ushort Endcharoffset;
+			public ushort EndCharOffset;
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
@@ -1872,7 +2124,7 @@ namespace MP4
 		{
 			/*ARGB*/
 			[BinData]
-			public uint HilColor;
+			public uint HighlightColor;
 		}
 
 		public sealed partial class KaraokeRecord
@@ -1914,10 +2166,10 @@ namespace MP4
 		{
 			[XmlAttribute]
 			[BinData]
-			public ushort Startcharoffset;
+			public ushort StartCharOffset;
 			[XmlAttribute]
 			[BinData]
-			public ushort Endcharoffset;
+			public ushort EndCharOffset;
 			[XmlAttribute]
 			[BinData]
 			public string URL;
@@ -1940,10 +2192,10 @@ namespace MP4
 		{
 			[XmlAttribute]
 			[BinData]
-			public ushort Startcharoffset;
+			public ushort StartCharOffset;
 			[XmlAttribute]
 			[BinData]
-			public ushort Endcharoffset;
+			public ushort EndCharOffset;
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
@@ -1959,13 +2211,10 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public int SwitchGroup;
-			[XmlElement]
+			[XmlIgnore]
 			[BinArray]
-			[BinData]
-			public int[] AttributeList;
-			[XmlAttribute]
-			[BinData]
-			public int AttributeListCount;
+			[BinData(BinFormat.UInt32)]
+			public AtomicCode[] AttributeList;
 		}
 
 		/*
@@ -1973,19 +2222,26 @@ namespace MP4
 		*/
 		public sealed partial class XMLBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			[BinData]
-			public int XMLLength;
-			[XmlAttribute]
+			[XmlIgnore]
 			[BinData]
 			public string XML;
+
+			public XmlCDataSection XMLAsCData
+			{
+				get
+				{
+					XmlDocument doc = new XmlDocument();
+					return doc.CreateCDataSection(XML);
+				}
+				set
+				{
+					XML = value.Value;
+				}
+			}
 		}
 
 		public sealed partial class BinaryXMLBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			[BinData]
-			public int DataLength;
 			[XmlAttribute]
 			[BinData]
 			public string Data;
@@ -1999,8 +2255,6 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public long ExtentLength;
-			/*for storage only*/
-			public long OriginalExtentOffset;
 		}
 
 		public sealed partial class ItemLocationEntry
@@ -2013,9 +2267,8 @@ namespace MP4
 			public ushort DataReferenceIndex;
 			[XmlAttribute]
 			public long BaseOffset;
-			/*for storage only*/
-			public long OriginalBaseOffset;
-			public List<AtomicInfo> ExtentEntries = new List<AtomicInfo>();
+			[XmlElement("ItemExtentEntry")]
+			public List<ItemExtentEntry> ExtentEntries = new List<ItemExtentEntry>();
 		}
 
 		public sealed partial class ItemLocationBox : ISOMFullBox
@@ -2029,7 +2282,8 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public byte BaseOffsetSize;
-			public List<AtomicInfo> LocationEntries = new List<AtomicInfo>();
+			[XmlElement("ItemLocationEntry")]
+			public List<ItemLocationEntry> LocationEntries = new List<ItemLocationEntry>();
 		}
 
 		public sealed partial class PrimaryItemBox : ISOMFullBox
@@ -2081,16 +2335,16 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class OriginalFormatBox : AtomicInfo
 		{
-			[XmlAttribute]
-			[BinData]
-			public int DataFormat;
+			[XmlIgnore]
+			[BinData(BinFormat.UInt32)]
+			public AtomicCode DataFormat;
 		}
 
 		public sealed partial class SchemeTypeBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			[BinData]
-			public int SchemeType;
+			[XmlIgnore]
+			[BinData(BinFormat.UInt32)]
+			public AtomicCode SchemeType;
 			[XmlAttribute]
 			[BinData]
 			public int SchemeVersion;
@@ -2103,7 +2357,7 @@ namespace MP4
 		public sealed partial class ISMAKMSBox : ISOMFullBox
 		{
 			/*zero-terminated string*/
-			[XmlAttribute]
+			[XmlAttribute("KMSURI")]
 			[BinData]
 			public string URI;
 		}
@@ -2183,7 +2437,6 @@ namespace MP4
 			public ItemInfoBox ItemInfos { get { return boxList.Get<ItemInfoBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
 			public IPMPControlBox IPMPControl { get { return boxList.Get<IPMPControlBox>(); } set { boxList.Set(value); } }
-			[XmlIgnore]
 			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox);
 		}
 
@@ -2192,6 +2445,10 @@ namespace MP4
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(FragmentDuration)")]
 		public sealed partial class MovieExtendsHeaderBox : ISOMFullBox
 		{
+			internal const string DefaultID = "mehd";
+			public MovieExtendsHeaderBox() : base(DefaultID) { }
+
+			[XmlAttribute]
 			[BinData(BinFormat.Int64, Condition = "Version == 1")]
 			[BinData(BinFormat.UInt32)]
 			public long FragmentDuration;
@@ -2201,6 +2458,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieExtendsBox : AtomicInfo
 		{
+			internal const string DefaultID = "mvex";
+			public MovieExtendsBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public TrackExtendsBox[] TrackExList { get { return boxList.ArrayOfType<TrackExtendsBox>(); } }
 			[XmlIgnore]
@@ -2211,30 +2471,36 @@ namespace MP4
 			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox); //No order???
 		}
 
-/*the TrackExtends contains default values for the track fragments*/
+		/*the TrackExtends contains default values for the track fragments*/
 		public sealed partial class TrackExtendsBox : ISOMFullBox
 		{
+			internal const string DefaultID = "trex";
+			public TrackExtendsBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
 			public int TrackID;
 			[XmlAttribute]
 			[BinData]
-			public int DefSampleDescIndex;
+			public int SampleDescriptionIndex;
 			[XmlAttribute]
 			[BinData]
-			public int DefSampleDuration;
+			public int SampleDuration;
 			[XmlAttribute]
 			[BinData]
-			public int DefSampleSize;
-			[XmlAttribute]
+			public int SampleSize;
+			[XmlIgnore]
 			[BinData]
-			public int DefSampleFlags;
+			public int DefaultSampleFlags;
 		}
 
 /*indicates the seq num of this fragment*/
 		public sealed partial class MovieFragmentHeaderBox : ISOMFullBox
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "mfhd";
+			public MovieFragmentHeaderBox() : base(DefaultID) { }
+
+			[XmlAttribute("FragmentSequenceNumber")]
 			[BinData]
 			public int SequenceNumber;
 		}
@@ -2243,6 +2509,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieFragmentBox : AtomicInfo
 		{
+			internal const string DefaultID = "moof";
+			public MovieFragmentBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public MovieFragmentHeaderBox Header { get { return boxList.Get<MovieFragmentHeaderBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
@@ -2259,8 +2528,11 @@ namespace MP4
 
 		public sealed partial class TrackFragmentHeaderBox : ISOMFullBox
 		{
+			internal const string DefaultID = "tfhd";
+			public TrackFragmentHeaderBox() : base(DefaultID) { }
+
 			[XmlAttribute]
-			public TrackFragmentFlags TrackFragmentFlags { get { return (TrackFragmentFlags)Flags & TrackFragmentFlags.ValidMask; } set { Flags = (int)value; } }
+			public TrackFragmentFlags TrackFragmentFlags { get { return Flags.ValidFlags<TrackFragmentFlags>(); } set { Flags = (int)value; } }
 
 			[XmlAttribute]
 			[BinData]
@@ -2271,16 +2543,16 @@ namespace MP4
 			public long BaseDataOffset;
 			[XmlAttribute]
 			[BinData(Condition = "(TrackFragmentFlags & TrackFragmentFlags.SampleDesc) != 0")]
-			public int SampleDescIndex;
+			public int SampleDescriptionIndex;
 			[XmlAttribute]
 			[BinData(Condition = "(TrackFragmentFlags & TrackFragmentFlags.SampleDur) != 0")]
-			public int DefSampleDuration;
+			public int SampleDuration;
 			[XmlAttribute]
 			[BinData(Condition = "(TrackFragmentFlags & TrackFragmentFlags.SampleSize) != 0")]
-			public int DefSampleSize;
-			[XmlAttribute]
+			public int SampleSize;
+			[XmlIgnore]
 			[BinData(Condition = "(TrackFragmentFlags & TrackFragmentFlags.SampleFlags) != 0")]
-			public int DefSampleFlags;
+			public int DefaultSampleFlags;
 			//[XmlAttribute]
 			//[BinData(Condition = "(TrackFragmentFlags & TrackFragmentFlags.DurEmpty) != 0")]
 			//public int EmptyDuration;
@@ -2289,6 +2561,9 @@ namespace MP4
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(BaseMediaDecodeTime)")]
 		public sealed partial class TFBaseMediaDecodeTimeBox : ISOMFullBox
 		{
+			internal const string DefaultID = "tfdt";
+			public TFBaseMediaDecodeTimeBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData(BinFormat.Int64, Condition = "Version == 1")]
 			[BinData(BinFormat.UInt32)]
@@ -2298,6 +2573,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackFragmentBox : AtomicInfo
 		{
+			internal const string DefaultID = "traf";
+			public TrackFragmentBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			public TrackFragmentHeaderBox Header { get { return boxList.Get<TrackFragmentHeaderBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
@@ -2328,8 +2606,11 @@ namespace MP4
 
 		public sealed partial class TrackFragmentRunBox : ISOMFullBox
 		{
+			internal const string DefaultID = "trun";
+			public TrackFragmentRunBox() : base(DefaultID) { CreateEntryCollection(out entries, this); }
+
 			[XmlAttribute]
-			public TrackRunFlags TrackRunFlags { get { return (TrackRunFlags)Flags & TrackRunFlags.ValidMask; } set { Flags = (int)value; } }
+			public TrackRunFlags TrackRunFlags { get { return Flags.ValidFlags<TrackRunFlags>(); } set { Flags = (int)value; } }
 
 			[XmlIgnore]
 			[BinCustom(ReadMethod = "int sampleCount = reader.ReadInt32()",
@@ -2354,6 +2635,7 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Final)]
 		public sealed partial class TrunEntry : IEntry<TrackFragmentRunBox>
 		{
+			[XmlIgnore]
 			public TrackFragmentRunBox Owner { get; set; }
 			[XmlAttribute]
 			[BinData(Condition = "(Owner.TrackRunFlags & TrackRunFlags.Duration) != 0")]
@@ -2361,7 +2643,7 @@ namespace MP4
 			[XmlAttribute]
 			[BinData(Condition = "(Owner.TrackRunFlags & TrackRunFlags.Size) != 0")]
 			public int Size;
-			[XmlAttribute]
+			[XmlIgnore]
 			[BinData(Condition = "(Owner.TrackRunFlags & TrackRunFlags.Flags) != 0")]
 			public int Flags;
 			[XmlAttribute]
@@ -2409,10 +2691,12 @@ namespace MP4
 		public sealed partial class RTPBox : AtomicInfo
 		{
 			internal const string DefaultID = "rtp ";
-			[XmlAttribute]
+			public RTPBox() : base(DefaultID) { }
+
+			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode SubType;
-			[XmlAttribute, DefaultValue("")]
+			[XmlText, DefaultValue("")]
 			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")] //don't write the NULL char
 			public string SDPText;
 		}
@@ -2421,7 +2705,9 @@ namespace MP4
 		public sealed partial class SDPBox : AtomicInfo
 		{
 			internal const string DefaultID = "sdp ";
-			[XmlAttribute, DefaultValue("")]
+			public SDPBox() : base(DefaultID) { }
+
+			[XmlText, DefaultValue("")]
 			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")] //sdp text has no delimiter !!!
 			public string SDPText;
 		}
@@ -2429,9 +2715,12 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RTPOBox : AtomicInfo
 		{
+			internal const string DefaultID = "rtpo";
+			public RTPOBox() : base(DefaultID) { }
+
 			//here we have no pb, just remembed that some entries will have to
 			//be 4-bytes aligned ...
-			[XmlAttribute]
+			[XmlAttribute("PacketTimeOffset")]
 			[BinData]
 			public int TimeOffset;//s32
 		}
@@ -2439,6 +2728,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class HintTrackInfoBox : AtomicInfo
 		{
+			internal const string DefaultID = "hnti";
+			public HintTrackInfoBox() : base(DefaultID) { }
+
 			[XmlIgnore]
 			AtomicInfo SDP
 			{
@@ -2464,12 +2756,15 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RelyHintBox : AtomicInfo
 		{
+			internal const string DefaultID = "rely";
+			public RelyHintBox() : base(DefaultID) { }
+
 			[BinData]
 			byte data;
 			[XmlAttribute, DefaultValue(0)]
-			public int Reserved { get { return data >> 2; } set { data = (byte)(value << 2); } }
+			public int Reserved { get { return data.Bits(6, 2); } set { data = data.Bits(6, 2, value); } }
 			[XmlAttribute]
-			public bool Prefered { get { return (data & 0x2u) != 0; } set { data = (byte)(value ? data | 0x2u : data & ~0x2u); } }
+			public bool Prefered { get { return data.Bit(1); } set { data = (byte)(value ? data | 0x2u : data & ~0x2u); } }
 			[XmlAttribute]
 			public bool Required { get { return (data & 0x1u) != 0; } set { data = (byte)(value ? data | 0x1u : data & ~0x1u); } }
 		}
@@ -2480,6 +2775,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TSHintEntryBox : AtomicInfo
 		{
+			internal const string DefaultID = "tims";
+			public TSHintEntryBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
 			public int TimeScale;
@@ -2488,7 +2786,10 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TimeOffHintEntryBox : AtomicInfo
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "tsro";
+			public TimeOffHintEntryBox() : base(DefaultID) { }
+
+			[XmlAttribute("TimeStampOffset")]
 			[BinData]
 			public int TimeOffset;
 		}
@@ -2496,7 +2797,10 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class SeqOffHintEntryBox : AtomicInfo
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "snro";
+			public SeqOffHintEntryBox() : base(DefaultID) { }
+
+			[XmlAttribute("SeqNumOffset")]
 			[BinData]
 			public int SeqOffset;
 		}
@@ -2509,9 +2813,12 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TRPYBox : AtomicInfo
 		{
+			internal const string DefaultID = "trpy";
+			public TRPYBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberBytes;
+			public long RTPBytesSent;
 		}
 
 		/// <summary>
@@ -2521,27 +2828,35 @@ namespace MP4
 		public sealed partial class TOTLBox: AtomicInfo
 		{
 			internal const string DefaultID = "totl";
+			public TOTLBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int NumberBytes;
+			public int RTPBytesSent;
 		}
 
 		/*Total number of network packets that will be sent*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NUMPBox : AtomicInfo
 		{
+			internal const string DefaultID = "nump";
+			public NUMPBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberPackets;
+			public long PacketsSent;
 		}
 
 		/*32-bits version of nump used in Darwin*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NPCKBox : AtomicInfo
 		{
+			internal const string DefaultID = "npck";
+			public NPCKBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int NumberPackets;
+			public int PacketsSent;
 		}
 
 
@@ -2549,24 +2864,33 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NTYLBox : AtomicInfo
 		{
+			internal const string DefaultID = "tpyl";
+			public NTYLBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberBytes;
+			public long BytesSent;
 		}
 
 		/*32-bits version of tpyl used in Darwin*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TPAYBox : AtomicInfo
 		{
+			internal const string DefaultID = "tpay";
+			public TPAYBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int NumberBytes;
+			public int BytesSent;
 		}
 
 		/*Maximum data rate in bits per second.*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MAXRBox : AtomicInfo
 		{
+			internal const string DefaultID = "maxr";
+			public MAXRBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
 			public int Granularity;
@@ -2580,18 +2904,24 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DMEDBox : AtomicInfo
 		{
+			internal const string DefaultID = "dmed";
+			public DMEDBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberBytes;
+			public long BytesSent;
 		}
 
 		/*Number of bytes of immediate data to be sent*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DIMMBox : AtomicInfo
 		{
+			internal const string DefaultID = "dimm";
+			public DIMMBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberBytes;
+			public long BytesSent;
 		}
 
 
@@ -2599,52 +2929,70 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DREPBox : AtomicInfo
 		{
+			internal const string DefaultID = "drep";
+			public DREPBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public long NumberBytes;
+			public long RepeatedBytes;
 		}
 
 		/*Smallest relative transmission time, in milliseconds. signed integer for smoothing*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TMINBox : AtomicInfo
 		{
+			internal const string DefaultID = "tmin";
+			public TMINBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int MinTime;//s32
+			public int MinimumTransmitTime;//s32
 		}
 
 		/*Largest relative transmission time, in milliseconds.*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TMAXBox : AtomicInfo
 		{
+			internal const string DefaultID = "tmax";
+			public TMAXBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int MaxTime;//s32
+			public int MaximumTransmitTime;//s32
 		}
 
 		/*Largest packet, in bytes, including 12-byte RTP header*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PMAXBox : AtomicInfo
 		{
+			internal const string DefaultID = "pmax";
+			public PMAXBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int MaxSize;
+			public int MaximumSize;
 		}
 
 		/*Longest packet duration, in milliseconds*/
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DMAXBox : AtomicInfo
 		{
+			internal const string DefaultID = "dmax";
+			public DMAXBox() : base(DefaultID) { }
+
 			[XmlAttribute]
 			[BinData]
-			public int MaxDur;
+			public int MaximumDuration;
 		}
 
 		/*32-bit payload type number, followed by rtpmap payload string */
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PAYTBox : AtomicInfo
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "payt";
+			public PAYTBox() : base(DefaultID) { }
+
+			[XmlAttribute("PayloadID")]
 			[BinData]
 			public int PayloadCode;
 			[XmlAttribute, DefaultValue("")]
@@ -2656,7 +3004,10 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NameBox : AtomicInfo
 		{
-			[XmlAttribute, DefaultValue("")]
+			internal const string DefaultID = "name";
+			public NameBox() : base(DefaultID) { }
+
+			[XmlAttribute("Name"), DefaultValue("")]
 			[BinData]
 			public string String;
 		}
@@ -2664,6 +3015,11 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class HintInfoBox : AtomicInfo
 		{
+			internal const string DefaultID = "hinf";
+			public HintInfoBox() : base(DefaultID) { }
+
+			[XmlIgnore]
+			public IEnumerable<MAXRBox> DataRates { get { return this.boxList.OfType<MAXRBox>(); } } //Unique by Granularity
 			[BinCustom]
 			BoxCollection boxList = new BoxCollection();
 		}
@@ -2708,19 +3064,17 @@ namespace MP4
 			public byte PaddingScheme;
 			[XmlAttribute]
 			[BinData]
-			public long PlaintextLength;
+			public long PlainTextLength;
 			[XmlAttribute]
 			[BinData]
 			public string ContentID;
 			[XmlAttribute]
 			[BinData]
 			public string RightsIssuerURL;
-			[XmlAttribute]
+			[XmlIgnore]
+			[BinArray]
 			[BinData]
-			public string TextualHeaders;
-			[XmlAttribute]
-			[BinData]
-			public int TextualHeadersLen;
+			public string[] TextualHeaders;
 			[XmlAttribute]
 			public List<AtomicInfo> ExtendedHeaders = new List<AtomicInfo>();
 		}
@@ -2733,12 +3087,9 @@ namespace MP4
 			[XmlAttribute]
 			[BinData]
 			public string GroupID;
-			[XmlAttribute]
+			[XmlElement(DataType = "hexBinary")]
 			[BinData]
-			public ushort GKLength;
-			[XmlAttribute]
-			[BinData]
-			public string GroupKey;
+			public byte[] GroupKey;
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
@@ -2750,19 +3101,16 @@ namespace MP4
 
 		public sealed partial class OMADRMTransactionTrackingBox : ISOMFullBox
 		{
-			[XmlAttribute]
+			[XmlElement(DataType = "hexBinary")]
 			[BinData]
-			public string TransactionID;//char TransactionID[16];
+			public byte[] TransactionID;//char TransactionID[16];
 		}
 
 		public sealed partial class OMADRMRightsObjectBox : ISOMFullBox
 		{
-			[XmlAttribute]
+			[XmlElement(DataType = "hexBinary")]
 			[BinData]
-			public string OmaRo;
-			[XmlAttribute]
-			[BinData]
-			public int OmaRoSize;
+			public byte[] OMARightsObject;
 		}
 
 		/*identical*/
@@ -2786,32 +3134,34 @@ namespace MP4
 		{
 			[BinData]
 			uint referenceData;
-			[XmlAttribute]
-			public bool ReferenceType { get { return (referenceData >> 31) != 0u; } set { referenceData |= 1u << 31; } }
-			[XmlAttribute]
-			public int ReferenceSize { get { return (int)(referenceData & (uint)int.MaxValue); } set { referenceData |= (uint)value & (uint)int.MaxValue; } }
-			[XmlAttribute]
+			[XmlAttribute("Type")]
+			public bool ReferenceType { get { return referenceData.Bit(31); } set { referenceData = referenceData.Bit(31, value); } }
+			[XmlAttribute("Size")]
+			public int ReferenceSize { get { return (int)referenceData.Bits(31, 0); } set { referenceData = referenceData.Bits(31, 0, (uint)value); } }
+			[XmlAttribute("Duration")]
 			[BinData]
 			public int SubsegmentDuration;
 			[BinData]
 			uint sapData;
 			[XmlAttribute]
-			public bool StartsWithSAP { get { return (sapData >> 31) != 0u; } set { sapData |= 1u << 31; } }
+			public bool StartsWithSAP { get { return sapData.Bit(31); } set { sapData = sapData.Bit(31, value); } }
 			[XmlAttribute]
-			public int SAPType { get { return (int)(sapData >> 28) & 0x7; } set { sapData |= (uint)(value & 0x7) << 28; } }
+			public int SAPType { get { return (int)sapData.Bits(3, 28); } set { sapData = sapData.Bits(3, 28, (uint)value); } }
 			[XmlAttribute]
-			public int SAPDeltaTime { get { return (int)(sapData & 0xFFFFFFFu); } set { sapData |= (uint)value & 0xFFFFFFFu; } }
+			public int SAPDeltaTime { get { return (int)sapData.Bits(28, 0); } set { sapData = sapData.Bits(28, 0, (uint)value); } }
 		}
 
 		public sealed partial class SegmentIndexBox : ISOMFullBox
 		{
+			internal const string DefaultID = "sidx";
+			public SegmentIndexBox() : base(DefaultID) { }
 
 			[XmlAttribute]
 			[BinData]
 			public int ReferenceID;
 			[XmlAttribute]
 			[BinData]
-			public int Timescale;
+			public int TimeScale;
 			[XmlAttribute]
 			[BinData(BinFormat.UInt32, Condition = "Version == 0")]
 			[BinData(BinFormat.Int64)]
@@ -2823,7 +3173,7 @@ namespace MP4
 			[XmlAttribute, DefaultValue((ushort)0)]
 			[BinData]
 			public ushort Reserved;
-			[XmlAttribute]
+			[XmlElement("Reference")]
 			[BinArray(CountFormat = BinFormat.UInt16)]
 			public List<SIDXReference> Refs = new List<SIDXReference>();
 		}
@@ -2831,12 +3181,9 @@ namespace MP4
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PcrInfoBox : AtomicInfo
 		{
-			[XmlElement("Value")]
-			public long[] PcrValues
-			{
-				get { return (pcrValues ?? new ulong[0]).Select(d => (long)(d >> 22)).ToArray(); }
-				set { pcrValues = (value ?? new long[0]).Select(d => (ulong)d << 22).ToArray(); }
-			}
+			internal const string DefaultID = "pcrb";
+			public PcrInfoBox() : base(DefaultID) { }
+
 			[BinArray(CountFormat = BinFormat.Int32)]
 			[BinData]
 			ulong[] pcrValues;
@@ -2857,11 +3204,14 @@ namespace MP4
 
 		public sealed partial class SampleGroupBox : ISOMFullBox
 		{
+			internal const string DefaultID = "sbgp";
+			public SampleGroupBox() : base(DefaultID) { }
+
+			[XmlIgnore]
+			[BinData(BinFormat.UInt32)]
+			public AtomicCode GroupingType;
 			[XmlAttribute]
 			[BinData(Condition = "Version == 1")]
-			public int GroupingType;
-			[XmlAttribute]
-			[BinData]
 			public int GroupingTypeParameter;
 
 			[BinArray(CountFormat = BinFormat.Int32)]
@@ -2870,6 +3220,10 @@ namespace MP4
 
 		public sealed partial class SampleGroupDescriptionBox : ISOMFullBox
 		{
+			internal const string DefaultID = "sgpd";
+			/*version 0 is deprecated, use v1 by default*/
+			public SampleGroupDescriptionBox() : base(DefaultID, version: 1) { CreateEntryCollection(out groupDescriptions, this); }
+
 			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode GroupingType;
@@ -2882,8 +3236,12 @@ namespace MP4
 			Collection<SampleGroupDescriptionEntry> groupDescriptions;
 		}
 
-		public abstract partial class SampleGroupDescriptionEntry
+		[BinBlock(MethodMode = BinMethodMode.Virtual)]
+		public abstract partial class SampleGroupDescriptionEntry : IEntry<SampleGroupDescriptionBox>
 		{
+			[XmlIgnore]
+			public SampleGroupDescriptionBox Owner { get; set; }
+
 			[XmlAttribute]
 			[BinData(Condition = "Owner.Version == 1 && Owner.DefaultLength == 0")]
 			public int Length;
@@ -2903,9 +3261,9 @@ namespace MP4
 			[BinData]
 			byte data;
 			[XmlAttribute]
-			public bool NumLeadingSamplesKnown { get { return (data & 0x80) != 0; } set { data |= (byte)0x80; } }
+			public bool NumLeadingSamplesKnown { get { return data.Bit(7); } set { data = data.Bit(7, value); } }
 			[XmlAttribute]
-			public byte NumLeadingSamples { get { return (byte)(data & 0x7F); } set { data |= (byte)(value & 0x7F); } }
+			public byte NumLeadingSamples { get { return (byte)data.Bits(7, 0); } set { data = data.Bits(7, 0, value); } }
 		}
 
 		/*RollRecoveryEntry - 'roll' type*/

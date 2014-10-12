@@ -462,12 +462,12 @@ namespace MP4
 				if (Owner.Version == 1)
 				{
 					// MediaTime
-					MediaTime = ((DateTime)(reader.ReadMacDate64()));
+					MediaTime = ((long)(reader.ReadInt64()));
 				}
 				else
 				{
 					// MediaTime
-					MediaTime = ((DateTime)(reader.ReadMacDate32()));
+					MediaTime = ((long)(reader.ReadUInt32()));
 				}
 				// MediaRate
 				MediaRate = ((int)(reader.ReadUInt16()));
@@ -526,12 +526,12 @@ namespace MP4
 				if (Owner.Version == 1)
 				{
 					// MediaTime
-					writer.WriteMacDate64(((System.DateTime)(MediaTime)));
+					writer.Write(((long)(MediaTime)));
 				}
 				else
 				{
 					// MediaTime
-					writer.WriteMacDate32(((System.DateTime)(MediaTime)));
+					writer.Write(((uint)(MediaTime)));
 				}
 				// MediaRate
 				writer.Write(((ushort)(MediaRate)));
@@ -1435,7 +1435,7 @@ namespace MP4
 			}
 		}
 		
-		public partial class ISOMDataEntryFields
+		public partial class DataEntryURLBox
 		{
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -1446,7 +1446,7 @@ namespace MP4
 				base.ReadBinary(reader);
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Location
-				Location = ((string)(encoder.ReadString()));
+				Location = new string(encoder.ReadChars(((int)(reader.Length()))));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -1457,12 +1457,12 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
 					long size = base.DataSize;
 					// Location
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(Location)) ?? "");
-					size += encoder.BaseStream.Position;
+					if ((Location != null))
+					{
+						size += encoding.GetByteCount(Location.ToCharArray());
+					}
 					return size;
 				}
 			}
@@ -1476,7 +1476,10 @@ namespace MP4
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BinStringWriter(writer.BaseStream, encoding);
 				// Location
-				encoder.Write(((string)(Location)) ?? "");
+				if ((Location != null))
+				{
+					encoder.Write(Location.ToCharArray());
+				}
 			}
 		}
 		
@@ -1990,10 +1993,10 @@ namespace MP4
 			{
 				// BufferSizeDB
 				BufferSizeDB = ((int)(reader.ReadInt32()));
-				// MaxBitrate
-				MaxBitrate = ((int)(reader.ReadInt32()));
-				// AvgBitrate
-				AvgBitrate = ((int)(reader.ReadInt32()));
+				// MaxBitRate
+				MaxBitRate = ((int)(reader.ReadInt32()));
+				// AvgBitRate
+				AvgBitRate = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -2003,7 +2006,7 @@ namespace MP4
 			{
 				get
 				{
-					// BufferSizeDB+MaxBitrate+AvgBitrate
+					// BufferSizeDB+MaxBitRate+AvgBitRate
 					long size = ((4 + 4) 
 								+ 4);
 					return size;
@@ -2017,10 +2020,10 @@ namespace MP4
 			{
 				// BufferSizeDB
 				writer.Write(((int)(BufferSizeDB)));
-				// MaxBitrate
-				writer.Write(((int)(MaxBitrate)));
-				// AvgBitrate
-				writer.Write(((int)(AvgBitrate)));
+				// MaxBitRate
+				writer.Write(((int)(MaxBitRate)));
+				// AvgBitRate
+				writer.Write(((int)(AvgBitRate)));
 			}
 		}
 		
@@ -2106,9 +2109,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Header
-				Header = new string(encoder.ReadChars(((int)(reader.Length()))));
+				Header = ((byte[])(reader.ReadBytes(((int)(reader.Length())))));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -2118,12 +2120,11 @@ namespace MP4
 			{
 				get
 				{
-					var encoding = System.Text.Encoding.UTF8;
 					long size = 0;
 					// Header
 					if ((Header != null))
 					{
-						size += encoding.GetByteCount(Header.ToCharArray());
+						size += ((byte[])(Header)).Length;
 					}
 					return size;
 				}
@@ -2134,12 +2135,10 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
 				// Header
 				if ((Header != null))
 				{
-					encoder.Write(Header.ToCharArray());
+					writer.Write(((byte[])(Header)));
 				}
 			}
 		}
@@ -2483,10 +2482,10 @@ namespace MP4
 				CompressionID = ((ushort)(reader.ReadUInt16()));
 				// PacketSize
 				PacketSize = ((ushort)(reader.ReadUInt16()));
-				// SamplerateHi
-				SamplerateHi = ((ushort)(reader.ReadUInt16()));
-				// SamplerateLo
-				SamplerateLo = ((ushort)(reader.ReadUInt16()));
+				// SampleRateHi
+				SampleRateHi = ((ushort)(reader.ReadUInt16()));
+				// SampleRateLo
+				SampleRateLo = ((ushort)(reader.ReadUInt16()));
 				if (Version == 1)
 				{
 					// Reserved2
@@ -2509,7 +2508,7 @@ namespace MP4
 			{
 				get
 				{
-					// Version+Revision+Vendor+ChannelCount+BitsPerSample+CompressionID+PacketSize+SamplerateHi+SamplerateLo
+					// Version+Revision+Vendor+ChannelCount+BitsPerSample+CompressionID+PacketSize+SampleRateHi+SampleRateLo
 					long size = (base.DataSize 
 								+ ((((((((2 + 2) 
 								+ 4) 
@@ -2556,10 +2555,10 @@ namespace MP4
 				writer.Write(((ushort)(CompressionID)));
 				// PacketSize
 				writer.Write(((ushort)(PacketSize)));
-				// SamplerateHi
-				writer.Write(((ushort)(SamplerateHi)));
-				// SamplerateLo
-				writer.Write(((ushort)(SamplerateLo)));
+				// SampleRateHi
+				writer.Write(((ushort)(SampleRateHi)));
+				// SampleRateLo
+				writer.Write(((ushort)(SampleRateLo)));
 				if (Version == 1)
 				{
 					// Reserved2
@@ -3013,7 +3012,7 @@ namespace MP4
 			}
 		}
 		
-		public partial class SampleSizeBox
+		public partial class FixedSampleSizeBox
 		{
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -3022,21 +3021,80 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				if (AtomicID != DefaultID)
+				int count;
+				// ConstantSampleSize
+				ConstantSampleSize = ((int)(reader.ReadInt32()));
+				// SampleCount
+				int sampleCount = reader.ReadInt32(); if (ConstantSampleSize != 0) sampleCount = 0;
+				if (true)
 				{
-					// Reserverd
-					Reserverd = ((int)(reader.ReadInt24()));
+					count = ((int)(sampleCount));
+					var buffer = new int[count];
+					for (int index = 0; (index < count); index = (index + 1))
+					{
+						// Sizes
+						buffer[index] = ((int)(reader.ReadInt32()));
+					}
+					Sizes = ((int[])(buffer));
 				}
-				if (AtomicID != DefaultID)
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
 				{
-					// SampleSize
-					SampleSize = ((int)(reader.ReadByte()));
+					// ConstantSampleSize
+					long size = (base.DataSize + 4);
+					// SampleCount
+					size += 4;
+					// Sizes
+					if ((Sizes != null))
+					{
+						var buffer = ((int[])(Sizes));
+						size += (buffer.Length * 4);
+					}
+					return size;
 				}
-				else
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				base.WriteBinary(writer);
+				// ConstantSampleSize
+				writer.Write(((int)(ConstantSampleSize)));
+				// SampleCount
+				writer.Write((int)Sizes.Length);
+				if ((Sizes != null))
 				{
-					// SampleSize
-					SampleSize = ((int)(reader.ReadInt32()));
+					var buffer = ((int[])(Sizes));
+					for (int index = 0; (index < buffer.Length); index = (index + 1))
+					{
+						// Sizes
+						writer.Write(((int)(buffer[index])));
+					}
 				}
+			}
+		}
+		
+		public partial class CompactSampleSizeBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				base.ReadBinary(reader);
+				// Reserverd
+				Reserverd = ((int)(reader.ReadInt24()));
+				// SampleSizeBits
+				SampleSizeBits = ((byte)(reader.ReadByte()));
 				// Sizes
 				Read_Sizes(reader);
 			}
@@ -3048,22 +3106,9 @@ namespace MP4
 			{
 				get
 				{
-					long size = base.DataSize;
-					if (AtomicID != DefaultID)
-					{
-						// Reserverd
-						size += 3;
-					}
-					if (AtomicID != DefaultID)
-					{
-						// SampleSize
-						size += 1;
-					}
-					else
-					{
-						// SampleSize
-						size += 4;
-					}
+					// Reserverd+SampleSizeBits
+					long size = (base.DataSize 
+								+ (3 + 1));
 					// Sizes
 					size += Size_Sizes();
 					return size;
@@ -3076,21 +3121,10 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				base.WriteBinary(writer);
-				if (AtomicID != DefaultID)
-				{
-					// Reserverd
-					writer.WriteInt24(((int)(Reserverd)));
-				}
-				if (AtomicID != DefaultID)
-				{
-					// SampleSize
-					writer.Write(((byte)(SampleSize)));
-				}
-				else
-				{
-					// SampleSize
-					writer.Write(((int)(SampleSize)));
-				}
+				// Reserverd
+				writer.WriteInt24(((int)(Reserverd)));
+				// SampleSizeBits
+				writer.Write(((byte)(SampleSizeBits)));
 				// Sizes
 				Write_Sizes(writer);
 			}
@@ -4457,10 +4491,10 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// Startcharoffset
-				Startcharoffset = ((ushort)(reader.ReadUInt16()));
-				// Endcharoffset
-				Endcharoffset = ((ushort)(reader.ReadUInt16()));
+				// StartCharOffset
+				StartCharOffset = ((ushort)(reader.ReadUInt16()));
+				// EndCharOffset
+				EndCharOffset = ((ushort)(reader.ReadUInt16()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -4470,7 +4504,7 @@ namespace MP4
 			{
 				get
 				{
-					// Startcharoffset+Endcharoffset
+					// StartCharOffset+EndCharOffset
 					long size = (2 + 2);
 					return size;
 				}
@@ -4481,10 +4515,10 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// Startcharoffset
-				writer.Write(((ushort)(Startcharoffset)));
-				// Endcharoffset
-				writer.Write(((ushort)(Endcharoffset)));
+				// StartCharOffset
+				writer.Write(((ushort)(StartCharOffset)));
+				// EndCharOffset
+				writer.Write(((ushort)(EndCharOffset)));
 			}
 		}
 		
@@ -4496,8 +4530,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// HilColor
-				HilColor = ((uint)(reader.ReadUInt32()));
+				// HighlightColor
+				HighlightColor = ((uint)(reader.ReadUInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -4507,7 +4541,7 @@ namespace MP4
 			{
 				get
 				{
-					// HilColor
+					// HighlightColor
 					long size = 4;
 					return size;
 				}
@@ -4518,8 +4552,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// HilColor
-				writer.Write(((uint)(HilColor)));
+				// HighlightColor
+				writer.Write(((uint)(HighlightColor)));
 			}
 		}
 		
@@ -4650,10 +4684,10 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
-				// Startcharoffset
-				Startcharoffset = ((ushort)(reader.ReadUInt16()));
-				// Endcharoffset
-				Endcharoffset = ((ushort)(reader.ReadUInt16()));
+				// StartCharOffset
+				StartCharOffset = ((ushort)(reader.ReadUInt16()));
+				// EndCharOffset
+				EndCharOffset = ((ushort)(reader.ReadUInt16()));
 				// URL
 				URL = ((string)(encoder.ReadString()));
 				// URLHint
@@ -4669,7 +4703,7 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// Startcharoffset+Endcharoffset
+					// StartCharOffset+EndCharOffset
 					long size = (2 + 2);
 					// URL
 					size -= encoder.BaseStream.Position;
@@ -4690,10 +4724,10 @@ namespace MP4
 			{
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BinStringWriter(writer.BaseStream, encoding);
-				// Startcharoffset
-				writer.Write(((ushort)(Startcharoffset)));
-				// Endcharoffset
-				writer.Write(((ushort)(Endcharoffset)));
+				// StartCharOffset
+				writer.Write(((ushort)(StartCharOffset)));
+				// EndCharOffset
+				writer.Write(((ushort)(EndCharOffset)));
 				// URL
 				encoder.Write(((string)(URL)) ?? "");
 				// URLHint
@@ -4751,10 +4785,10 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// Startcharoffset
-				Startcharoffset = ((ushort)(reader.ReadUInt16()));
-				// Endcharoffset
-				Endcharoffset = ((ushort)(reader.ReadUInt16()));
+				// StartCharOffset
+				StartCharOffset = ((ushort)(reader.ReadUInt16()));
+				// EndCharOffset
+				EndCharOffset = ((ushort)(reader.ReadUInt16()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -4764,7 +4798,7 @@ namespace MP4
 			{
 				get
 				{
-					// Startcharoffset+Endcharoffset
+					// StartCharOffset+EndCharOffset
 					long size = (2 + 2);
 					return size;
 				}
@@ -4775,10 +4809,10 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// Startcharoffset
-				writer.Write(((ushort)(Startcharoffset)));
-				// Endcharoffset
-				writer.Write(((ushort)(Endcharoffset)));
+				// StartCharOffset
+				writer.Write(((ushort)(StartCharOffset)));
+				// EndCharOffset
+				writer.Write(((ushort)(EndCharOffset)));
 			}
 		}
 		
@@ -4832,16 +4866,14 @@ namespace MP4
 				if (true)
 				{
 					count = ((int)(reader.ReadByte()));
-					var buffer = new int[count];
+					var buffer = new AtomicCode[count];
 					for (int index = 0; (index < count); index = (index + 1))
 					{
 						// AttributeList
-						buffer[index] = ((int)(reader.ReadInt32()));
+						buffer[index] = ((AtomicCode)(reader.ReadUInt32()));
 					}
-					AttributeList = ((int[])(buffer));
+					AttributeList = ((AtomicCode[])(buffer));
 				}
-				// AttributeListCount
-				AttributeListCount = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -4851,13 +4883,12 @@ namespace MP4
 			{
 				get
 				{
-					// SwitchGroup+AttributeListCount
-					long size = (base.DataSize 
-								+ (4 + 4));
+					// SwitchGroup
+					long size = (base.DataSize + 4);
 					// AttributeList
 					if ((AttributeList != null))
 					{
-						var buffer = ((int[])(AttributeList));
+						var buffer = ((AtomicCode[])(AttributeList));
 						size += (buffer.Length * 4);
 					}
 					size += 1;
@@ -4875,20 +4906,18 @@ namespace MP4
 				writer.Write(((int)(SwitchGroup)));
 				if ((AttributeList != null))
 				{
-					var buffer = ((int[])(AttributeList));
+					var buffer = ((AtomicCode[])(AttributeList));
 					writer.Write(((byte)(buffer.Length)));
 					for (int index = 0; (index < buffer.Length); index = (index + 1))
 					{
 						// AttributeList
-						writer.Write(((int)(buffer[index])));
+						writer.Write(((uint)(buffer[index])));
 					}
 				}
 				else
 				{
 					writer.Write(((byte)(0)));
 				}
-				// AttributeListCount
-				writer.Write(((int)(AttributeListCount)));
 			}
 		}
 		
@@ -4902,8 +4931,6 @@ namespace MP4
 			{
 				base.ReadBinary(reader);
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
-				// XMLLength
-				XMLLength = ((int)(reader.ReadInt32()));
 				// XML
 				XML = ((string)(encoder.ReadString()));
 			}
@@ -4917,8 +4944,7 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// XMLLength
-					long size = (base.DataSize + 4);
+					long size = base.DataSize;
 					// XML
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(XML)) ?? "");
@@ -4935,8 +4961,6 @@ namespace MP4
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BinStringWriter(writer.BaseStream, encoding);
-				// XMLLength
-				writer.Write(((int)(XMLLength)));
 				// XML
 				encoder.Write(((string)(XML)) ?? "");
 			}
@@ -4952,8 +4976,6 @@ namespace MP4
 			{
 				base.ReadBinary(reader);
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
-				// DataLength
-				DataLength = ((int)(reader.ReadInt32()));
 				// Data
 				Data = ((string)(encoder.ReadString()));
 			}
@@ -4967,8 +4989,7 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// DataLength
-					long size = (base.DataSize + 4);
+					long size = base.DataSize;
 					// Data
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(Data)) ?? "");
@@ -4985,8 +5006,6 @@ namespace MP4
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BinStringWriter(writer.BaseStream, encoding);
-				// DataLength
-				writer.Write(((int)(DataLength)));
 				// Data
 				encoder.Write(((string)(Data)) ?? "");
 			}
@@ -5247,7 +5266,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				// DataFormat
-				DataFormat = ((int)(reader.ReadInt32()));
+				DataFormat = ((AtomicCode)(reader.ReadUInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -5269,7 +5288,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				// DataFormat
-				writer.Write(((int)(DataFormat)));
+				writer.Write(((uint)(DataFormat)));
 			}
 		}
 		
@@ -5284,7 +5303,7 @@ namespace MP4
 				base.ReadBinary(reader);
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// SchemeType
-				SchemeType = ((int)(reader.ReadInt32()));
+				SchemeType = ((AtomicCode)(reader.ReadUInt32()));
 				// SchemeVersion
 				SchemeVersion = ((int)(reader.ReadInt32()));
 				// URI
@@ -5320,7 +5339,7 @@ namespace MP4
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BinStringWriter(writer.BaseStream, encoding);
 				// SchemeType
-				writer.Write(((int)(SchemeType)));
+				writer.Write(((uint)(SchemeType)));
 				// SchemeVersion
 				writer.Write(((int)(SchemeVersion)));
 				// URI
@@ -5602,14 +5621,14 @@ namespace MP4
 				base.ReadBinary(reader);
 				// TrackID
 				TrackID = ((int)(reader.ReadInt32()));
-				// DefSampleDescIndex
-				DefSampleDescIndex = ((int)(reader.ReadInt32()));
-				// DefSampleDuration
-				DefSampleDuration = ((int)(reader.ReadInt32()));
-				// DefSampleSize
-				DefSampleSize = ((int)(reader.ReadInt32()));
-				// DefSampleFlags
-				DefSampleFlags = ((int)(reader.ReadInt32()));
+				// SampleDescriptionIndex
+				SampleDescriptionIndex = ((int)(reader.ReadInt32()));
+				// SampleDuration
+				SampleDuration = ((int)(reader.ReadInt32()));
+				// SampleSize
+				SampleSize = ((int)(reader.ReadInt32()));
+				// DefaultSampleFlags
+				DefaultSampleFlags = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -5619,7 +5638,7 @@ namespace MP4
 			{
 				get
 				{
-					// TrackID+DefSampleDescIndex+DefSampleDuration+DefSampleSize+DefSampleFlags
+					// TrackID+SampleDescriptionIndex+SampleDuration+SampleSize+DefaultSampleFlags
 					long size = (base.DataSize 
 								+ ((((4 + 4) 
 								+ 4) 
@@ -5637,14 +5656,14 @@ namespace MP4
 				base.WriteBinary(writer);
 				// TrackID
 				writer.Write(((int)(TrackID)));
-				// DefSampleDescIndex
-				writer.Write(((int)(DefSampleDescIndex)));
-				// DefSampleDuration
-				writer.Write(((int)(DefSampleDuration)));
-				// DefSampleSize
-				writer.Write(((int)(DefSampleSize)));
-				// DefSampleFlags
-				writer.Write(((int)(DefSampleFlags)));
+				// SampleDescriptionIndex
+				writer.Write(((int)(SampleDescriptionIndex)));
+				// SampleDuration
+				writer.Write(((int)(SampleDuration)));
+				// SampleSize
+				writer.Write(((int)(SampleSize)));
+				// DefaultSampleFlags
+				writer.Write(((int)(DefaultSampleFlags)));
 			}
 		}
 		
@@ -5739,23 +5758,23 @@ namespace MP4
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleDesc) != 0)
 				{
-					// SampleDescIndex
-					SampleDescIndex = ((int)(reader.ReadInt32()));
+					// SampleDescriptionIndex
+					SampleDescriptionIndex = ((int)(reader.ReadInt32()));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleDur) != 0)
 				{
-					// DefSampleDuration
-					DefSampleDuration = ((int)(reader.ReadInt32()));
+					// SampleDuration
+					SampleDuration = ((int)(reader.ReadInt32()));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleSize) != 0)
 				{
-					// DefSampleSize
-					DefSampleSize = ((int)(reader.ReadInt32()));
+					// SampleSize
+					SampleSize = ((int)(reader.ReadInt32()));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleFlags) != 0)
 				{
-					// DefSampleFlags
-					DefSampleFlags = ((int)(reader.ReadInt32()));
+					// DefaultSampleFlags
+					DefaultSampleFlags = ((int)(reader.ReadInt32()));
 				}
 			}
 			
@@ -5775,22 +5794,22 @@ namespace MP4
 					}
 					if ((TrackFragmentFlags & TrackFragmentFlags.SampleDesc) != 0)
 					{
-						// SampleDescIndex
+						// SampleDescriptionIndex
 						size += 4;
 					}
 					if ((TrackFragmentFlags & TrackFragmentFlags.SampleDur) != 0)
 					{
-						// DefSampleDuration
+						// SampleDuration
 						size += 4;
 					}
 					if ((TrackFragmentFlags & TrackFragmentFlags.SampleSize) != 0)
 					{
-						// DefSampleSize
+						// SampleSize
 						size += 4;
 					}
 					if ((TrackFragmentFlags & TrackFragmentFlags.SampleFlags) != 0)
 					{
-						// DefSampleFlags
+						// DefaultSampleFlags
 						size += 4;
 					}
 					return size;
@@ -5812,23 +5831,23 @@ namespace MP4
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleDesc) != 0)
 				{
-					// SampleDescIndex
-					writer.Write(((int)(SampleDescIndex)));
+					// SampleDescriptionIndex
+					writer.Write(((int)(SampleDescriptionIndex)));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleDur) != 0)
 				{
-					// DefSampleDuration
-					writer.Write(((int)(DefSampleDuration)));
+					// SampleDuration
+					writer.Write(((int)(SampleDuration)));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleSize) != 0)
 				{
-					// DefSampleSize
-					writer.Write(((int)(DefSampleSize)));
+					// SampleSize
+					writer.Write(((int)(SampleSize)));
 				}
 				if ((TrackFragmentFlags & TrackFragmentFlags.SampleFlags) != 0)
 				{
-					// DefSampleFlags
-					writer.Write(((int)(DefSampleFlags)));
+					// DefaultSampleFlags
+					writer.Write(((int)(DefaultSampleFlags)));
 				}
 			}
 		}
@@ -6558,8 +6577,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((long)(reader.ReadInt64()));
+				// RTPBytesSent
+				RTPBytesSent = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6569,7 +6588,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// RTPBytesSent
 					long size = 8;
 					return size;
 				}
@@ -6580,8 +6599,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((long)(NumberBytes)));
+				// RTPBytesSent
+				writer.Write(((long)(RTPBytesSent)));
 			}
 		}
 		
@@ -6593,8 +6612,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((int)(reader.ReadInt32()));
+				// RTPBytesSent
+				RTPBytesSent = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6604,7 +6623,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// RTPBytesSent
 					long size = 4;
 					return size;
 				}
@@ -6615,8 +6634,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((int)(NumberBytes)));
+				// RTPBytesSent
+				writer.Write(((int)(RTPBytesSent)));
 			}
 		}
 		
@@ -6628,8 +6647,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberPackets
-				NumberPackets = ((long)(reader.ReadInt64()));
+				// PacketsSent
+				PacketsSent = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6639,7 +6658,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberPackets
+					// PacketsSent
 					long size = 8;
 					return size;
 				}
@@ -6650,8 +6669,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberPackets
-				writer.Write(((long)(NumberPackets)));
+				// PacketsSent
+				writer.Write(((long)(PacketsSent)));
 			}
 		}
 		
@@ -6663,8 +6682,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberPackets
-				NumberPackets = ((int)(reader.ReadInt32()));
+				// PacketsSent
+				PacketsSent = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6674,7 +6693,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberPackets
+					// PacketsSent
 					long size = 4;
 					return size;
 				}
@@ -6685,8 +6704,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberPackets
-				writer.Write(((int)(NumberPackets)));
+				// PacketsSent
+				writer.Write(((int)(PacketsSent)));
 			}
 		}
 		
@@ -6698,8 +6717,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((long)(reader.ReadInt64()));
+				// BytesSent
+				BytesSent = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6709,7 +6728,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// BytesSent
 					long size = 8;
 					return size;
 				}
@@ -6720,8 +6739,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((long)(NumberBytes)));
+				// BytesSent
+				writer.Write(((long)(BytesSent)));
 			}
 		}
 		
@@ -6733,8 +6752,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((int)(reader.ReadInt32()));
+				// BytesSent
+				BytesSent = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6744,7 +6763,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// BytesSent
 					long size = 4;
 					return size;
 				}
@@ -6755,8 +6774,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((int)(NumberBytes)));
+				// BytesSent
+				writer.Write(((int)(BytesSent)));
 			}
 		}
 		
@@ -6807,8 +6826,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((long)(reader.ReadInt64()));
+				// BytesSent
+				BytesSent = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6818,7 +6837,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// BytesSent
 					long size = 8;
 					return size;
 				}
@@ -6829,8 +6848,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((long)(NumberBytes)));
+				// BytesSent
+				writer.Write(((long)(BytesSent)));
 			}
 		}
 		
@@ -6842,8 +6861,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((long)(reader.ReadInt64()));
+				// BytesSent
+				BytesSent = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6853,7 +6872,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// BytesSent
 					long size = 8;
 					return size;
 				}
@@ -6864,8 +6883,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((long)(NumberBytes)));
+				// BytesSent
+				writer.Write(((long)(BytesSent)));
 			}
 		}
 		
@@ -6877,8 +6896,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// NumberBytes
-				NumberBytes = ((long)(reader.ReadInt64()));
+				// RepeatedBytes
+				RepeatedBytes = ((long)(reader.ReadInt64()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6888,7 +6907,7 @@ namespace MP4
 			{
 				get
 				{
-					// NumberBytes
+					// RepeatedBytes
 					long size = 8;
 					return size;
 				}
@@ -6899,8 +6918,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// NumberBytes
-				writer.Write(((long)(NumberBytes)));
+				// RepeatedBytes
+				writer.Write(((long)(RepeatedBytes)));
 			}
 		}
 		
@@ -6912,8 +6931,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// MinTime
-				MinTime = ((int)(reader.ReadInt32()));
+				// MinimumTransmitTime
+				MinimumTransmitTime = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6923,7 +6942,7 @@ namespace MP4
 			{
 				get
 				{
-					// MinTime
+					// MinimumTransmitTime
 					long size = 4;
 					return size;
 				}
@@ -6934,8 +6953,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// MinTime
-				writer.Write(((int)(MinTime)));
+				// MinimumTransmitTime
+				writer.Write(((int)(MinimumTransmitTime)));
 			}
 		}
 		
@@ -6947,8 +6966,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// MaxTime
-				MaxTime = ((int)(reader.ReadInt32()));
+				// MaximumTransmitTime
+				MaximumTransmitTime = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6958,7 +6977,7 @@ namespace MP4
 			{
 				get
 				{
-					// MaxTime
+					// MaximumTransmitTime
 					long size = 4;
 					return size;
 				}
@@ -6969,8 +6988,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// MaxTime
-				writer.Write(((int)(MaxTime)));
+				// MaximumTransmitTime
+				writer.Write(((int)(MaximumTransmitTime)));
 			}
 		}
 		
@@ -6982,8 +7001,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// MaxSize
-				MaxSize = ((int)(reader.ReadInt32()));
+				// MaximumSize
+				MaximumSize = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -6993,7 +7012,7 @@ namespace MP4
 			{
 				get
 				{
-					// MaxSize
+					// MaximumSize
 					long size = 4;
 					return size;
 				}
@@ -7004,8 +7023,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// MaxSize
-				writer.Write(((int)(MaxSize)));
+				// MaximumSize
+				writer.Write(((int)(MaximumSize)));
 			}
 		}
 		
@@ -7017,8 +7036,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				// MaxDur
-				MaxDur = ((int)(reader.ReadInt32()));
+				// MaximumDuration
+				MaximumDuration = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7028,7 +7047,7 @@ namespace MP4
 			{
 				get
 				{
-					// MaxDur
+					// MaximumDuration
 					long size = 4;
 					return size;
 				}
@@ -7039,8 +7058,8 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
-				// MaxDur
-				writer.Write(((int)(MaxDur)));
+				// MaximumDuration
+				writer.Write(((int)(MaximumDuration)));
 			}
 		}
 		
@@ -7317,20 +7336,28 @@ namespace MP4
 			{
 				base.ReadBinary(reader);
 				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				int count;
 				// EncryptionMethod
 				EncryptionMethod = ((byte)(reader.ReadByte()));
 				// PaddingScheme
 				PaddingScheme = ((byte)(reader.ReadByte()));
-				// PlaintextLength
-				PlaintextLength = ((long)(reader.ReadInt64()));
+				// PlainTextLength
+				PlainTextLength = ((long)(reader.ReadInt64()));
 				// ContentID
 				ContentID = ((string)(encoder.ReadString()));
 				// RightsIssuerURL
 				RightsIssuerURL = ((string)(encoder.ReadString()));
-				// TextualHeaders
-				TextualHeaders = ((string)(encoder.ReadString()));
-				// TextualHeadersLen
-				TextualHeadersLen = ((int)(reader.ReadInt32()));
+				if (true)
+				{
+					count = ((int)(reader.ReadByte()));
+					var buffer = new string[count];
+					for (int index = 0; (index < count); index = (index + 1))
+					{
+						// TextualHeaders
+						buffer[index] = ((string)(encoder.ReadString()));
+					}
+					TextualHeaders = ((string[])(buffer));
+				}
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7342,11 +7369,10 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// EncryptionMethod+PaddingScheme+PlaintextLength+TextualHeadersLen
+					// EncryptionMethod+PaddingScheme+PlainTextLength
 					long size = (base.DataSize 
-								+ (((1 + 1) 
-								+ 8) 
-								+ 4));
+								+ ((1 + 1) 
+								+ 8));
 					// ContentID
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(ContentID)) ?? "");
@@ -7355,10 +7381,18 @@ namespace MP4
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(RightsIssuerURL)) ?? "");
 					size += encoder.BaseStream.Position;
-					// TextualHeaders
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(TextualHeaders)) ?? "");
-					size += encoder.BaseStream.Position;
+					size += 1;
+					if ((TextualHeaders != null))
+					{
+						var buffer = ((string[])(TextualHeaders));
+						for (int index = 0; (index < buffer.Length); index = (index + 1))
+						{
+							// TextualHeaders
+							size -= encoder.BaseStream.Position;
+							encoder.Write(((string)(buffer[index])) ?? "");
+							size += encoder.BaseStream.Position;
+						}
+					}
 					return size;
 				}
 			}
@@ -7375,16 +7409,26 @@ namespace MP4
 				writer.Write(((byte)(EncryptionMethod)));
 				// PaddingScheme
 				writer.Write(((byte)(PaddingScheme)));
-				// PlaintextLength
-				writer.Write(((long)(PlaintextLength)));
+				// PlainTextLength
+				writer.Write(((long)(PlainTextLength)));
 				// ContentID
 				encoder.Write(((string)(ContentID)) ?? "");
 				// RightsIssuerURL
 				encoder.Write(((string)(RightsIssuerURL)) ?? "");
-				// TextualHeaders
-				encoder.Write(((string)(TextualHeaders)) ?? "");
-				// TextualHeadersLen
-				writer.Write(((int)(TextualHeadersLen)));
+				if ((TextualHeaders != null))
+				{
+					var buffer = ((string[])(TextualHeaders));
+					writer.Write(((byte)(buffer.Length)));
+					for (int index = 0; (index < buffer.Length); index = (index + 1))
+					{
+						// TextualHeaders
+						encoder.Write(((string)(buffer[index])) ?? "");
+					}
+				}
+				else
+				{
+					writer.Write(((byte)(0)));
+				}
 			}
 		}
 		
@@ -7402,10 +7446,8 @@ namespace MP4
 				GKEncryptionMethod = ((byte)(reader.ReadByte()));
 				// GroupID
 				GroupID = ((string)(encoder.ReadString()));
-				// GKLength
-				GKLength = ((ushort)(reader.ReadUInt16()));
 				// GroupKey
-				GroupKey = ((string)(encoder.ReadString()));
+				GroupKey = ((byte[])(reader.ReadBytes(((int)(reader.ReadByte())))));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7417,17 +7459,18 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// GKEncryptionMethod+GKLength
-					long size = (base.DataSize 
-								+ (1 + 2));
+					// GKEncryptionMethod
+					long size = (base.DataSize + 1);
 					// GroupID
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(GroupID)) ?? "");
 					size += encoder.BaseStream.Position;
 					// GroupKey
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(GroupKey)) ?? "");
-					size += encoder.BaseStream.Position;
+					if ((GroupKey != null))
+					{
+						size += ((byte[])(GroupKey)).Length;
+					}
+					size += 1;
 					return size;
 				}
 			}
@@ -7444,10 +7487,16 @@ namespace MP4
 				writer.Write(((byte)(GKEncryptionMethod)));
 				// GroupID
 				encoder.Write(((string)(GroupID)) ?? "");
-				// GKLength
-				writer.Write(((ushort)(GKLength)));
 				// GroupKey
-				encoder.Write(((string)(GroupKey)) ?? "");
+				if ((GroupKey != null))
+				{
+					writer.Write(((byte)(((byte[])(GroupKey)).Length)));
+					writer.Write(((byte[])(GroupKey)));
+				}
+				else
+				{
+					writer.Write(((byte)(0)));
+				}
 			}
 		}
 		
@@ -7496,9 +7545,8 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// TransactionID
-				TransactionID = ((string)(encoder.ReadString()));
+				TransactionID = ((byte[])(reader.ReadBytes(((int)(reader.ReadByte())))));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7508,13 +7556,13 @@ namespace MP4
 			{
 				get
 				{
-					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
 					long size = base.DataSize;
 					// TransactionID
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(TransactionID)) ?? "");
-					size += encoder.BaseStream.Position;
+					if ((TransactionID != null))
+					{
+						size += ((byte[])(TransactionID)).Length;
+					}
+					size += 1;
 					return size;
 				}
 			}
@@ -7525,10 +7573,16 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				base.WriteBinary(writer);
-				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
 				// TransactionID
-				encoder.Write(((string)(TransactionID)) ?? "");
+				if ((TransactionID != null))
+				{
+					writer.Write(((byte)(((byte[])(TransactionID)).Length)));
+					writer.Write(((byte[])(TransactionID)));
+				}
+				else
+				{
+					writer.Write(((byte)(0)));
+				}
 			}
 		}
 		
@@ -7541,11 +7595,8 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
-				// OmaRo
-				OmaRo = ((string)(encoder.ReadString()));
-				// OmaRoSize
-				OmaRoSize = ((int)(reader.ReadInt32()));
+				// OMARightsObject
+				OMARightsObject = ((byte[])(reader.ReadBytes(((int)(reader.ReadByte())))));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7555,14 +7606,13 @@ namespace MP4
 			{
 				get
 				{
-					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// OmaRoSize
-					long size = (base.DataSize + 4);
-					// OmaRo
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(OmaRo)) ?? "");
-					size += encoder.BaseStream.Position;
+					long size = base.DataSize;
+					// OMARightsObject
+					if ((OMARightsObject != null))
+					{
+						size += ((byte[])(OMARightsObject)).Length;
+					}
+					size += 1;
 					return size;
 				}
 			}
@@ -7573,12 +7623,16 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				base.WriteBinary(writer);
-				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
-				// OmaRo
-				encoder.Write(((string)(OmaRo)) ?? "");
-				// OmaRoSize
-				writer.Write(((int)(OmaRoSize)));
+				// OMARightsObject
+				if ((OMARightsObject != null))
+				{
+					writer.Write(((byte)(((byte[])(OMARightsObject)).Length)));
+					writer.Write(((byte[])(OMARightsObject)));
+				}
+				else
+				{
+					writer.Write(((byte)(0)));
+				}
 			}
 		}
 		
@@ -7638,8 +7692,8 @@ namespace MP4
 				int count;
 				// ReferenceID
 				ReferenceID = ((int)(reader.ReadInt32()));
-				// Timescale
-				Timescale = ((int)(reader.ReadInt32()));
+				// TimeScale
+				TimeScale = ((int)(reader.ReadInt32()));
 				if (Version == 0)
 				{
 					// EarliestPresentationTime
@@ -7680,7 +7734,7 @@ namespace MP4
 			{
 				get
 				{
-					// ReferenceID+Timescale+Reserved
+					// ReferenceID+TimeScale+Reserved
 					long size = (base.DataSize 
 								+ ((4 + 4) 
 								+ 2));
@@ -7723,8 +7777,8 @@ namespace MP4
 				base.WriteBinary(writer);
 				// ReferenceID
 				writer.Write(((int)(ReferenceID)));
-				// Timescale
-				writer.Write(((int)(Timescale)));
+				// TimeScale
+				writer.Write(((int)(TimeScale)));
 				if (Version == 0)
 				{
 					// EarliestPresentationTime
@@ -7869,13 +7923,13 @@ namespace MP4
 			{
 				base.ReadBinary(reader);
 				int count;
+				// GroupingType
+				GroupingType = ((AtomicCode)(reader.ReadUInt32()));
 				if (Version == 1)
 				{
-					// GroupingType
-					GroupingType = ((int)(reader.ReadInt32()));
+					// GroupingTypeParameter
+					GroupingTypeParameter = ((int)(reader.ReadInt32()));
 				}
-				// GroupingTypeParameter
-				GroupingTypeParameter = ((int)(reader.ReadInt32()));
 				sampleEntries.Clear();
 				count = ((int)(reader.ReadInt32()));
 				for (int index = 0; (index < count); index = (index + 1))
@@ -7894,11 +7948,11 @@ namespace MP4
 			{
 				get
 				{
-					// GroupingTypeParameter
+					// GroupingType
 					long size = (base.DataSize + 4);
 					if (Version == 1)
 					{
-						// GroupingType
+						// GroupingTypeParameter
 						size += 4;
 					}
 					size += 4;
@@ -7918,13 +7972,13 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				base.WriteBinary(writer);
+				// GroupingType
+				writer.Write(((uint)(GroupingType)));
 				if (Version == 1)
 				{
-					// GroupingType
-					writer.Write(((int)(GroupingType)));
+					// GroupingTypeParameter
+					writer.Write(((int)(GroupingTypeParameter)));
 				}
-				// GroupingTypeParameter
-				writer.Write(((int)(GroupingTypeParameter)));
 				writer.Write(((int)(sampleEntries.Count)));
 				for (var enumerator = ((System.Collections.IEnumerable)(sampleEntries)).GetEnumerator(); enumerator.MoveNext(); )
 				{
@@ -8011,7 +8065,7 @@ namespace MP4
 			}
 		}
 		
-		public partial class SampleGroupDescriptionEntry : FRAFV.Binary.Serialization.IBinSerializable
+		public partial class SampleGroupDescriptionEntry
 		{
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]

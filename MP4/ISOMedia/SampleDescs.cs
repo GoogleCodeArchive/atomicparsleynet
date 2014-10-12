@@ -24,9 +24,6 @@
  *    $Revision$
  *
  */
-using System.ComponentModel;
-using System.Xml.Serialization;
-using FRAFV.Binary.Serialization;
 
 namespace MP4
 {
@@ -34,32 +31,20 @@ namespace MP4
 	{
 		public abstract partial class ISOMSampleEntryFields : ISOMUUIDBox
 		{
-			[XmlIgnore]
-			public bool ReservedSpecified
-			{
-				get { return !Reserved.IsZero(); }
-			}
+			protected ISOMSampleEntryFields(string type) : base(type) { }
+			internal ISOMSampleEntryFields() { }
 		}
 
 		public abstract partial class ISOMVisualSampleEntry : ISOMSampleEntryFields
 		{
-			[XmlAttribute("HorizRes")]
-			public double HorizResAsFloat { get { return (double)HorizRes; } set { HorizRes = (Fixed<uint, x16>)value; } }
-
-			[XmlAttribute("VertRes")]
-			public double VertResAsFloat { get { return (double)VertRes; } set { VertRes = (Fixed<uint, x16>)value; } }
-
-			[XmlAttribute("CompressorName"), DefaultValue("")]
-			public string CompressorNameAsString { get { return CompressorName; } set { CompressorName = new UTF8PadString(value, 32); } }
+			protected ISOMVisualSampleEntry(string type) : base(type) { }
+			internal ISOMVisualSampleEntry() { }
 		}
 
 		public abstract partial class ISOMAudioSampleEntry : ISOMSampleEntryFields
 		{
-			[XmlIgnore]
-			public bool Reserved2Specified
-			{
-				get { return !Reserved2.IsZero(); }
-			}
+			protected ISOMAudioSampleEntry(string type) : base(type) { }
+			internal ISOMAudioSampleEntry() { }
 		}
 	}
 }

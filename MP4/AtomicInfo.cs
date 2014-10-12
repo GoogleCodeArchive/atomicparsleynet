@@ -74,9 +74,7 @@ namespace MP4
 		/// <summary>
 		/// Indicates that the track is used in the movie’s poster.
 		/// </summary>
-		Poster = 0x0008,
-
-		ValidMask = 0x000F
+		Poster = 0x0008
 	}
 
 	[Flags]
@@ -88,7 +86,7 @@ namespace MP4
 		SampleSize = 0x10,
 		SampleFlags = 0x20,
 		DurEmpty = 0x10000,
-		ValidMask = 0x1003B
+		MovieFragmentBaseOffset = 0x20000
 	}
 
 	[Flags]
@@ -99,8 +97,28 @@ namespace MP4
 		Duration = 0x100,
 		Size = 0x200,
 		Flags = 0x400,
-		CTSOffset = 0x800,
-		ValidMask = 0xF05
+		CTSOffset = 0x800
+	}
+
+	public enum SampleDependsOnFlags
+	{
+		Unknown = 0,
+		SampleDoesNotDependOnOthers = 2, // ie: an I picture
+		SampleDependsOnOthers = 1 // ie: not an I picture
+	}
+
+	public enum SampleIsDependedOnFlags
+	{
+		Unknown = 0,
+		NoOtherSampleDependsOnThisSample = 2,  // mediaSampleDroppable
+		OtherSamplesDependOnThisSample = 1
+	}
+
+	public enum SampleHasRedundancyFlags
+	{
+		Unknown = 0,
+		ThereIsNoRedundantCodingInThisSample = 2,
+		ThereIsRedundantCodingInThisSample = 1
 	}
 
 	public interface IBoxContainer
@@ -124,7 +142,7 @@ namespace MP4
 		[XmlIgnore]
 		public AtomicCode AtomicID { get; set; }
 
-		[XmlAttribute]
+		[XmlAttribute("AtomicID")]
 		public string Name
 		{
 			get { return AtomicID.ToString(); }
@@ -138,6 +156,11 @@ namespace MP4
 		public AtomicInfo Parent { get; set; }
 
 		protected AtomicInfo() { }
+
+		protected AtomicInfo(string type)
+		{
+			this.AtomicID = new AtomicCode(type);
+		}
 
 		public abstract void ReadBinary(BinaryReader reader);
 		public abstract long DataSize { get; }
@@ -191,12 +214,13 @@ namespace MP4
 			{
 				if (boxSize == 1L)
 					dataSize = reader.ReadInt64() - 16L;
-				else if (boxSize != 0L)
+				else if (boxSize > 8L)
 					dataSize = boxSize - 8L;
 				else
 					dataSize = reader.BaseStream.Length - start - 8L;
 				if (dataSize < 0L)
 					throw new InvalidDataException("Invalid movie sample data size");
+				boxSize = dataSize + 8L;
 			}
 			else
 			{
