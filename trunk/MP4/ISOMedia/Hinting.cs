@@ -24,7 +24,6 @@
  *    $Revision$
  *
  */
-using System.Xml.Serialization;
 
 namespace MP4
 {
@@ -33,16 +32,6 @@ namespace MP4
 		public sealed partial class HintSampleEntryBox : ISOMSampleEntryFields, IBoxContainer
 		{
 			public override ProtectionInfoBox ProtectionInfo { get { return null; } set { } }
-
-			[XmlElement("TSHint", typeof(TSHintEntryBox))]
-			[XmlElement("TimeOffHint", typeof(TimeOffHintEntryBox))]
-			[XmlElement("SeqOffHint", typeof(SeqOffHintEntryBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
-			public Collection<AtomicInfo> HintDataTable
-			{
-				get { return this.boxList; }
-			}
 
 			Collection<AtomicInfo> IBoxContainer.Boxes { get { return this.boxList; } }
 		}

@@ -99,8 +99,8 @@ namespace MP4
 			new AtomDefinition<ISOMediaBoxes.CompositionOffsetBox   >("ctts",  "stbl",  AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition<ISOMediaBoxes.SampleDescriptionBox   >("stsd",  "stbl",  AtomState.DualStateAtom,   AtomRequirements.RequiredOne,         BoxType.VersionedAtom ),
 
-			new AtomDefinition<ISOMediaBoxes.SampleSizeBox          >("stsz",  "stbl",  AtomState.ChildAtom,       AtomRequirements.ReqFamilialOne,      BoxType.VersionedAtom ),
-			new AtomDefinition<ISOMediaBoxes.SampleSizeBox          >("stz2",  "stbl",  AtomState.ChildAtom,       AtomRequirements.ReqFamilialOne,      BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.FixedSampleSizeBox     >("stsz",  "stbl",  AtomState.ChildAtom,       AtomRequirements.ReqFamilialOne,      BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.CompactSampleSizeBox   >("stz2",  "stbl",  AtomState.ChildAtom,       AtomRequirements.ReqFamilialOne,      BoxType.VersionedAtom ),
 
 			new AtomDefinition<ISOMediaBoxes.SampleToChunkBox       >("stsc",  "stbl",  AtomState.ChildAtom,       AtomRequirements.RequiredOne,         BoxType.VersionedAtom ),
 
@@ -166,12 +166,12 @@ namespace MP4
 			new AtomDefinition                                       ("iSFM",  "schi",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition                                       ("iSLT",  "schi",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),        //boxes with 'k***' are also here; reserved
 			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("IKEY",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
-			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("hint",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
-			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("dpnd",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
+			new AtomDefinition<ISOMediaBoxes.HintTrackReferenceBox  >("hint",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
+			new AtomDefinition<ISOMediaBoxes.StreamTrackReferenceBox>("dpnd",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
 			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("ipir",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
-			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("mpod",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
-			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("sync",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
-			new AtomDefinition<ISOMediaBoxes.TrackReferenceTypeBox  >("chap",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),        //?possible versioned?
+			new AtomDefinition<ISOMediaBoxes.ODTrackReferenceBox    >("mpod",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
+			new AtomDefinition<ISOMediaBoxes.SyncTrackReferenceBox  >("sync",  "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),
+			new AtomDefinition<ISOMediaBoxes.ChapterTrackReferenceBox>("chap", "tref",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.SimpleAtom ),        //?possible versioned?
 
 			new AtomDefinition                                       ("ipmc",  "moov",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition                                       ("ipmc",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
@@ -290,19 +290,19 @@ namespace MP4
 			//gnrm - GenericSampleEntryBox
 			//gnrv - GenericVisualSampleEntryBox
 			//gnra - GenericAudioSampleEntryBox
-			//rely - RelyHintBox
-			//rtpo - RTPOBox
+			//rely - RelyHintBox <RelyTransmissionBox>
+			//rtpo - RTPOBox <RTPTimeOffsetBox>
 			//sgpd - SampleGroupDescriptionBox
 			//stsf - SampleFragmentBox
 			//void - VoidBox
 			//pasp - PixelAspectRatioBox
-			//metx, mett - MetaDataSampleEntryBox
+			//metx, mett - MetaDataSampleEntryBox <XMLMetaDataSampleEntryBox> or <TextMetaDataSampleEntryBox>
 			//dac3 - AC3ConfigBox
 			//ac-3 - AC3SampleEntryBox
 			//lsrc - LASERConfigurationBox
 			//lsr1 - LASeRSampleEntryBox
 			//sidx - SegmentIndexBox
-			//pcrb - PcrInfoBox
+			//pcrb - PcrInfoBox <MPEG2TSPCRInfoBox>
 			//tfdt - TFBaseMediaDecodeTimeBox
 			//rvcc - RVCConfigurationBox
 		};

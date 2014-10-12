@@ -24,11 +24,7 @@
  *    $Revision$
  *
  */
-using System;
 using System.IO;
-using System.Linq;
-using System.Xml.Serialization;
-using System.Collections.Generic;
 using FRAFV.Binary.Serialization;
 
 namespace MP4
@@ -40,29 +36,6 @@ namespace MP4
 		/// </summary>
 		public sealed partial class MetaBox: ISOMFullBox, IBoxContainer
 		{
-#warning Looking forward to 'dinf', 'xml ', 'bxml', 'iloc', 'pitm', 'ipro', 'iinf', 'ipmc', 'ID32', 'ilst', 'esds', 'data'
-			[XmlElement("Handler", typeof(HandlerBox))]
-			//[XmlElement(typeof(dinf))]
-			//[XmlElement(typeof(xml ))]
-			//[XmlElement(typeof(bxml))]
-			//[XmlElement(typeof(iloc))]
-			//[XmlElement(typeof(pitm))]
-			//[XmlElement(typeof(ipro))]
-			//[XmlElement(typeof(iinf))]
-			//[XmlElement(typeof(ipmc))]
-			//[XmlElement(typeof(ID32))]
-			//[XmlElement(typeof(ilst))]
-			[XmlElement("FreeSpace", typeof(ISOMediaBoxes.FreeSpaceBox))]
-			[XmlElement("UUID", typeof(ISOMediaBoxes.UUIDBox))]
-			//[XmlElement(typeof(esds))]
-			//[XmlElement(typeof(data))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
-			public Collection<AtomicInfo> Boxes
-			{
-				get { return this.boxList; }
-			}
-
 			public override void ReadBinary(BinaryReader reader)
 			{
 				long pos = reader.BaseStream.Position;

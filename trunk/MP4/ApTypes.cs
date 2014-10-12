@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Xml;
+using System.Text;
+using System.Globalization;
 
 namespace MP4
 {
@@ -135,6 +138,178 @@ namespace MP4
 		public static Fixed<ushort, x8> ToFixed16(this double value)
 		{
 			return (Fixed<ushort, x8>)value;
+		}
+
+		public static string ToXML(this int[] value)
+		{
+			return String.Join(" ", value.Select(item => XmlConvert.ToString(item)));
+		}
+
+		public static void FromXML(this string value, out int[] data)
+		{
+			data = (value ?? "").Split(' ').Select(item => XmlConvert.ToInt32(item)).ToArray();
+		}
+
+		public static string ToXML(this long /*TimeSpan*/ ticks)
+		{
+			var value = new TimeSpan(ticks);
+			var sb = new StringBuilder(20);
+			if (value.Ticks < 0)
+			{
+				sb.Append('-');
+				value = new TimeSpan(-value.Ticks);
+			}
+			sb.Append((value.Days * 24 + value.Hours).ToString("D2", NumberFormatInfo.InvariantInfo));
+			sb.Append(':');
+			sb.Append(value.Minutes.ToString("D2", NumberFormatInfo.InvariantInfo));
+			sb.Append(':');
+			sb.Append(value.Seconds.ToString("D2", NumberFormatInfo.InvariantInfo));
+			sb.Append('.');
+			sb.Append(value.Milliseconds.ToString("D3", NumberFormatInfo.InvariantInfo));
+			return sb.ToString();
+		}
+
+		public static void FromXML(this string value, out long /*TimeSpan*/ ticks)
+		{
+			var parts = value.Split(':');
+			if (parts.Length != 3)
+				throw new FormatException("Unknown duration format " + value);
+			var sec = parts[2].Split('.');
+			if (sec.Length != 2)
+				throw new FormatException("Unknown duration format " + value);
+			int h = int.Parse(parts[0], NumberFormatInfo.InvariantInfo);
+			int m = int.Parse(parts[1], NumberFormatInfo.InvariantInfo);
+			int s = int.Parse(sec[0], NumberFormatInfo.InvariantInfo);
+			int ms = int.Parse(sec[1], NumberFormatInfo.InvariantInfo);
+			var data = new TimeSpan(0, h, m, s, ms);
+			ticks = data.Ticks;
+		}
+
+		public static int UnknownEnum<TEnum>(this int value)
+			where TEnum : struct
+		{
+			if (!Enum.IsDefined(typeof(TEnum), value))
+				return 0;
+			else
+				return value;
+		}
+
+		public static TEnum ValidEnum<TEnum>(this int value, TEnum defValue)
+			where TEnum : struct
+		{
+			if (Enum.IsDefined(typeof(TEnum), value))
+				return (TEnum)Enum.ToObject(typeof(TEnum), value);
+			else
+				return defValue;
+		}
+
+		public static int UnknownFlags<TEnum>(this int value)
+			where TEnum : struct
+		{
+			int mask = 0;
+			foreach (object eflag in Enum.GetValues(typeof(TEnum)))
+			{
+				mask |= Convert.ToInt32(eflag);
+			}
+			return value & ~mask;
+		}
+
+		public static TEnum ValidFlags<TEnum>(this int value)
+			where TEnum : struct
+		{
+			return (TEnum)Enum.ToObject(typeof(TEnum), value ^ UnknownFlags<TEnum>(value));
+		}
+
+		public static uint Bits(this uint value, int length, int shift)
+		{
+			if (length < 0 || length > 32)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 32)
+				throw new ArgumentOutOfRangeException("shift");
+			uint mask = uint.MaxValue >> (32 - length);
+			return (value >> shift) & mask;
+		}
+
+		public static bool Bit(this uint value, int shift)
+		{
+			if (shift < 0 || shift > 32)
+				throw new ArgumentOutOfRangeException("shift");
+			uint mask = 1u << shift;
+			return (value & mask) == mask;
+		}
+
+		public static int Bits(this int value, int length, int shift)
+		{
+			return (int)Bits((uint)value, length, shift);
+		}
+
+		public static int Bits(this byte value, int length, int shift)
+		{
+			if (length < 0 || length > 8)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 8)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = byte.MaxValue >> (8 - length);
+			return (value >> shift) & mask;
+		}
+
+		public static bool Bit(this int value, int shift)
+		{
+			return Bit((uint)value, shift);
+		}
+
+		public static bool Bit(this byte value, int shift)
+		{
+			if (shift < 0 || shift > 8)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = 1 << shift;
+			return (value & mask) == mask;
+		}
+
+		public static uint Bits(this uint value, int length, int shift, uint bits)
+		{
+			if (length < 0 || length > 32)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 32)
+				throw new ArgumentOutOfRangeException("shift");
+			uint mask = uint.MaxValue >> (32 - length) << shift;
+			return value & ~mask | (bits << shift) & mask;
+		}
+
+		public static int Bits(this int value, int length, int shift, int bits)
+		{
+			return (int)Bits((uint)value, length, shift, (uint)bits);
+		}
+
+		public static byte Bits(this byte value, int length, int shift, int bits)
+		{
+			if (length < 0 || length > 8)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 8)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = byte.MaxValue >> (8 - length) << shift;
+			return (byte)(value & ~mask | (bits << shift) & mask);
+		}
+
+		public static uint Bit(this uint value, int shift, bool bit)
+		{
+			if (shift < 0 || shift > 32)
+				throw new ArgumentOutOfRangeException("shift");
+			uint mask = 1u << shift;
+			return bit ? value | mask : value & ~mask;
+		}
+
+		public static int Bit(this int value, int shift, bool bit)
+		{
+			return (int)Bit((uint)value, shift, bit);
+		}
+
+		public static byte Bit(this byte value, int shift, bool bit)
+		{
+			if (shift < 0 || shift > 8)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = 1 << shift;
+			return (byte)(bit ? value | mask : value & ~mask);
 		}
 	}
 

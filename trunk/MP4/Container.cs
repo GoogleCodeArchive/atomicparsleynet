@@ -39,6 +39,7 @@ using FRAFV.Binary.Serialization;
 
 namespace MP4
 {
+	[XmlRoot("IsoMediaFile", Namespace = XMLNS)]
 	public sealed class Container
 	{
 		private static readonly ILog log = Logger.GetLogger(typeof(Container));
@@ -47,16 +48,16 @@ namespace MP4
 		[XmlIgnore]
 		public ICollection<AtomicInfo> Atoms { get; private set; }
 
-		[XmlElement("FileType", typeof(ISOMediaBoxes.FileTypeBox))]
-		[XmlElement("JPEG2000", typeof(ISOMediaBoxes.JPEG2000Atom))]
-		[XmlElement("Movie", typeof(ISOMediaBoxes.MovieBox))]
-		[XmlElement("MediaData", typeof(ISOMediaBoxes.MediaDataBox))]
+		[XmlElement(typeof(ISOMediaBoxes.FileTypeBox))]
+		[XmlElement(typeof(ISOMediaBoxes.JPEG2000Atom))]
+		[XmlElement(typeof(ISOMediaBoxes.MovieBox))]
+		[XmlElement(typeof(ISOMediaBoxes.MediaDataBox))]
 		[XmlElement(typeof(ISOMediaBoxes.ProgressiveDownloadBox))]
-		[XmlElement("MovieFragment", typeof(ISOMediaBoxes.MovieFragmentBox))]
+		[XmlElement(typeof(ISOMediaBoxes.MovieFragmentBox))]
 		//[XmlElement(typeof(mfra))]
-		[XmlElement("Meta", typeof(ISOMediaBoxes.MetaBox))]
-		[XmlElement("FreeSpace", typeof(ISOMediaBoxes.FreeSpaceBox))]
-		[XmlElement("UUID", typeof(ISOMediaBoxes.UUIDBox))]
+		[XmlElement(typeof(ISOMediaBoxes.MetaBox))]
+		[XmlElement(typeof(ISOMediaBoxes.FreeSpaceBox))]
+		[XmlElement(typeof(ISOMediaBoxes.UUIDBox))]
 		[XmlElement(typeof(ISOMediaBoxes.ESDBox))]
 		//[XmlElement(typeof(data))]
 		[XmlElement(typeof(ISOMediaBoxes.UnknownBox))]

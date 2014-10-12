@@ -57,6 +57,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ISOMedia.cs</DependentUpon>
     </Compile>
+    <Compile Include="ISOMedia\BoxDump.cs" />
     <Compile Include="ISOMedia\Hinting.cs" />
     <Compile Include="ISOMedia\SampleDescs.cs" />
     <Compile Include="ODF.cs" />
