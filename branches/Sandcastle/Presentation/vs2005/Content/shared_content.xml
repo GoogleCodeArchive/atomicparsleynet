@@ -87,6 +87,9 @@
   	<item id="compact">.NET Compact Framework</item>
   	<item id="everett">1.1</item>
   	<item id="whidbey">2.0</item>
+  	<item id="avalon">3.0</item>
+  	<item id="orcas">3.5</item>
+  	<item id="rosario">4.0</item>
 
 	<item id="copyCode">Copy Code</item>
   	
@@ -164,38 +167,8 @@
 
   <item id="top">Top</item>
 
-  <!-- footer -->	
-	    
-<!--	<item id="footer">
-		<p/>	
-		<span>
-			Send
-		<a>
-			<includeAttribute name="href" item="MailToLink">
-				<parameter>{0}</parameter>
-				<parameter>{1}</parameter>
-			</includeAttribute>
-			comments
-		</a>
-			about this topic to Microsoft.
-		</span>
-	</item>
-
-	<item id="MailToLink">javascript:sendfeedback('Documentation Feedback (Sandcastle CTP): ', '{1}', '');</item>
-  -->
-
 <item id="footer">
-<span id="feedbackarea">
-			Send
-		<a>
-			<includeAttribute name="href" item="MailToLink">
-        <parameter>{2}</parameter>
-        <parameter>{3}</parameter>
-      </includeAttribute>
-      feedback
-		</a>
-			on this topic to Microsoft.
-		</span>
+<include item="copyrightText"/>
 </item>
   
 <item id="feedbackHeader">
@@ -211,48 +184,8 @@
 </item> 
 <item id="MailToLink">javascript:SubmitFeedback('<include item="fb_alias" />','<include item="fb_product" />','<include item="fb_deliverable" />','{0}','{1}','<include item="fb_body" />','<include item="fb_subject" />');</item>  
  
-<!-- 5 star rating feedback control in sandcastle scenario--> 
-<!--
-<item id="footer">
-  <A NAME="feedback"></A>
-  <span id="fb" class="feedbackcss">
-    <div ID="feedbackarea">
-	    <FORM METHOD="post" ENCTYPE="text/plain" NAME="formRating">
-	      <H5><include item="fb_Title" /></H5>
-	      <P><include item="fb_Introduction" /></P>
-        <table>
-	        <tr>
-	          <td><include item="fb_Poor" /></td>
-	          <td class="fbinputId" align="right">1<BR/><input name="fbRating" type="radio" value="0"></input></td>
-	          <td class="fbinputId" align="right">2<BR/><input name="fbRating" type="radio" value="0"></input></td>
-            <td class="fbinputId" align="right">3<BR/><input name="fbRating" type="radio" value="0"></input></td>
-            <td class="fbinputId" align="right">4<BR/><input name="fbRating" type="radio" value="0"></input></td>
-            <td class="fbinputId" align="right">5<BR/><input name="fbRating" type="radio" value="0"></input></td>
-	          <td><include item="fb_Excellent" /></td>
-	        </tr>
-	      </table>
-	      <P>
-          <include item="fb_EnterFeedbackText" />
-	        <input id="submitFeedback" type="button"><includeAttribute name="value" item="fb_Send"/><includeAttribute name="onclick" item="MailtoLink" /></input> 
-        </P>
-	    </FORM>
-    </div>
-  </span>
-</item>
-
-<item id="feedbackHeader">
-  <span id="headfeedbackarea" class="feedbackhead">
-      <a href="#feedback" ID="IconFB" Target="_self">
-        <include item="fb_headerFeedBack" />
-      </a>
-	</span>
-</item>
-
-<item id="MailToLink">javascript:SubmitFeedback('<include item="feedback_alias" />','<include item="feedback_product" />','<include item="feedback_deliverable" />','<include item="feedback_fileVersion" />','<include item="feedback_topicVersion" />','<include item="feedback_body" />','<include item="feedback_subject" />');</item> 
--->
-  
 <item id="copyrightStatement"><include item="copyrightText"/></item>
 
-<item id="copyrightText">&#169; 2005 Microsoft Corporation. All rights reserved.</item> 
+<item id="copyrightText">&#169; FRA&amp;FV 2014. All rights reserved.<br/>&#169; 2005 Microsoft Corporation. All rights reserved.</item> 
 
 </content>

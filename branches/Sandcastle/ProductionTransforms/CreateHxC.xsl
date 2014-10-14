@@ -13,7 +13,7 @@
   <xsl:param name="fileNamePrefix">test</xsl:param>
 
   <xsl:template match="/">
-    <HelpCollection DTDVersion="1.0" FileVersion="08.00.50720.2102" LangId="1033" Title="Common Scripts" Copyright="© 2005 Microsoft Corporation. All rights reserved.">
+    <HelpCollection DTDVersion="1.0" FileVersion="08.00.50720.2102" LangId="1033" Title="SDK" Copyright="© 2014 FRA&FV. All rights reserved. © 2005 Microsoft Corporation. All rights reserved.">
       <CompilerOptions OutputFile="{$fileNamePrefix}.HxS" CreateFullTextIndex="Yes" CompileResult="Hxs">
         <IncludeFile File="{$fileNamePrefix}.HxF" />
       </CompilerOptions>
