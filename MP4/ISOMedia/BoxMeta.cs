@@ -31,25 +31,23 @@ namespace MP4
 {
 	public sealed partial class ISOMediaBoxes
 	{
-		/// <summary>
-		/// Metadata Atom
-		/// </summary>
+		// Metadata Atom
 		public sealed partial class MetaBox: ISOMFullBox, IBoxContainer
 		{
 			public override void ReadBinary(BinaryReader reader)
 			{
-				long pos = reader.BaseStream.Position;
-				var next = reader.ReadUInt32();
-				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
-				/*try to hack around QT files which don't use a full box for meta*/
-				if ((long)next < reader.Length()) //TODO: like error
-				{
+				//long pos = reader.BaseStream.Position;
+				//var next = reader.ReadUInt32();
+				//reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+				///*try to hack around QT files which don't use a full box for meta*/
+				//if ((long)next < reader.Length()) //TODO: like error
+				//{
 					base.ReadBinary(reader);
-				}
-				else
-				{
-					this.Versioned = false;
-				}
+				//}
+				//else
+				//{
+				//	this.Versioned = false;
+				//}
 				reader.ReadEnd(boxList, this);
 			}
 

@@ -187,9 +187,6 @@ namespace MP4
 		/// <summary>
 		/// Macintosh Language Codes
 		/// </summary>
-		/// <remarks>
-		/// The Macintosh language codes supported by QuickTime.
-		/// </remarks>
 		public static readonly MacLanguage[] MacLanguageList = new MacLanguage[]
 		{
 			new MacLanguage( "en",      "English",              0 ),

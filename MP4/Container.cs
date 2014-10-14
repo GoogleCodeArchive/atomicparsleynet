@@ -39,6 +39,9 @@ using FRAFV.Binary.Serialization;
 
 namespace MP4
 {
+	/// <summary>
+	/// A movie container
+	/// </summary>
 	[XmlRoot("IsoMediaFile", Namespace = XMLNS)]
 	public sealed class Container
 	{
@@ -240,33 +243,6 @@ namespace MP4
 		/// </summary>
 		/// <param name="path">the complete path to the originating file to be tested</param>
 		/// <param name="deepscan_REQ">controls whether we go into 'stsd' or just a superficial scan</param>
-		/// <remarks>
-		/// if the file has not yet been scanned (this gets called by nearly every cli
-		/// option), then open the file and start scanning. Read in the first 12 bytes and
-		/// see if bytes 4-8 are 'ftyp' as any modern MPEG-4 file will have 'ftyp' first.
-		/// Accommodations are also in place for the jpeg2000 signature, but the sig.  must
-		/// be followed by 'ftyp' and have an 'mjp2' or 'mj2s' brand. If it does, start
-		/// scanning the rest of the file. An MPEG-4 file is logically organized into
-		/// discrete hierarchies called "atoms" or "boxes". Each atom is at minimum 8 bytes
-		/// long. Bytes 1-4 make an unsigned 32-bit integer that denotes how long this atom
-		/// is (ie: 8 would mean this atom is 8 bytes long).  The next 4 bytes (bytes 5-8)
-		/// make the atom name. If the atom presents longer than 8 bytes, then that
-		/// supplemental data would be what the atom carries. Atoms are broadly separated
-		/// into 2 categories: parents & children (or container & leaf).  Typically, a
-		/// parent can hold other atoms, but not data; a child can hold data but not other
-		/// atoms. This 'rule' is broken sometimes (the atoms listed as DUAL_STATE_ATOM),
-		/// but largely holds.
-		/// 
-		/// Each atom is read in as 8 bytes. The atom name is extracted, and using the last
-		/// known container (either FILE_LEVEL or an actual atom name), the new atom's
-		/// hierarchy is found based on its length & position. Using its containing atom,
-		/// the KnownAtoms table is searched to locate the properties of that atom (parent/
-		/// child, versioned/simple), and jumping around in the file is based off that
-		/// known atom's type. Atoms that fall into a hybrid category (DUAL_STATE_ATOMs)
-		/// are explicitly handled. If an atom is known to be versioned, the version-and-
-		/// flags attribute is read. If an atom is listed as having a language attribute,
-		/// it is read to support multiple languages (as most 3GP assets do).
-		/// </remarks>
 		private void ScanAtoms(Stream file)
 		{
 			bool jpeg2000signature = false;

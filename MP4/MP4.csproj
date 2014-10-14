@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\MP4.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BinSerialization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bc1c14f3284588ce, processorArchitecture=MSIL">
@@ -86,6 +87,26 @@
       <Project>{8A557528-03BC-4CA0-AB96-5529A6EEFD82}</Project>
       <Name>ID3Tag</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Help\MP4.Remarks.XML">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Help\qtff_09.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Help\qt_l_027.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Help\qt_l_030-G.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Help\qt_l_200.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Help\qt_l_054.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\ID3Tag\Version.Tasks" />

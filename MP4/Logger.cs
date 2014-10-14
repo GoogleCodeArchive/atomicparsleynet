@@ -36,12 +36,16 @@ internal class Logger: ILog
 	#region ILog console implementation
 	public override void Debug(string message)
 	{
+		Console.ForegroundColor = ConsoleColor.Gray;
 		Console.Out.WriteLine(message);
+		Console.ResetColor();
 	}
 
 	public override void Debug(string format, params object[] args)
 	{
+		Console.ForegroundColor = ConsoleColor.Gray;
 		Console.Out.WriteLine(format, args);
+		Console.ResetColor();
 	}
 
 	public override void Info(string message)
@@ -56,22 +60,30 @@ internal class Logger: ILog
 
 	public override void Warn(string message)
 	{
+		Console.ForegroundColor = ConsoleColor.Yellow;
 		Console.Out.WriteLine(message);
+		Console.ResetColor();
 	}
 
 	public override void Warn(string format, params object[] args)
 	{
+		Console.ForegroundColor = ConsoleColor.Yellow;
 		Console.Out.WriteLine(format, args);
+		Console.ResetColor();
 	}
 
 	public override void Error(string message)
 	{
+		Console.ForegroundColor = ConsoleColor.Red;
 		Console.Error.WriteLine(message);
+		Console.ResetColor();
 	}
 
 	public override void Error(string format, params object[] args)
 	{
+		Console.ForegroundColor = ConsoleColor.Red;
 		Console.Out.WriteLine(format, args);
+		Console.ResetColor();
 	}
 	#endregion
 }

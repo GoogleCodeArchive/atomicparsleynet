@@ -150,9 +150,7 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Unused space available in file.
-		/// </summary>
+		// Unused space available in file.
 		public sealed partial class FreeSpaceBox: AtomicInfo
 		{
 			public FreeSpaceBox(int size)
@@ -161,9 +159,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// The File Type Compatibility Atom
-		/// </summary>
+		// The File Type Compatibility Atom
 		public sealed partial class FileTypeBox: AtomicInfo
 		{
 			internal static readonly AtomicCode[] EmptyBrands = new AtomicCode[0];
@@ -257,9 +253,7 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Movie sample data — usually this data can be interpreted only by using the movie resource.
-		/// </summary>
+		// Movie sample data — usually this data can be interpreted only by using the movie resource.
 		public sealed partial class MediaDataBox: AtomicInfo
 		{
 			public override void ReadBinary(BinaryReader reader)
@@ -538,9 +532,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Track Atom
-		/// </summary>
+		// Track Atom
 		public sealed partial class TrackBox : AtomicInfo, IBoxContainer
 		{
 #line 6200 "box_code_base.c"
@@ -548,17 +540,13 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Track Reference Atom
-		/// </summary>
+		// Track Reference Atom
 		public sealed partial class TrackReferenceBox : AtomicInfo, IBoxContainer
 		{
 			Collection<AtomicInfo> IBoxContainer.Boxes { get { return this.boxList; } }
 		}
 
-		/// <summary>
-		/// Track reference type atom
-		/// </summary>
+		// Track reference type atom
 		public partial class TrackReferenceTypeBox : AtomicInfo
 		{
 			public int AddRefTrack(int trackID)
@@ -570,9 +558,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// used to classify boxes in the UserData Box
-		/// </summary>
+		// Used to classify boxes in the UserData Box
 		public sealed partial class UserDataMap
 		{
 			public UserDataMap(AtomicCode boxType)
@@ -589,9 +575,7 @@ namespace MP4
 			public UserDataMap() { }
 		}
 
-		/// <summary>
-		/// User Data Atom
-		/// </summary>
+		// User Data Atom
 		public sealed partial class UserDataBox: AtomicInfo, IBoxContainer
 		{
 			#region UserDataMap collection

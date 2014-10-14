@@ -57,9 +57,15 @@ namespace MP4
 	[BinBlock(BinaryReaderType = "BinStringReader", BinaryWriterType = "BinStringWriter")]
 	public sealed partial class ISOMediaBoxes
 	{
+		/// <summary>
+		/// Full atom
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public abstract partial class ISOMFullBox: AtomicInfo
 		{
+			/// <summary>
+			/// This atom has a version field and flags field
+			/// </summary>
 			[XmlAttribute, DefaultValue(true)]
 			public bool Versioned = true;
 
@@ -108,16 +114,22 @@ namespace MP4
 		/// <summary>
 		/// Movie sample data — usually this data can be interpreted only by using the movie resource.
 		/// </summary>
-		/// <remarks>
-		/// Note: The data is NEVER loaded to the mdat in this lib.
-		/// </remarks>
 		public sealed partial class MediaDataBox: AtomicInfo
 		{
 			internal const string DefaultID = "mdat";
+			/// <summary>
+			/// Initializes a new instance of the Movie sample data atom <c>'mdat'</c>.
+			/// </summary>
 			public MediaDataBox() : base(DefaultID) { }
 
+			/// <summary>
+			/// Movie sample data external resource offset
+			/// </summary>
 			[XmlIgnore, DefaultValue(0L)]
 			public long Offset;
+			/// <summary>
+			/// Movie sample data size
+			/// </summary>
 			[XmlIgnore, DefaultValue(0L)]
 			public long MediaDataSize;
 		}
@@ -347,13 +359,17 @@ namespace MP4
 		public sealed partial class MovieBox : AtomicInfo
 		{
 			internal const string DefaultID = "moov";
+			/// <summary>
+			/// Initializes a new instance of the Movie atom <c>'moov'</c>.
+			/// </summary>
 			public MovieBox() : base(DefaultID) { }
 
 			/// <summary>
 			/// Profile atom
 			/// </summary>
 #warning Profile atom not found
-
+			[XmlIgnore]
+			public AtomicInfo Profile;
 			/// <summary>
 			/// Movie header atom
 			/// </summary>
@@ -363,41 +379,51 @@ namespace MP4
 			/// Movie clipping atom
 			/// </summary>
 #warning Movie clipping atom not found
-
+			[XmlIgnore]
+			public AtomicInfo MovieClipping;
 			/// <summary>
-			/// Meta box if any
+			/// The Meta box
 			/// </summary>
 			[XmlIgnore]
 			public MetaBox Meta { get { return boxList.Get<MetaBox>(); } set { boxList.Set(value); } }
-
+			/// <summary>
+			/// Object descriptor box
+			/// </summary>
 			[XmlIgnore]
 			public ObjectDescriptorBox ObjectDescriptor { get { return boxList.Get<ObjectDescriptorBox>(); } set { boxList.Set(value); } }
-
+			/// <summary>
+			/// Movie extends box
+			/// </summary>
 			[XmlIgnore]
 			public MovieExtendsBox MovieExtends { get { return boxList.Get<MovieExtendsBox>(); } set { boxList.Set(value); } }
-
 			/// <summary>
 			/// Track atoms
 			/// </summary>
 			[XmlIgnore]
 			public TrackBox[] TrackList;
-
 			/// <summary>
 			/// User data atom
 			/// </summary>
 			[XmlIgnore]
 			public UserDataBox UserData { get { return boxList.Get<UserDataBox>(); } set { boxList.Set(value); } }
-
 			/// <summary>
 			/// Color table atom
 			/// </summary>
 #warning Color table atom not found
-
+			[XmlIgnore]
+			public AtomicInfo ColorTable;
 			/// <summary>
 			/// Compressed movie atom
 			/// </summary>
 #warning Compressed movie atom not found
-
+			[XmlIgnore]
+			public AtomicInfo CompressedMovie;
+			/// <summary>
+			/// Reference movie atom
+			/// </summary>
+#warning Reference movie atom not found
+			[XmlIgnore]
+			public AtomicInfo ReferenceMovie;
 			/// <summary>
 			/// Other boxes
 			/// </summary>
@@ -708,12 +734,21 @@ namespace MP4
 			public string ComponentName;
 		}
 
+		/// <summary>
+		/// Media Atoms
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MediaBox : AtomicInfo
 		{
 			internal const string DefaultID = "mdia";
+			/// <summary>
+			/// Initializes a new instance of the Media atom <c>'mdia'</c>.
+			/// </summary>
 			public MediaBox() : base(DefaultID) { }
 
+			/// <summary>
+			/// 
+			/// </summary>
 			[XmlIgnore]
 			public MediaHeaderBox MediaHeader { get { return boxList.Get<MediaHeaderBox>(); } set { boxList.Set(value); } }
 			[XmlIgnore]
@@ -1761,9 +1796,6 @@ namespace MP4
 			/// <summary>
 			/// Chunk offset atom
 			/// </summary>
-			/// <remarks>
-			/// Untyped, to handle 32 bits and 64 bits chunkOffsets
-			/// </remarks>
 			[XmlIgnore]
 			public AtomicInfo ChunkOffset
 			{
@@ -1970,6 +2002,9 @@ namespace MP4
 		public sealed partial class FileTypeBox: AtomicInfo
 		{
 			internal const string DefaultID = "ftyp";
+			/// <summary>
+			/// Initializes a new instance of the File Type Compatibility atom <c>'ftyp'</c>.
+			/// </summary>
 			public FileTypeBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -1985,8 +2020,9 @@ namespace MP4
 			[BinData]
 			public int Version;
 			/// <summary>
-			/// A series of unsigned 32-bit integers listing compatible file formats. The major brand must appear in the list of compatible brands.
-			/// One or more “placeholder” entries with value zero are permitted; such entries should be ignored.
+			/// A series of unsigned 32-bit integers listing compatible file formats. The major brand must appear in
+			/// the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such
+			/// entries should be ignored.
 			/// </summary>
 			[XmlIgnore]
 			[BinCustom]
