@@ -1,0 +1,168 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BuildDir>$(MSBuildProjectDirectory)\$(Product)\Output</BuildDir>
+    <DllDir>$(BuildDir)\dll</DllDir>
+    <DependencyDir>$(DllDir)\dependency</DependencyDir>
+    <CommentsDir>$(BuildDir)\comments</CommentsDir>
+    <TopicStyleDir>$(BuildDir)\$(TopicStyle)</TopicStyleDir>
+    <ChmDir>$(TopicStyleDir)\Chm</ChmDir>
+    <OutputDir>$(TopicStyleDir)\output</OutputDir>
+    <Presentation>$(MSBuildProjectDirectory)\Presentation\$(TopicStyle)</Presentation>
+    <ProductionTools>$(MSBuildProjectDirectory)\ProductionTools</ProductionTools>
+    <ProductionTransforms>$(MSBuildProjectDirectory)\ProductionTransforms</ProductionTransforms>
+    <GenericDir>$(MSBuildProjectDirectory)</GenericDir>
+    <Internal>false</Internal>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="Exists('$(ProgramFiles) (x86)')">
+      <PropertyGroup>
+        <ReferenceAssemblies>$(ProgramFiles(x86))\Reference Assemblies</ReferenceAssemblies>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <ReferenceAssemblies>$(ProgramFiles)\Reference Assemblies</ReferenceAssemblies>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <!-- Select language code by ID -->
+  <Choose>
+    <When Condition="'$(LanguageId)' == '1049'">
+      <PropertyGroup>
+        <LanguageCode>ru</LanguageCode>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(LanguageId)' == '1033'">
+      <PropertyGroup>
+        <LanguageCode>en</LanguageCode>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <LanguageCode>none</LanguageCode>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Target Name="CopySrcFiles" DependsOnTargets="CreateDirectories">
+    <Exec Command="copy &quot;%(Dlls.FullPath)&quot; &quot;$(DllDir)\%(Dlls.Filename)%(Dlls.Extension)&quot;" />
+    <Exec Command="copy &quot;%(Comments.FullPath)&quot; &quot;$(CommentsDir)\%(Comments.Filename)%(Comments.Extension)&quot;" 
+          Condition="%(Comments.Remarks)==''"/>
+    <Exec Command="copy &quot;%(Media.FullPath)&quot; &quot;$(OutputDir)\html\%(Media.Filename)%(Media.Extension)&quot;" 
+          Condition="@(Media)!=''"/>
+    <Exec Command="copy &quot;%(Dlls.FullPath)&quot; &quot;$(DllDir)\%(Dlls.Filename)%(Dlls.Extension)&quot;" />
+    <Exec Command="copy &quot;%(Dependents.FullPath)&quot; &quot;$(DependencyDir)\%(Dependents.Filename)%(Dependents.Extension)&quot;" 
+          Condition="@(Dependents)!=''"/>
+
+    <Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"Transforms\MergeComments.xslt" "%(Comments.FullPath)" /out:"$(CommentsDir)\%(Comments.Filename).xml" /arg:second="%(Comments.RootDir)%(Comments.Directory)%(Comments.Remarks)"' 
+          Condition="%(Comments.Remarks)!=''"/>
+  </Target>
+  
+  <!--Creating Directories...-->
+  <Target Name="CreateDirectories" >
+    <!--Deleting Directories-->
+    <Message Text="Deleting Directories..." />
+    <RemoveDir Condition="Exists('$(BuildDir)')" Directories="$(BuildDir)" />
+    <Message Text="Creating Directories..." />
+    <MakeDir Directories="$(BuildDir)" Condition="!Exists('$(BuildDir)')" />
+    <MakeDir Directories="$(DllDir)" Condition="!Exists('$(DllDir)')" />
+    <MakeDir Directories="$(CommentsDir)" Condition="!Exists('$(CommentsDir)')" />
+    <MakeDir Directories="$(DependencyDir)" Condition="!Exists('$(DependencyDir)')" />
+    <MakeDir Directories="$(TopicStyleDir)" Condition="!Exists('$(TopicStyleDir)')" />
+    <MakeDir Directories="$(OutputDir)" Condition="!Exists('$(OutputDir)')" />
+    <MakeDir Directories="$(OutputDir)\html" Condition="!Exists('$(OutputDir)\html')" />
+    <MakeDir Directories="$(OutputDir)\icons" Condition="!Exists('$(OutputDir)\icons')" />
+    <MakeDir Directories="$(OutputDir)\media" Condition="!Exists('$(OutputDir)\media')" />
+    <MakeDir Directories="$(OutputDir)\scripts" Condition="!Exists('$(OutputDir)\scripts')" />
+    <MakeDir Directories="$(OutputDir)\styles" Condition="!Exists('$(OutputDir)\styles')" />
+  </Target>
+
+  <!--Creating web Directories...-->
+  <Target Name="CreateWebDirs" Condition="$(WebBuild)=='true'" >
+    <Message Text="Creating web Directories..." />
+    <MakeDir Directories="$(OutputDir)\TopicInfo" Condition="!Exists('$(OutputDir)\TopicInfo')" />
+    <MakeDir Directories="$(TopicStyleDir)\website" Condition="!Exists('$(TopicStyleDir)\website')" />
+    <MakeDir Directories="$(TopicStyleDir)\website\api" Condition="!Exists('$(TopicStyleDir)\website\api')" />
+    <MakeDir Directories="$(TopicStyleDir)\website\icons" Condition="!Exists('$(TopicStyleDir)\website\icons')" />
+    <MakeDir Directories="$(TopicStyleDir)\website\styles" Condition="!Exists('$(TopicStyleDir)\website\styles')" />
+  </Target>
+
+
+  <!--Call MRefBuilder-->
+  <Target Name="Reflection" DependsOnTargets="CreateDirectories;CopySrcFiles">
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; "$(ProductionTools)\MRefBuilder.exe" &quot;$(DllDir)\*.dll&quot; &quot;$(DllDir)\*.exe&quot; /out:&quot;$(TopicStyleDir)\reflection.org&quot; /dep:&quot;$(DependencyDir)\*.dll&quot;,&quot;$(DependencyDir)\*.exe&quot; /config:"$(GenericDir)\ProductionTools\MRefBuilder.config"' Condition="$(Internal)=='false'" />
+
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)\&amp; "$(ProductionTools)\MRefBuilder.exe" &quot;$(DllDir)\*.dll&quot; &quot;$(DllDir)\*.exe&quot; /out:&quot;$(TopicStyleDir)\reflection.org&quot; /dep:&quot;$(DependencyDir)\*.dll&quot;,&quot;$(DependencyDir)\*.exe&quot; /internal+ /config:"$(GenericDir)\ProductionTools\MRefBuilder.config"' Condition="$(Internal)=='true'" />
+
+    <Exec Condition="'$(TopicStyle)' == 'prototype'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyPrototypeDocModel.xsl" /xsl:"$(ProductionTransforms)\AddGuidFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml"' />
+    <Exec Condition="'$(TopicStyle)' == 'vs2005' or '$(TopicStyle)' == 'vs2005ru'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=true /arg:IncludeInheritedOverloadTopics=true' />
+    <Exec Condition="'$(TopicStyle)' == 'hana'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=false /arg:IncludeInheritedOverloadTopics=true' />
+  </Target>
+  
+  <!--Copy icons,styles and scripts to output-->
+  <Target Name="CopyOutput" DependsOnTargets="Reflection">
+    <Message Text="Copy icons, styles and scripts to Output..." />
+    <Exec Command='copy "$(Presentation)\icons\*" "$(OutputDir)\icons\"'  />
+    <Exec Command='copy "$(Presentation)\scripts\*" "$(OutputDir)\scripts\"'  />
+    <Exec Command='copy "$(Presentation)\styles\*" "$(OutputDir)\styles\"'  />
+  </Target>
+
+  <Target Name="Manifest" DependsOnTargets="Reflection">
+    <Exec Command='"$(ProductionTools)\XslTransform.exe"  /xsl:"$(ProductionTransforms)\ReflectionToManifest.xsl"  reflection.xml /out:manifest.xml'
+         WorkingDirectory="$(TopicStyleDir)" />
+  </Target>
+  
+  <!--Generate an intermediate Toc file that simulates the Whidbey TOC format-->
+  <Target Name="Toc" DependsOnTargets="Manifest;CopyOutput;CreateWebDirs">
+    <Message Text="Generate an intermediate Toc file that simulates the Whidbey TOC format...." />
+    <Exec Condition="$(TopicStyle) == 'prototype'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\CreatePrototypeToc.xsl" "$(TopicStyleDir)\reflection.xml" /out:"$(TopicStyleDir)\toc.xml"' />
+    <Exec Condition="$(TopicStyle) != 'prototype'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\CreateVsToc.xsl" "$(TopicStyleDir)\reflection.xml" /out:"$(TopicStyleDir)\toc.xml"' />
+  </Target>
+  
+  <!--Call BuildAssembler-->
+  <Target Name="Html" DependsOnTargets="Toc">
+    <Message Text="Call BuildAssembler..." />
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; set Presentation=$(Presentation)&amp; set reflectionfile=$(TopicStyleDir)\reflection.xml&amp; set CommentsDir=$(CommentsDir)&amp; set ReferenceAssemblies=$(ReferenceAssemblies)&amp; set OutputDir=$(OutputDir)\html&amp; "$(ProductionTools)\BuildAssembler.exe" /config:"$(Presentation)\configuration\sandcastle.config" "$(TopicStyleDir)\manifest.xml"' Condition="$(WebBuild)!='true'" />
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; set Presentation=$(Presentation)&amp; set reflectionfile=$(TopicStyleDir)\reflection.xml&amp; set CommentsDir=$(CommentsDir)&amp; set OutputDir=$(OutputDir)\html&amp; "$(ProductionTools)\BuildAssembler.exe" /config:"$(Presentation)\configuration\sandcastle-webref.config" "$(TopicStyleDir)\manifest.xml"' Condition="$(WebBuild)=='true'" />
+  </Target>
+
+  <!-- Generate CHM help project -->
+  <Target Name="Chm" DependsOnTargets="Html">
+    <!-- Creating chm directories -->
+    <MakeDir Directories="$(ChmDir)" Condition="!Exists('$(ChmDir)')" />
+    <MakeDir Directories="$(ChmDir)\html" Condition="!Exists('$(ChmDir)\html')" />
+    <MakeDir Directories="$(ChmDir)\icons" Condition="!Exists('$(ChmDir)\icons')" />
+    <MakeDir Directories="$(ChmDir)\scripts" Condition="!Exists('$(ChmDir)\scripts')" />
+    <MakeDir Directories="$(ChmDir)\styles" Condition="!Exists('$(ChmDir)\styles')" />
+    <MakeDir Directories="$(ChmDir)\media" Condition="!Exists('$(ChmDir)\media')" />
+    <!-- Copy icons,styles and scripts from output to chm -->
+    <Exec Command='xcopy "$(OutputDir)\icons\*" "$(ChmDir)\icons\" /y /r'/>
+    <Exec Command='xcopy "$(OutputDir)\media\*" "$(ChmDir)\media\" /y /r'/>
+    <Exec Command='xcopy "$(OutputDir)\scripts\*" "$(ChmDir)\scripts\" /y /r'/>
+    <Exec Command='xcopy "$(OutputDir)\styles\*" "$(ChmDir)\styles\" /y /r'/>
+    
+    <Exec Command='"$(ProductionTools)\ChmBuilder.exe" /project:$(Name) /html:"$(OutputDir)\html" /lcid:$(LanguageId) /toc:"$(TopicStyleDir)\Toc.xml" /out:"$(ChmDir)" /config:"$(GenericDir)\ProductionTools\ChmBuilder.config"' />
+    <Exec Command='"$(ProductionTools)\DBCSFix.exe" /d:"$(ChmDir)" /l:$(LanguageId)' />
+
+    <Exec Command='"$(MSBuildProjectDirectory)\HTML Help Workshop\hhc.exe" "$(ChmDir)\$(Name).hhp"' IgnoreExitCode="true" />
+  </Target>
+
+  <Target Name="CreateWebBuildProperty">
+    <CreateProperty
+        Value="true">
+      <Output
+          TaskParameter="Value"
+          PropertyName="WebBuild" />
+    </CreateProperty>
+  </Target>
+
+  <!-- Generate web pages -->
+  <Target Name="Web" DependsOnTargets="CreateWebBuildProperty;Toc" Condition="$(TopicStyle)=='vs2005'">
+    <Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\Vs2005TocToDsToc.xsl" /arg:topicInfo="$(OutputDir)\TopicInfo" /xsl:"$(ProductionTransforms)\DsTocToSitemap.xsl" "$(TopicStyleDir)\Toc.xml" /out:"$(TopicStyleDir)\website\api\web.sitemap"' />
+    <Exec Command='xcopy "$(OutputDir)\icons\*" "$(TopicStyleDir)\website\icons\" /y /r'/>
+    <Exec Command='xcopy "$(OutputDir)\styles\*" "$(TopicStyleDir)\website\styles\" /y /r'/>
+    <Exec Command='xcopy "$(Presentation)\website\*" "$(TopicStyleDir)\website\" /y /r'/>
+  </Target>
+</Project>
