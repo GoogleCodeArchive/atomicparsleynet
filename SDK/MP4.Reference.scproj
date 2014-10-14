@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Chm">
+	<PropertyGroup>
+		<Name>MP4.Reference</Name>
+		<TopicStyle>vs2005</TopicStyle>
+		<LanguageId>1033</LanguageId>
+	</PropertyGroup>
+	<ItemGroup>
+		<Dlls Include="..\MP4\bin\$(Configuration)\MP4.dll" />
+		<Comments Include="..\MP4\bin\$(Configuration)\MP4.XML">
+			<Remarks>Help\MP4.Remarks.XML</Remarks>
+		</Comments>
+		<Media Include="..\MP4\bin\$(Configuration)\Help\*" Exclude="..\MP4\bin\$(Configuration)\Help\*.xml" />
+		<!--<Comments Include="MSComments\mscorlib.xml" />-->
+		<Dependents Include="C:\Windows\Microsoft.NET\assembly\GAC_MSIL\BinSerialization\v4.0_1.0.0.0__bc1c14f3284588ce\BinSerialization.dll" />
+		<Dependents Include="..\MP4\bin\$(Configuration)\ID3Tag.dll" />
+	</ItemGroup>
+	<Import Project="Generic.targets" />
+</Project>
