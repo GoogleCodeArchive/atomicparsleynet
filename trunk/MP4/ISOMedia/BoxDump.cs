@@ -106,9 +106,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// ISO Copyright statement
-		/// </summary>
+		// ISO Copyright statement
 		public sealed partial class CopyrightBox : ISOMFullBox
 		{
 			[XmlAttribute("LanguageCode"), DefaultValue("")]
@@ -134,9 +132,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Data Information Atom
-		/// </summary>
+		// Data Information Atom
 		public sealed partial class DataInformationBox : AtomicInfo, IBoxContainer
 		{
 			[XmlElement(typeof(DataReferenceBox))]
@@ -148,9 +144,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Data Reference Atom
-		/// </summary>
+		// Data Reference Atom
 		public sealed partial class DataReferenceBox : ISOMFullBox, IBoxContainer
 		{
 #warning Looking forward to 'alis', 'rsrc', 'cios'
@@ -200,9 +194,7 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Unused space available in file.
-		/// </summary>
+		// Unused space available in file.
 		public sealed partial class FreeSpaceBox: AtomicInfo
 		{
 			[XmlElement("Data")]
@@ -213,9 +205,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// The File Type Compatibility Atom
-		/// </summary>
+		// The File Type Compatibility Atom
 		public sealed partial class FileTypeBox: AtomicInfo
 		{
 			[XmlAttribute("MajorBrand"), DefaultValue("")]
@@ -252,9 +242,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Handler Reference Atom
-		/// </summary>
+		// Handler Reference Atom
 		public sealed partial class HandlerBox : ISOMFullBox
 		{
 			[XmlAttribute("ComponentType"), DefaultValue("")]
@@ -277,9 +265,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Metadata Atom
-		/// </summary>
+		// Metadata Atom
 		public sealed partial class MetaBox : ISOMFullBox, IBoxContainer
 		{
 #warning Looking forward to 'dinf', 'xml ', 'bxml', 'iloc', 'pitm', 'ipro', 'iinf', 'ipmc', 'ID32', 'ilst', 'data'
@@ -379,9 +365,7 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Movie sample data — usually this data can be interpreted only by using the movie resource.
-		/// </summary>
+		// Movie sample data — usually this data can be interpreted only by using the movie resource.
 		public sealed partial class MediaDataBox: AtomicInfo
 		{
 			public struct ExternalDataXMLSerializer
@@ -402,9 +386,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Media Header Atom
-		/// </summary>
+		// Media Header Atom
 		public sealed partial class MediaHeaderBox: ISOMFullBox
 		{
 			[XmlAttribute("LanguageCode"), DefaultValue("")]
@@ -455,9 +437,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// The Movie Atom
-		/// </summary>
+		// The Movie Atom
 		public sealed partial class MovieBox : AtomicInfo, IBoxContainer
 		{
 #warning Looking forward to 'drm', 'ipmc'
@@ -649,9 +629,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Movie Header Atom
-		/// </summary>
+		// Movie Header Atom
 		public sealed partial class MovieHeaderBox: ISOMFullBox
 		{
 			[XmlIgnore]
@@ -688,18 +666,14 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Sound Media Information Header Atom
-		/// </summary>
+		// Sound Media Information Header Atom
 		public sealed partial class SoundMediaHeaderBox: ISOMFullBox
 		{
 			[XmlAttribute("Balance"), DefaultValue(0.0)]
 			public double BalanceAsFloat { get { return (double)Balance; } set { Balance = value.ToFixed16(); } }
 		}
 
-		/// <summary>
-		/// Sample Table Atom
-		/// </summary>
+		// Sample Table Atom
 		public sealed partial class SampleTableBox : AtomicInfo, IBoxContainer
 		{
 #warning Looking forward to 'cslg', 'stps'
@@ -929,9 +903,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Track Header Atom
-		/// </summary>
+		// Track Header Atom
 		public sealed partial class TrackHeaderBox : ISOMFullBox
 		{
 			[XmlAttribute]
@@ -977,9 +949,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Track Atom
-		/// </summary>
+		// Track Atom
 		public sealed partial class TrackBox : AtomicInfo, IBoxContainer
 		{
 #warning Looking forward to 'tapt'
@@ -1001,9 +971,7 @@ namespace MP4
 #line default
 		}
 
-		/// <summary>
-		/// Track Reference Atom
-		/// </summary>
+		// Track Reference Atom
 		public sealed partial class TrackReferenceBox : AtomicInfo
 		{
 			[XmlElement(typeof(TrackReferenceTypeBox))]
@@ -1020,9 +988,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// Track reference type atom
-		/// </summary>
+		// Track reference type atom
 		public partial class TrackReferenceTypeBox : AtomicInfo
 		{
 			[XmlAttribute("Tracks")]
@@ -1073,9 +1039,7 @@ namespace MP4
 			public bool SampleFlagsEntrySpecified { get { return (Owner.TrackRunFlags & TrackRunFlags.Flags) != 0; } }
 		}
 
-		/// <summary>
-		/// used to classify boxes in the UserData Box
-		/// </summary>
+		// Used to classify boxes in the UserData Box
 		public sealed partial class UserDataMap
 		{
 #warning Looking forward to 'titl', 'auth', 'perf', 'gnre', 'dscp', 'albm', 'yrrc', 'rtng', 'clsf', 'kywd', 'loci', 'tsel', 'data'
@@ -1121,9 +1085,7 @@ namespace MP4
 			}
 		}
 
-		/// <summary>
-		/// User Data Atom
-		/// </summary>
+		// User Data Atom
 		public sealed partial class UserDataBox: AtomicInfo, IBoxContainer
 		{
 			[XmlElement("UDTARecord")]

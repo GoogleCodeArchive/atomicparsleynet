@@ -28,7 +28,7 @@ namespace MP4
 		/// </summary>
 		public const int UTF8_iTunesStyle_Unlimited = 1;
 		/// <summary>
-		/// no NULL termination, used in purl & egid
+		/// no NULL termination, used in purl &amp; egid
 		/// </summary>
 		public const int UTF8_iTunesStyle_Binary = 3;
 		/// <summary>
@@ -450,14 +450,6 @@ namespace MP4
 	/// <summary>
 	/// Graphics Modes
 	/// </summary>
-	/// <remarks>
-	/// <para>QuickTime files use graphics modes to describe how one video or graphics layer should be combined with
-	///   the layers beneath it. Graphics modes are also known as transfer modes. Some graphics modes require a color
-	///   to be specified for certain operations, such as blending to determine the blend level. QuickTime uses
-	///   the graphics modes defined by Apple’s QuickDraw.</para>
-	/// <para>The most common graphics modes are and <c>ditherCopy</c>, which simply indicate that the image should
-	///   not blend with the image behind it, but overwrite it. QuickTime also defines several additional graphics modes.</para>
-	/// </remarks>
 	[Flags]
 	public enum GraphicsMode
 	{

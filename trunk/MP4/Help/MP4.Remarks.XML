@@ -1,0 +1,764 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>MP4</name>
+	</assembly>
+	<members>
+		<member name="F:MP4.ApTypes.UTF8_iTunesStyle_256glyphLimited">
+		</member>
+		<member name="F:MP4.ApTypes.UTF8_iTunesStyle_Unlimited">
+		</member>
+		<member name="F:MP4.ApTypes.UTF8_iTunesStyle_Binary">
+		</member>
+		<member name="F:MP4.ApTypes.UTF8_3GP_Style">
+		</member>
+		<member name="F:MP4.ApTypes.UTF16_3GP_Style">
+		</member>
+		<member name="F:MP4.ApTypes.THIRD_GEN_PARTNER">
+		</member>
+		<member name="F:MP4.ApTypes.THIRD_GEN_PARTNER_VER1_REL6">
+		</member>
+		<member name="F:MP4.ApTypes.THIRD_GEN_PARTNER_VER1_REL7">
+		</member>
+		<member name="F:MP4.ApTypes.THIRD_GEN_PARTNER_VER2">
+		</member>
+		<member name="F:MP4.ApTypes.THIRD_GEN_PARTNER_VER2_REL_A">
+		</member>
+		<member name="T:MP4.GraphicsMode">
+			<remarks>
+				<para>
+					QuickTime files use graphics modes to describe how one video or graphics layer should be combined with
+					the layers beneath it. Graphics modes are also known as transfer modes. Some graphics modes require a color
+					to be specified for certain operations, such as blending to determine the blend level. QuickTime uses
+					the graphics modes defined by Apple’s QuickDraw.
+				</para>
+				<para>
+					The most common graphics modes are and <c>ditherCopy</c>, which simply indicate that the image should
+					not blend with the image behind it, but overwrite it. QuickTime also defines several additional graphics modes.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.GraphicsMode.SourceCopy">
+		</member>
+		<member name="F:MP4.GraphicsMode.DitherCopy">
+		</member>
+		<member name="F:MP4.GraphicsMode.Blend">
+		</member>
+		<member name="F:MP4.GraphicsMode.Transparent">
+		</member>
+		<member name="F:MP4.GraphicsMode.StraightAlpha">
+		</member>
+		<member name="F:MP4.GraphicsMode.PremulWhiteAlpha">
+		</member>
+		<member name="F:MP4.GraphicsMode.PremulBlackAlpha">
+		</member>
+		<member name="F:MP4.GraphicsMode.StraightAlphaBlend">
+		</member>
+		<member name="F:MP4.GraphicsMode.Composition">
+		</member>
+		<member name="F:MP4.Catalog.MacLanguageList">
+			<remarks>
+				The Macintosh language codes supported by QuickTime.
+			</remarks>
+		</member>
+		<member name="F:MP4.AtomFlags.Binary">
+		</member>
+		<member name="F:MP4.AtomFlags.Text">
+		</member>
+		<member name="F:MP4.AtomFlags.JPEGBinary">
+		</member>
+		<member name="F:MP4.AtomFlags.PNGBinary">
+		</member>
+		<member name="F:MP4.AtomFlags.UInt">
+		</member>
+		<member name="F:MP4.AtomFlags.UUIDBinary">
+		</member>
+		<member name="T:MP4.TrackFlags">
+		</member>
+		<member name="F:MP4.TrackFlags.Enabled">
+		</member>
+		<member name="F:MP4.TrackFlags.Movie">
+		</member>
+		<member name="F:MP4.TrackFlags.Preview">
+		</member>
+		<member name="F:MP4.TrackFlags.Poster">
+		</member>
+		<member name="T:MP4.IBoxContainer">
+			<remarks>
+				<para>
+					An atom that contains other atoms is called a container atom. The parent atom is the container atom
+					exactly one level above a given atom in the hierarchy. An atom that does not contain other atoms is called
+					a leaf atom, and typically contains data as one or more fields or tables. Some leaf atoms act as flags or
+					placeholders, however, and contain no data beyond their size and type fields.
+				</para>
+				<img src="qt_l_027.gif" alt="A sample atom"/>
+				<para>
+					Atoms within container atoms do not generally have to be in any particular order, unless such an order
+					is specifically called out in their container. One such example is the handler description atom, which
+					must come before the data being handled. For example, a media handler description atom must come before
+					a media information atom, and a data handler description atom must come before a data information atom.
+				</para>
+				<para>
+					QT atoms are an enhanced data structure that provide a more general-purpose storage format and remove some of
+					the ambiguities that arise when using simple atoms. A QT atom has an expanded header; the size and type
+					fields are followed by fields for an atom ID and a count of child atoms.
+				</para>
+				<para>
+					This allows multiple child atoms of the same type to be specified through identification numbers. It also
+					makes it possible to parse the contents of a QT atom of unknown type, by walking the tree of its child atoms.
+				</para>
+				<para>
+					QT atoms are normally wrapped in an atom container, a data structure with a header containing a lock count.
+					Each atom container contains exactly one root atom, which is the QT atom. Atom containers are not atoms,
+					and are not found in the hierarchy of atoms that makes up a QuickTime movie file. Atom containers may be
+					found as data structures inside some atoms, however. Examples include media input maps and media property
+					atoms.
+				</para>
+				<note>
+					An <b>atom container</b> is <em>not</em> the same as a <b>container atom</b>. An atom container is a
+					<em>container</em>, not an atom.
+				</note>
+				<img src="qt_l_200.gif" alt="QT atom layout"/>
+				<para>
+					Each QT atom starts with a QT atom container header, followed by the root atom. The root atom’s type is
+					the QT atom’s type. The root atom contains any other atoms that are part of the structure.
+				</para>
+				<para>
+					Each container atom starts with a QT atom header followed by the atom’s contents. The contents are either
+					child atoms or data, but never both. If an atom contains children, it also contains all of its children’s
+					data and descendants. The root atom is always present and never has any siblings.
+				</para>
+			</remarks>
+		</member>
+		<member name="T:MP4.AtomicInfo">
+			<remarks>
+				<para>
+					An object in this terminology is a box.
+				</para>
+				<para>
+					Boxes start with a header which gives both size and type. The header permits compact or extended size
+					(32 or 64 bits) and compact or extended types (32 bits or full UUIDs). The standard boxes all use compact
+					types (32-bit) and most boxes will use the compact (32-bit) size. Typically only the Media Data Box(es)
+					need the 64-bit size.
+				</para>
+				<para>
+					The size is the entire size of the box, including the size and type header, fields, and all contained boxes.
+					This facilitates general parsing of the file.
+				</para>
+				<para>
+					The fields in the objects are stored with the most significant byte first, commonly known as network byte
+					order or big-endian format.
+				</para>
+			</remarks>
+		</member>
+		<member name="M:MP4.AtomicInfo.MatchToKnownAtom(MP4.AtomicCode,MP4.AtomicInfo)">
+			<remarks>
+				Using the atom_name of this new atom, search through KnownAtoms, testing that the names match. If they do, move onto a finer grained sieve.
+				If the parent can be at any level (like "free"), just let it through; if the parent is "ilst" (iTunes-style metadata), or a uuid, return a generic match
+				The final test is the one most atoms will go through. Some atoms can have different parents - up to 5 different parents are allowed by this version of AP
+				Iterate through the known parents, and test it against atom_container. If they match, return the properties of the known atom
+			</remarks>
+		</member>
+		<member name="M:MP4.AtomicInfo.ProvideAtomPath">
+			<remarks>
+				First, determine exactly how many atoms will constitute the full path and calculate where into the string to first start placing atom names. Start by
+				working off the current atom. Using fromFile, either use a more stringent atom start/length from a file, or a more relaxed atom level if from memory.
+				The array in memory won't have proper atom sizes except for the last child atom typically ('data' will have a proper size, but its parent and all
+				other parents will not have sizing automatically updated - which happens only at writeout time).
+			</remarks>
+		</member>
+		<member name="P:MP4.AtomicInfo.AtomicID">
+		</member>
+		<member name="T:MP4.AtomicInfo.TransformMatrix">
+			<remarks>
+				<para>
+					QuickTime files use matrices to describe spatial information about many objects, such as tracks
+					within a movie.
+				</para>
+				<para>
+					A transformation matrix defines how to map points from one coordinate space into another coordinate
+					space. By modifying the contents of a transformation matrix, you can perform several standard graphics
+					display operations, including translation, rotation, and scaling. The matrix used to accomplish
+					two-dimensional transformations is described mathematically by a 3-by-3 matrix.
+				</para>
+				<para>
+					All values in the matrix are 32-bit fixed-point numbers divided as 16.16, except for the last
+					{u, v, w} column, which contains 32-bit fixed-point numbers divided as 2.30.
+				</para>
+				<img src="qt_l_054.gif" alt="How display matrices are used"/>
+			</remarks>
+		</member>
+		<member name="F:MP4.AtomState.ParentAtom">
+		</member>
+		<member name="F:MP4.AtomState.DualStateAtom">
+		</member>
+		<member name="F:MP4.AtomState.ChildAtom">
+		</member>
+		<member name="F:MP4.AtomRequirements.RequiredOnce">
+		</member>
+		<member name="F:MP4.AtomRequirements.RequiredOne">
+		</member>
+		<member name="F:MP4.AtomRequirements.RequiredVariable">
+		</member>
+		<member name="F:MP4.AtomRequirements.ParentSpecific">
+		</member>
+		<member name="F:MP4.AtomRequirements.OptionalOnce">
+		</member>
+		<member name="F:MP4.AtomRequirements.OptionalOne">
+		</member>
+		<member name="F:MP4.AtomRequirements.OptionalMany">
+		</member>
+		<member name="F:MP4.AtomRequirements.ReqFamilialOne">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Version">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Flags">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MovieHeaderBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.CreationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.ModificationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.TimeScale">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.Duration">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PreferredRate">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PreferredVolume">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.Reserved">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.Matrix">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PreviewTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PreviewDuration">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PosterTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.SelectionTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.SelectionDuration">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.CurrentTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.NextTrackID">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.UserDataBox">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MovieBox">
+			<remarks>
+				<para>
+					The metadata for a presentation is stored in the single Movie box which occurs at the top-level of a file.
+					Normally this box is close to the beginning or end of the file, though this is not required.
+				</para>
+				<para>
+					You use movie atoms to specify the information that defines a movie—that is, the information that allows
+					your application to interpret the sample data that is stored elsewhere. The movie atom usually contains
+					a movie header atom, which defines the time scale and duration information for the entire movie, as well
+					as its display characteristics. Existing movies may contain a movie profile atom, which summarizes
+					the main features of the movie, such as the necessary codecs and maximum bit rate. In addition, the movie
+					atom contains a track atom for each track in the movie.
+				</para>
+				<para>
+					The movie atom has an atom type of <c>'moov'</c>. It contains other types of atoms, including at least one
+					of three possible atoms—the movie header atom (<c>'mvhd'</c>), the compressed movie atom (<c>'cmov'</c>), or
+					a reference movie atom (<c>'rmra'</c>). An uncompressed movie atom can contain both a movie header atom and
+					a reference movie atom, but it must contain at least one of the two. It can also contain several other atoms,
+					such as a clipping atom (<c>'clip'</c>), one or more track atoms (<c>'trak'</c>), a color table atom
+					(<c>'ctab'</c>), and a user data atom (<c>'udta'</c>).
+				</para>
+				<img src="qtff_09.jpg" alt="The layout of a movie atom"/>
+			</remarks>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MediaBox">
+			<remarks>
+				<para>
+					Media atoms describe and define a track’s media type and sample data. The media atom contains information
+					that specifies:
+				</para>
+				<list type="bullet">
+					<item>
+						<description>The media type, such as sound or video</description>
+					</item>
+					<item>
+						<description>The media handler component used to interpret the sample data</description>
+					</item>
+					<item>
+						<description>The media timescale and track duration</description>
+					</item>
+					<item>
+						<description>Media-and-track-specific information, such as sound volume or graphics mode</description>
+					</item>
+					<item>
+						<description>The media data references, which typically specify the file where the sample data
+						is stored</description>
+					</item>
+					<item>
+						<description>The sample table atoms, which, for each media sample, specify the sample description,
+						duration, and byte offset from the data reference</description>
+					</item>
+				</list>
+				<para>
+					The media atom has an atom type of <c>'mdia'</c>. It must contain a media header atom (<c>'mdhd'</c>),
+					and it can contain a handler reference (<c>'hdlr'</c>) atom, media information (<c>'minf'</c>) atom, and user
+					data (<c>'udta'</c>) atom.
+				</para>
+				<note>
+					Do not confuse the media atom (<c>'mdia'</c>) with the media <em>data</em> atom (<c>'mdat'</c>).
+					The media atom contains only <em>references</em> to media data; the media data atom contains the actual
+					media samples.
+				</note>
+				<img src="qt_l_030-G.jpg" alt="The layout of a media atom"/>
+			</remarks>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.TrackHeaderBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.CreationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.ModificationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.TrackID">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Reserved1">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Duration">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Reserved2">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Layer">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.AlternateGroup">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Volume">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Reserved3">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Matrix">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Width">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackHeaderBox.Height">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.TrackReferenceBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackReferenceBox.boxList">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.TrackBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackBox.boxList">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.Header">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.EditBox">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.References">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.Media">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.UserData">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.TrackBox.Meta">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MediaHeaderBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.CreationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.ModificationTime">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.TimeScale">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.Duration">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.Language">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.Quality">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.HandlerBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentType">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.HandlerType">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.Manufacturer">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentFlags">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentFlagsMask">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentName">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaBox.boxList">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.VideoMediaHeaderBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.VideoMediaHeaderBox.GraphicsMode">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.VideoMediaHeaderBox.OpcolorRed">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.VideoMediaHeaderBox.OpcolorGreen">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.VideoMediaHeaderBox.OpcolorBlue">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.SoundMediaHeaderBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.SoundMediaHeaderBox.Balance">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.SoundMediaHeaderBox.Reserved">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.DataReferenceBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.DataReferenceBox.boxArray">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.DataInformationBox">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.DataInformationBox.DataReference">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.MPEGVisualSampleEntryBox.iPodExt">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.SampleTableBox">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleDescription">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.TimeToSample">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.CompositionOffset">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SyncSample">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleToChunk">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleSize">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.ChunkOffset">
+			<remarks>
+				Untyped, to handle 32 bits and 64 bits chunkOffsets
+			</remarks>
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.ShadowSync">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleGroupsDescription">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleGroups">
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleDep">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.FreeSpaceBox">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.CopyrightBox">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.TrackReferenceTypeBox">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackReferenceTypeBox.TrackIDs">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.FileTypeBox">
+			<remarks>
+				<para>
+					The file type compatibility atom, also called the file type atom, allows the reader to determine whether this
+					is a type of file that the reader understands. Specifically, the file type atom identifies the file type
+					specifications with which the file is compatible. This allows the reader to distinguish among closely related
+					file types, such as QuickTime movie files, MPEG-4, and JPEG-2000 files (all of which may contain file type
+					atoms, movie atoms, and movie data atoms).
+				</para>
+				<para>
+					The file type atom is optional, but strongly recommended. If present, it must be the first significant atom
+					in the file, preceding the movie atom (and any free space atoms, preview atom, or movie data atoms).
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.FileTypeBox.Brand">
+			<remarks>
+				<para>
+					Any incompatible change in a specification should therefore register a new ‘brand’ identifier to identify
+					files conformant to the new specification.
+				</para>
+				<para>
+					The type <c>'isom'</c> (ISO Base Media file) is defined in this section of this specification, as identifying
+					files that conform to the first version of ISO Base Media File Format.
+				</para>
+				<para>
+					More specific identifiers can be used to identify precise versions of specifications providing more detail.
+					This brand should not be used as the major brand; this base file format should be derived into another
+					specification to be used. There is therefore no defined normal file extension, or mime type assigned to this
+					brand, nor definition of the minor version when <c>'isom'</c> is the major brand.
+				</para>
+				<para>
+					Files would normally be externally identified (e.g. with a file extension or mime type) that identifies
+					the ‘best use’ (major brand), or the brand that the author believes will provide the greatest compatibility.
+				</para>
+				<para>
+					The brand <c>'iso2'</c> shall be used to indicate compatibility with this amended version of the ISO Base Media File
+					Format; it may be used in addition to or instead of the <c>'isom'</c> brand and the same usage rules apply.
+					If used without the brand <c>'isom'</c> identifying the first version of the specification, it indicates that
+					support for some or all of the technology introduced by this amendment is required.
+				</para>
+				<para>
+					The brand <c>'avc1'</c> shall be used to indicate that the file is conformant with the ‘AVC Extensions’ in
+					sub-clause. If used without other brands, this implies that support for those extensions is required. The use
+					of <c>'avc1'</c> as a major-brand may be permitted by specifications; in that case, that specification
+					defines the file extension and required behavior.
+				</para>
+				<para>
+					If a Meta-box with an MPEG-7 handler type is used at the file level, then the brand <c>'mp71'</c> should be
+					a member of the compatible-brands list in the file-type box.
+				</para>
+				<para>
+					The brand <c>'qt  '</c> (note the two trailing ASCII space characters) for QuickTime movie files. If a file
+					is compatible with multiple brands, all such brands are listed in the
+					<see cref="F:MP4.ISOMediaBoxes.FileTypeBox.CompatibleBrand"/> fields, and the ‘major brand’ identifies
+					the preferred brand or best use.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.FileTypeBox.Version">
+			<remarks>
+				<para>
+					The minor version is informative only. It does not appear for compatible-brands, and must not be used to
+					determine the conformance of a file to a standard. It may allow more precise identification of the major
+					specification, for inspection, debugging, or improved decoding.
+				</para>
+				<para>
+					For QuickTime movie files, this takes the form of four binary-coded decimal values, indicating the century,
+					year, and month of the <i>QuickTime File Format Specification</i>, followed by a binary coded decimal zero.
+					For example, for the June 2004 minor version, this field is set to the BCD values <c>20 04 06 00</c>.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.FileTypeBox.CompatibleBrand">
+			<remarks>
+				<para>
+					If none of the compatible brands fields is set to <c>'qt  '</c>, then the file is not a QuickTime movie file.
+					QuickTime currently returns an error when attempting to open a file whose file type, file extension, or
+					MIME type identifies it as a QuickTime movie, but whose file type atom does not include the <c>'qt  '</c>
+					brand.
+				</para>
+				<note>
+					A common source of this error is an MPEG-4 file incorrectly named with the <c>.mov</c> file extension or with
+					the MIME type incorrectly set to “video/quicktime”. MPEG-4 files are automatically imported by QuickTime only
+					when they are correctly identified as MPEG-4 files using the Mac OS file type, file extension, or MIME type.
+				</note>
+				<note type="warning">
+					Use of the QuickTime file format in this manner is subject to license from Apple, Inc.
+				</note>
+			</remarks>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.TOTLBox">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MetaBox">
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.MediaDataBox">
+			<remarks>
+				<note>The data is NEVER loaded to the mdat in this lib.</note>
+				<para>
+					This box contains the media data. In video tracks, this box would contain video frames. A presentation may
+					contain zero or more these boxes. The actual media data follows the type field; its structure is described
+					by the metadata.
+				</para>
+				<para>
+					In large presentations, it may be desirable to have more data in this box than a 32-bit size would permit.
+					In this case, the large variant (64-bit) of the size field is used.
+				</para>
+				<para>
+					There may be any number of these boxes in the file (including zero, if all the media data is in other files).
+					The metadata refers to media data by its absolute offset within the file; so Media Data box headers and free
+					space may easily be skipped, and files without any box structure may also be referenced and used.
+				</para>
+			</remarks>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.UserDataMap">
+		</member>
+		<member name="T:MP4.PackedLanguage">
+			<remarks>
+				<para>
+					Some elements of a QuickTime file may be associated with a particular spoken language. To indicate
+					the language associated with a particular object, the QuickTime file format uses either language codes
+					from the Macintosh Script Manager or ISO language codes (as specified in ISO 639-2/T).
+				</para>
+				<para>
+					QuickTime stores language codes as unsigned 16-bit fields. All Macintosh language codes have a value
+					that is less than 0x400 except for the single value 0x7FFF indicating an unspecified language. ISO language
+					codes are three-character codes, and are stored inside the 16-bit language code field as packed arrays.
+					If treated as an unsigned 16-bit integer, an ISO language code always has a value of 0x400 or greater unless
+					the code is equal to the value 0x7FFF indicating an Unspecified Macintosh language code.
+				</para>
+				<para>
+					If the language is specified using a Macintosh language code, any associated text uses Macintosh
+					text encoding.
+				</para>
+				<para>
+					If the language is specified using an ISO language code, any associated text uses Unicode text encoding.
+					When Unicode is used, the text is in UTF-8 unless it starts with a byte-order-mark (BOM, 0xFEFF. ), whereupon
+					the text is in UTF-16. Both the BOM and the UTF-16 text should be big-endian.
+				</para>
+
+				<para>
+					Note: ISO language codes cannot be used for all elements of a QuickTime file. Currently, ISO language codes
+					can be used only for user data text. All other elements, including text tracks, must be specified using
+					Macintosh language codes.
+				</para>
+				<para>
+					Note: ISO 639-2/T codes do not distinguish between certain language variations. Use an extended language
+					tag atom (<c>'elng'</c>) to make these distinctions. For example, ISO 639-2T does not distinguish between traditional
+					and simplified Chinese, so also use <c>'elng'</c> with the value "zh-Hant" or "zh-Hans", respectively.
+			</para>
+			</remarks>
+		</member>
+		<member name="M:MP4.PackedLanguage.op_Explicit(MP4.PackedLanguage)~System.UInt16">
+			<remarks>
+				<para>
+					Because the language codes specified by ISO 639-2/T are three characters long, they must be packed
+					to fit into a 16-bit field. The packing algorithm must map each of the three characters, which are
+					always lowercase, into a 5-bit integer and then concatenate these integers into the least significant
+					15 bits of a 16-bit integer, leaving the 16-bit integer’s most significant bit set to zero.
+				</para>
+				<para>
+					One algorithm for performing this packing is to treat each ISO character as a 16-bit integer.
+					Subtract 0x60 from the first character and multiply by 2^10 (0x400), subtract 0x60 from the second
+					character and multiply by 2^5 (0x20), subtract 0x60 from the third character, and add the three
+					16-bit values. This will result in a single 16-bit value with the three codes correctly packed into
+					the 15 least significant bits and the most significant bit set to zero.
+				</para>
+			</remarks>
+		</member>
+		<member name="T:MP4.Container">
+			<remarks>
+				<para>
+					The International Standard specifies the ISO base media file format, which is a general format forming
+					the basis for a number of other more specific file formats. This format contains the timing, structure,
+					and media information for timed sequences of media data, such as audio/visual presentations.
+				</para>
+				<para>
+					For the purposes of this International Standard, the following terms and definitions apply.
+				</para>
+				<list type="table">
+					<item>
+						<term>Box or Atom</term>
+						<description>
+							An object-oriented building block defined by a unique type identifier and length.
+						</description>
+					</item>
+					<item>
+						<term>Chunk</term>
+						<description>
+							A contiguous set of samples for one track.
+						</description>
+					</item>
+					<item>
+						<term>Container Box</term>
+						<description>
+							A box whose sole purpose is to contain and group a set of related boxes.
+						</description>
+					</item>
+					<item>
+						<term>Hint Track</term>
+						<description>
+							A special track which does not contain media data. Instead it contains instructions for packaging one
+							or more tracks into a streaming channel.
+						</description>
+					</item>
+					<item>
+						<term>Hinter</term>
+						<description>
+							A tool that is run on a file containing only media, to add one or more hint tracks to the file and
+							so facilitate streaming.
+						</description>
+					</item>
+					<item>
+						<term>ISO Base Media File</term>
+						<description>
+							The name of the file format. This format was specified as ISO/IEC 14496-12 (MPEG-4 Part 12).
+							The identical text is published as ISO/IEC 15444-12 (JPEG 2000, Part 12).
+						</description>
+					</item>
+					<item>
+						<term>QuickTime File</term>
+						<description>
+							The name of the QuickTime File Format (QTFF). This format has been used as the basis of the MPEG-4
+							standard and the JPEG-2000 standard, developed by the International Organization for Standardization
+							(ISO Base Media File). Although these file types have similar structures and contain many functionally
+							identical elements, they are distinct file types.
+						</description>
+					</item>
+					<item>
+						<term>Sample</term>
+						<description>
+							In non-hint tracks, a sample is an individual frame of video, a time-contiguous series of video frames,
+							or a time-contiguous compressed section of audio. In hint tracks, a sample defines the formation of one
+							or more streaming packets. No two samples within a track may share the same time-stamp.
+						</description>
+					</item>
+					<item>
+						<term>Sample Description</term>
+						<description>
+							A structure which defines and describes the format of some number of samples in a track.
+						</description>
+					</item>
+					<item>
+						<term>Sample Table</term>
+						<description>
+							A packed directory for the timing and physical layout of the samples in a track.
+						</description>
+					</item>
+					<item>
+						<term>Track</term>
+						<description>
+							A collection of related samples in a media file. For media data, a track corresponds to a sequence
+							of images or sampled audio. For hint tracks, a track corresponds to a streaming channel.
+						</description>
+					</item>
+				</list>
+				<para>
+					QuickTime movies are stored on disk, using two basic structures for storing information: atoms
+					(also known as simple atoms, classic atoms or boxes) and QT atoms. Most atoms that you encounter in
+					the QuickTime File Format are simple or classic atoms. Both simple atoms and QT atoms, however, allow you
+					to construct arbitrarily complex hierarchical data structures. Both also allow your application to ignore
+					data that they don’t understand.
+				</para>
+				<para>
+					A QuickTime file stores the description of its media separately from the media data.
+				</para>
+				<para>
+					The description is called the movie resource, movie atom, or simply the movie, and contains information such
+					as the number of tracks, the video compression format, and timing information. The movie resource also
+					contains an index describing where all the media data is stored.
+				</para>
+				<para>
+					The media data is the actual sample data, such as video frames and audio samples, used in the movie.
+					The media data may be stored in the same file as the QuickTime movie, in a separate file, in multiple files,
+					in alternate sources such as databases or real-time streams, or in some combination of these.
+				</para>
+			</remarks>
+		</member>
+		<member name="M:MP4.Container.ScanAtoms(System.IO.Stream)">
+			<remarks>
+				if the file has not yet been scanned (this gets called by nearly every cli
+				option), then open the file and start scanning. Read in the first 12 bytes and
+				see if bytes 4-8 are 'ftyp' as any modern MPEG-4 file will have 'ftyp' first.
+				Accommodations are also in place for the jpeg2000 signature, but the sig.  must
+				be followed by 'ftyp' and have an 'mjp2' or 'mj2s' brand. If it does, start
+				scanning the rest of the file. An MPEG-4 file is logically organized into
+				discrete hierarchies called "atoms" or "boxes". Each atom is at minimum 8 bytes
+				long. Bytes 1-4 make an unsigned 32-bit integer that denotes how long this atom
+				is (ie: 8 would mean this atom is 8 bytes long).  The next 4 bytes (bytes 5-8)
+				make the atom name. If the atom presents longer than 8 bytes, then that
+				supplemental data would be what the atom carries. Atoms are broadly separated
+				into 2 categories: parents &amp; children (or container &amp; leaf).  Typically, a
+				parent can hold other atoms, but not data; a child can hold data but not other
+				atoms. This 'rule' is broken sometimes (the atoms listed as DUAL_STATE_ATOM),
+				but largely holds.
+
+				Each atom is read in as 8 bytes. The atom name is extracted, and using the last
+				known container (either FILE_LEVEL or an actual atom name), the new atom's
+				hierarchy is found based on its length &amp; position. Using its containing atom,
+				the KnownAtoms table is searched to locate the properties of that atom (parent/
+				child, versioned/simple), and jumping around in the file is based off that
+				known atom's type. Atoms that fall into a hybrid category (DUAL_STATE_ATOMs)
+				are explicitly handled. If an atom is known to be versioned, the version-and-
+				flags attribute is read. If an atom is listed as having a language attribute,
+				it is read to support multiple languages (as most 3GP assets do).
+			</remarks>
+		</member>
+	</members>
+</doc>

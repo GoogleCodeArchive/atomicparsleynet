@@ -14,28 +14,6 @@ namespace MP4
 	/// <summary>
 	/// Language Code
 	/// </summary>
-	/// <remarks>
-	/// <para>Some elements of a QuickTime file may be associated with a particular spoken language. To indicate
-	///   the language associated with a particular object, the QuickTime file format uses either language codes
-	///   from the Macintosh Script Manager or ISO language codes (as specified in ISO 639-2/T).</para>
-	/// <para>QuickTime stores language codes as unsigned 16-bit fields. All Macintosh language codes have a value
-	///   that is less than 0x400 except for the single value 0x7FFF indicating an unspecified language. ISO language
-	///   codes are three-character codes, and are stored inside the 16-bit language code field as packed arrays.
-	///   If treated as an unsigned 16-bit integer, an ISO language code always has a value of 0x400 or greater unless
-	///   the code is equal to the value 0x7FFF indicating an Unspecified Macintosh language code.</para>
-	/// <para>If the language is specified using a Macintosh language code, any associated text uses Macintosh
-	///   text encoding.</para>
-	/// <para>If the language is specified using an ISO language code, any associated text uses Unicode text encoding.
-	///   When Unicode is used, the text is in UTF-8 unless it starts with a byte-order-mark (BOM, 0xFEFF. ), whereupon
-	///   the text is in UTF-16. Both the BOM and the UTF-16 text should be big-endian.</para>
-	///
-	/// <para>Note: ISO language codes cannot be used for all elements of a QuickTime file. Currently, ISO language codes
-	///   can be used only for user data text. All other elements, including text tracks, must be specified using
-	///   Macintosh language codes.</para>
-	/// <para>Note: ISO 639-2/T codes do not distinguish between certain language variations. Use an extended language
-	///   tag atom ('elng') to make these distinctions. For example, ISO 639-2T does not distinguish between traditional
-	///   and simplified Chinese, so also use 'elng' with the value "zh-Hant" or "zh-Hans", respectively.</para>
-	/// </remarks>
 	public struct PackedLanguage
 	{
 		private const ushort CodeZero = 0;
@@ -64,11 +42,6 @@ namespace MP4
 		}
 
 		#region Conversions
-		/// <summary>
-		/// Converts 16-bit integer into ISO language code.
-		/// </summary>
-		/// <param name="data">Packed ISO language code in 16-bit integer.</param>
-		/// <returns>ISO language code.</returns>
 		private static string Data2Code(ushort data)
 		{
 			if (data == CodeUnspecified || data < MinISOCode || data == CodeUndefined) return String.Empty;
@@ -80,22 +53,6 @@ namespace MP4
 			return new String(new char[] { (char)(l1 + 0x60), (char)(l2 + 0x60), (char)(l3 + 0x60) });
 		}
 
-		/// <summary>
-		/// Converts ISO language code into 16-bit integer.
-		/// </summary>
-		/// <param name="code">ISO language code.</param>
-		/// <returns>Packed ISO language code in 16-bit integer.</returns>
-		/// <remarks>
-		/// <para>Because the language codes specified by ISO 639-2/T are three characters long, they must be packed
-		///   to fit into a 16-bit field. The packing algorithm must map each of the three characters, which are
-		///   always lowercase, into a 5-bit integer and then concatenate these integers into the least significant
-		///   15 bits of a 16-bit integer, leaving the 16-bit integer’s most significant bit set to zero.</para>
-		/// <para>One algorithm for performing this packing is to treat each ISO character as a 16-bit integer.
-		///   Subtract 0x60 from the first character and multiply by 2^10 (0x400), subtract 0x60 from the second
-		///   character and multiply by 2^5 (0x20), subtract 0x60 from the third character, and add the three
-		///   16-bit values. This will result in a single 16-bit value with the three codes correctly packed into
-		///   the 15 least significant bits and the most significant bit set to zero.</para>
-		/// </remarks>
 		private static ushort Code2Data(string code)
 		{
 			if (String.IsNullOrEmpty(code) || code == "und")
@@ -135,6 +92,11 @@ namespace MP4
 			return Data2Code(lang.code);
 		}
 
+		/// <summary>
+		/// Converts ISO language code into 16-bit integer.
+		/// </summary>
+		/// <param name="lang">ISO language code.</param>
+		/// <returns>Packed ISO language code in 16-bit integer.</returns>
 		public static explicit operator ushort(PackedLanguage lang)
 		{
 			return lang.code;
@@ -145,6 +107,11 @@ namespace MP4
 			return new PackedLanguage { code = Code2Data(lang) };
 		}
 
+		/// <summary>
+		/// Converts 16-bit integer into ISO language code.
+		/// </summary>
+		/// <param name="code">Packed ISO language code in 16-bit integer.</param>
+		/// <returns>ISO language code.</returns>
 		public static explicit operator PackedLanguage(ushort code)
 		{
 			return new PackedLanguage { code = code };

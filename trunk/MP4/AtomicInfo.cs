@@ -121,8 +121,14 @@ namespace MP4
 		ThereIsRedundantCodingInThisSample = 1
 	}
 
+	/// <summary>
+	/// Box (atom) container
+	/// </summary>
 	public interface IBoxContainer
 	{
+		/// <summary>
+		/// Children
+		/// </summary>
 		Collection<AtomicInfo> Boxes { get; }
 	}
 
@@ -131,6 +137,9 @@ namespace MP4
 		TOwner Owner { get; set; }
 	}
 
+	/// <summary>
+	/// The basic data unit
+	/// </summary>
 	public abstract class AtomicInfo : IBinSerializable
 	{
 		internal static readonly ILog log = Logger.GetLogger(typeof(AtomicInfo));
@@ -163,6 +172,10 @@ namespace MP4
 		}
 
 		public abstract void ReadBinary(BinaryReader reader);
+
+		/// <summary>
+		/// An integer that specifies the number of bytes in this box data, including all its fields and contained boxes.
+		/// </summary>
 		public abstract long DataSize { get; }
 		public abstract void WriteBinary(BinaryWriter writer);
 
@@ -333,12 +346,6 @@ namespace MP4
 		/// <param name="atom">the name of our newly found atom</param>
 		/// <param name="parent">the parent container atom</param>
 		/// <returns></returns>
-		/// <remarks>
-		/// Using the atom_name of this new atom, search through KnownAtoms, testing that the names match. If they do, move onto a finer grained sieve.
-		/// If the parent can be at any level (like "free"), just let it through; if the parent is "ilst" (iTunes-style metadata), or a uuid, return a generic match
-		/// The final test is the one most atoms will go through. Some atoms can have different parents - up to 5 different parents are allowed by this version of AP
-		/// Iterate through the known parents, and test it against atom_container. If they match, return the properties of the known atom
-		/// </remarks>
 		private static AtomDefinition MatchToKnownAtom(AtomicCode atom, AtomicInfo parent)
 		{
 			string atom_container = parent == null ? "" : (string)parent.AtomicID;
@@ -406,12 +413,6 @@ namespace MP4
 		/// </summary>
 		/// <param name="atom">the wanted path of an atom</param>
 		/// <returns>string into which the path will be placed (working backwards)</returns>
-		/// <remarks>
-		/// First, determine exactly how many atoms will constitute the full path and calculate where into the string to first start placing atom names. Start by
-		/// working off the current atom. Using fromFile, either use a more stringent atom start/length from a file, or a more relaxed atom level if from memory.
-		/// The array in memory won't have proper atom sizes except for the last child atom typically ('data' will have a proper size, but its parent and all
-		/// other parents will not have sizing automatically updated - which happens only at writeout time).
-		/// </remarks>
 		internal string ProvideAtomPath()
 		{
 			var atom_path = new List<string>();
@@ -571,16 +572,6 @@ namespace MP4
 		/// <summary>
 		/// A transformation matrix.
 		/// </summary>
-		/// <remarks>
-		/// <para>QuickTime files use matrices to describe spatial information about many objects, such as tracks
-		/// within a movie.</para>
-		/// <para>A transformation matrix defines how to map points from one coordinate space into another coordinate
-		/// space. By modifying the contents of a transformation matrix, you can perform several standard graphics
-		/// display operations, including translation, rotation, and scaling. The matrix used to accomplish
-		/// two-dimensional transformations is described mathematically by a 3-by-3 matrix.</para>
-		/// <para>All values in the matrix are 32-bit fixed-point numbers divided as 16.16, except for the last
-		/// {u, v, w} column, which contains 32-bit fixed-point numbers divided as 2.30.</para>
-		/// </remarks>
 		public sealed class TransformMatrix
 		{
 			public enum MatrixValues { A, B, U, C, D, V, Tx, Ty, W }
@@ -708,7 +699,7 @@ namespace MP4
 		ParentAtom = 0,
 		SimpleParentAtom = 1,
 		/// <summary>
-		/// Acts as both parent (contains other atoms) & child (carries data)
+		/// Acts as both parent (contains other atoms) &amp; child (carries data)
 		/// </summary>
 		DualStateAtom = 2,
 		/// <summary>
