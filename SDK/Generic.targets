@@ -46,18 +46,24 @@
     </Otherwise>
   </Choose>
 
-  <Target Name="CopySrcFiles" DependsOnTargets="CreateDirectories">
+  <Target Name="CopyComments" Inputs="@(Comments)" Outputs="$(CommentsDir)\%(Comments.Filename)%(Comments.Extension)">
+    <PropertyGroup>
+      <CommentsFullPath>$(CommentsDir)\%(Comments.Filename)</CommentsFullPath>
+      <CommentsFilename>%(Comments.Filename)%(Comments.Extension)</CommentsFilename>
+    </PropertyGroup>
+    <Exec Command="copy &quot;%(Comments.FullPath)&quot; &quot;$(CommentsFullPath).xml&quot;" 
+          Condition="@(Comments)!=''"/>
+    <Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"Transforms\MergeComments.xslt" "$(CommentsFullPath).xml" /out:"$(CommentsFullPath).Remarked.xml" /arg:second="%(Remarks.FullPath)"&amp; del /Q "$(CommentsFullPath).xml"&amp; ren "$(CommentsFullPath).Remarked.xml" "$(CommentsFilename)"' 
+          Condition="'%(Remarks.Comments)'=='$(CommentsFilename)'"/>
+  </Target>
+
+  <Target Name="CopySrcFiles" DependsOnTargets="CopyComments;CreateDirectories">
     <Exec Command="copy &quot;%(Dlls.FullPath)&quot; &quot;$(DllDir)\%(Dlls.Filename)%(Dlls.Extension)&quot;" />
-    <Exec Command="copy &quot;%(Comments.FullPath)&quot; &quot;$(CommentsDir)\%(Comments.Filename)%(Comments.Extension)&quot;" 
-          Condition="%(Comments.Remarks)==''"/>
     <Exec Command="copy &quot;%(Media.FullPath)&quot; &quot;$(OutputDir)\html\%(Media.Filename)%(Media.Extension)&quot;" 
           Condition="@(Media)!=''"/>
     <Exec Command="copy &quot;%(Dlls.FullPath)&quot; &quot;$(DllDir)\%(Dlls.Filename)%(Dlls.Extension)&quot;" />
     <Exec Command="copy &quot;%(Dependents.FullPath)&quot; &quot;$(DependencyDir)\%(Dependents.Filename)%(Dependents.Extension)&quot;" 
           Condition="@(Dependents)!=''"/>
-
-    <Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"Transforms\MergeComments.xslt" "%(Comments.FullPath)" /out:"$(CommentsDir)\%(Comments.Filename).xml" /arg:second="%(Comments.RootDir)%(Comments.Directory)%(Comments.Remarks)"' 
-          Condition="%(Comments.Remarks)!=''"/>
   </Target>
   
   <!--Creating Directories...-->
