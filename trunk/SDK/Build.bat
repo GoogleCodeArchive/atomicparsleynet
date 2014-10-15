@@ -5,6 +5,8 @@ rem %2: Reference help project
 rem %3: Main project
 
 if "%1"=="" goto exit
+SET RefProjOption=
+SET ProjectOption=
 if not "%2"=="" SET RefProjOption=/p:RefProj=%2
 if not "%3"=="" SET ProjectOption=/p:ProjName=%3
 SET LogFileOption=

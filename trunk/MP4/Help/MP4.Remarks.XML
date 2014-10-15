@@ -149,6 +149,9 @@
 					The fields in the objects are stored with the most significant byte first, commonly known as network byte
 					order or big-endian format.
 				</para>
+				<para>
+					The following table shows all known boxes were implemented.
+				</para>
 			</remarks>
 		</member>
 		<member name="M:MP4.AtomicInfo.MatchToKnownAtom(MP4.AtomicCode,MP4.AtomicInfo)">
@@ -593,16 +596,19 @@
 					the text is in UTF-16. Both the BOM and the UTF-16 text should be big-endian.
 				</para>
 
-				<para>
-					Note: ISO language codes cannot be used for all elements of a QuickTime file. Currently, ISO language codes
+				<note>
+					ISO language codes cannot be used for all elements of a QuickTime file. Currently, ISO language codes
 					can be used only for user data text. All other elements, including text tracks, must be specified using
 					Macintosh language codes.
-				</para>
-				<para>
-					Note: ISO 639-2/T codes do not distinguish between certain language variations. Use an extended language
+				</note>
+				<note>
+					ISO 639-2/T codes do not distinguish between certain language variations. Use an extended language
 					tag atom (<c>'elng'</c>) to make these distinctions. For example, ISO 639-2T does not distinguish between traditional
 					and simplified Chinese, so also use <c>'elng'</c> with the value "zh-Hant" or "zh-Hans", respectively.
-			</para>
+				</note>
+				<para>
+					The following table lists some of the Macintosh language codes supported by QuickTime.
+				</para>
 			</remarks>
 		</member>
 		<member name="M:MP4.PackedLanguage.op_Explicit(MP4.PackedLanguage)~System.UInt16">

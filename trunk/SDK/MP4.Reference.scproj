@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Chm">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Defs2XML;Chm">
 	<PropertyGroup>
 		<Name>MP4.Reference</Name>
 		<TopicStyle>vs2005</TopicStyle>
@@ -7,13 +7,163 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Dlls Include="..\MP4\bin\$(Configuration)\MP4.dll" />
-		<Comments Include="..\MP4\bin\$(Configuration)\MP4.XML">
-			<Remarks>Help\MP4.Remarks.XML</Remarks>
-		</Comments>
+		<Comments Include="..\MP4\bin\$(Configuration)\MP4.XML" />
+		<Remarks Include="..\MP4\bin\$(Configuration)\Help\MP4.Remarks.XML">
+			<Comments>MP4.XML</Comments>
+		</Remarks>
+		<Remarks Include="..\MP4\bin\$(Configuration)\Help\KnownAtoms.XML">
+			<Comments>MP4.XML</Comments>
+		</Remarks>
+		<Remarks Include="..\MP4\bin\$(Configuration)\Help\MacLang.XML">
+			<Comments>MP4.XML</Comments>
+		</Remarks>
 		<Media Include="..\MP4\bin\$(Configuration)\Help\*" Exclude="..\MP4\bin\$(Configuration)\Help\*.xml" />
 		<!--<Comments Include="MSComments\mscorlib.xml" />-->
 		<Dependents Include="C:\Windows\Microsoft.NET\assembly\GAC_MSIL\BinSerialization\v4.0_1.0.0.0__bc1c14f3284588ce\BinSerialization.dll" />
 		<Dependents Include="..\MP4\bin\$(Configuration)\ID3Tag.dll" />
 	</ItemGroup>
 	<Import Project="Generic.targets" />
+
+	<UsingTask TaskName="GenDefXML" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+		<ParameterGroup>
+			<DefName ParameterType="System.String" Required="true" />
+			<XMLFile ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System" />
+			<Reference Include="System.Core" />
+			<Reference Include="System.Xml" />
+			<Reference Include="BinSerialization" />
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Linq" />
+			<Using Namespace="System.Xml" />
+			<Code Type="Method" Language="cs">
+			<![CDATA[
+			private object GetField(Type type, string name)
+			{
+				if (type == null) throw new ArgumentNullException("type");
+				var pi = type.GetField(name);
+				if (pi == null) throw new ArgumentException(name + " not found");
+				return pi.GetValue(null);
+			}
+			private object GetField(object obj, string name)
+			{
+				if (obj == null) throw new ArgumentNullException("obj");
+				var pi = obj.GetType().GetField(name);
+				if (pi == null) throw new ArgumentException(name + " not found");
+				return pi.GetValue(obj);
+			}
+			private object GetProperty(object obj, string name)
+			{
+				if (obj == null) throw new ArgumentNullException("obj");
+				var pi = obj.GetType().GetProperty(name);
+				if (pi == null) throw new ArgumentException(name + " not found");
+				return pi.GetValue(obj, null);
+			}
+			private void WriteTableBegin(XmlWriter writer, string member, string term, params string[] descs)
+			{
+				writer.WriteStartElement("member");
+				writer.WriteAttributeString("name", member);
+				writer.WriteStartElement("remarks");
+				writer.WriteStartElement("list");
+				writer.WriteAttributeString("type", "table");
+				writer.WriteStartElement("listheader");
+				writer.WriteElementString("term", term);
+				foreach(string desc in descs)
+				{
+					writer.WriteElementString("description", desc);
+				}
+				writer.WriteEndElement();//listheader
+			}
+			private void WriteTableEnd(XmlWriter writer)
+			{
+				writer.WriteEndElement();//list
+				writer.WriteEndElement();//remarks
+				writer.WriteEndElement();//member
+			}
+			private void WriteTableRow(XmlWriter writer, object term, params object[] descs)
+			{
+				writer.WriteStartElement("item");
+				writer.WriteStartElement("term");
+				writer.WriteRaw(term.ToString());
+				writer.WriteEndElement();//term
+				foreach(object desc in descs)
+				{
+					writer.WriteStartElement("description");
+					writer.WriteRaw(desc.ToString());
+					writer.WriteEndElement();//description
+				}
+				writer.WriteEndElement();//item
+			}
+			private void WriteKnownAtoms(XmlWriter writer, System.Reflection.Assembly assm)
+			{
+				var type = assm.GetType("MP4.Definitions");
+				var list = (Array)GetField(type, "KnownAtoms");
+				WriteTableBegin(writer, "T:MP4.AtomicInfo", "Box class", "Box type", "Parent box type", "Container");
+				var atomList = list.Cast<object>().Where(atom => atom.GetType().IsGenericType)
+					.Select(atom => new{ boxType = atom.GetType().GetGenericArguments()[0], parent = (string)GetProperty(atom, "KnownParentAtom"),
+						name = (string)GetProperty(atom, "KnownAtomName") })
+					.GroupBy(atom => atom.name + atom.boxType.FullName)
+					.Select(atom =>
+						new {
+							box = "<see cref=\"T:"+atom.FirstOrDefault().boxType.FullName.Replace('+','.')+"\" />",
+							level = String.Join(", ", atom.Select(a => a.parent == "" ? "<em>File level</em>" :
+								a.parent == null ? "<em>Any level</em>" : "<c>'"+a.parent+"'</c>")),
+							container = atom.FirstOrDefault().boxType.GetInterfaces().Any(t => t.Name == "IBoxContainer") ?
+								"<i>Yes</i>" : "", name = "<c>'"+atom.FirstOrDefault().name+"'</c>" });
+				foreach(var atom in atomList)
+				{
+					WriteTableRow(writer, atom.box, atom.name, atom.level, atom.container);
+				}
+				WriteTableEnd(writer);
+			}
+			private void WriteMacLang(XmlWriter writer, System.Reflection.Assembly assm)
+			{
+				var type = assm.GetType("MP4.Catalog");
+				var list = (Array)GetField(type, "MacLanguageList");
+				WriteTableBegin(writer, "T:MP4.PackedLanguage", "Language", "Value", "ISO 639-1 code");
+				foreach(object lang in list)
+				{
+					WriteTableRow(writer, GetProperty(lang, "EnglishName"), GetProperty(lang, "Code"), GetProperty(lang, "ISO6391Code"));
+				}
+				WriteTableRow(writer, "<i>Unspecified</i>", "32767 (hex: 7FFF)", "");
+				WriteTableEnd(writer);
+			}
+			public override bool Execute()
+			{
+				var assm1 = System.Reflection.Assembly.LoadFile(Path.GetFullPath(@"..\MP4\bin\$(Configuration)\ID3Tag.dll"));
+				var assm2 = System.Reflection.Assembly.LoadFile(Path.GetFullPath(@"..\MP4\bin\$(Configuration)\MP4.dll"));
+				using(StreamWriter writer = File.CreateText(XMLFile))
+				using(XmlWriter xml = XmlWriter.Create((TextWriter)writer, new XmlWriterSettings{ Indent = true }))
+				{
+					xml.WriteStartDocument();
+					xml.WriteStartElement("doc");
+					xml.WriteStartElement("assembly");
+					xml.WriteElementString("name", "MP4");
+					xml.WriteEndElement();//assembly
+					xml.WriteStartElement("members");
+					switch(DefName)
+					{
+					case "KnownAtoms":
+						WriteKnownAtoms(xml, assm2);
+						break;
+					case "MacLang":
+						WriteMacLang(xml, assm2);
+						break;
+					}
+					xml.WriteEndElement();//members
+					xml.WriteEndElement();//doc
+				}
+				return true;
+			}
+			]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+	<Target Name="Defs2XML">
+		<GenDefXML DefName="KnownAtoms" XMLFile="..\MP4\bin\$(Configuration)\Help\KnownAtoms.XML" />
+		<GenDefXML DefName="MacLang" XMLFile="..\MP4\bin\$(Configuration)\Help\MacLang.XML" />
+	</Target>
 </Project>

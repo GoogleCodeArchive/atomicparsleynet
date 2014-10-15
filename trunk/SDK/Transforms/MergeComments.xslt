@@ -9,9 +9,28 @@
 	<xsl:template match="member">
 		<xsl:element name="{name()}">
 			<xsl:copy-of select="@*"/>
-			<xsl:apply-templates select="child::node()"/>
 			<xsl:variable name="name" select="@name"/>
-			<xsl:apply-templates select="$sec_doc[@name = $name]/child::node()"/>
+			<xsl:if test="summary|$sec_doc[@name = $name]/summary">
+				<xsl:element name="summary">
+					<xsl:apply-templates select="summary/child::node()"/>
+					<xsl:apply-templates select="$sec_doc[@name = $name]/summary/child::node()"/>
+				</xsl:element>
+			</xsl:if>
+			<xsl:apply-templates select="*[not(self::summary) and not(self::remarks)]"/>
+			<xsl:apply-templates select="$sec_doc[@name = $name]/*[not(self::summary) and not(self::remarks)]"/>
+			<xsl:if test="remarks|$sec_doc[@name = $name]/remarks">
+				<xsl:element name="remarks">
+					<xsl:apply-templates select="remarks/child::node()"/>
+					<xsl:apply-templates select="$sec_doc[@name = $name]/remarks/child::node()"/>
+				</xsl:element>
+			</xsl:if>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="div/img">
+		<xsl:element name="{name()}">
+			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates select="child::node()"/>
 		</xsl:element>
 	</xsl:template>
 
