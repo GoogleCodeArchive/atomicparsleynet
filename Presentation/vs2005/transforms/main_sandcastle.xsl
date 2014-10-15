@@ -106,6 +106,12 @@
     
   </xsl:template>
 
+	<xsl:template name="getEnumMemberDescription">
+		<xsl:apply-templates select="summary/node()" />
+		<!-- enum members may have additional authored content in the remarks node -->
+		<xsl:apply-templates select="remarks/node()" />
+	</xsl:template>
+
 
   <!-- block sections -->
 

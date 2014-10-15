@@ -190,6 +190,7 @@
     </xsl:if>
 
     <!-- Feedback link -->
+    <!--
     <xsl:if test="$hasTypeLink or $hasMembersLink or $examplesSection or $hasSeeAlsoSection">
       <include item="nsrLinkSeparator"/>
     </xsl:if>
@@ -201,6 +202,7 @@
         <xsl:value-of select="/document/metadata/attribute[@name='TopicVersion']" />
       </parameter>
     </include>
+    -->
     
   </xsl:template>
 

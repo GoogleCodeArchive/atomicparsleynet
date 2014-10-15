@@ -310,23 +310,6 @@
     </tr>
   </xsl:template>
 
-  <xsl:template name="getEnumMemberDescription">
-    <xsl:choose>
-      <xsl:when test="normalize-space(ddue:summary[1]) != ''">
-        <span sdata="memberAuthoredSummary">
-          <xsl:apply-templates select="ddue:summary[1]/ddue:para/node()" />
-        </span>
-      </xsl:when>
-      <xsl:otherwise>
-        <span sdata="memberAuthoredSummary">
-          <xsl:apply-templates select="ddue:summary[2]/ddue:para/node()" />
-        </span>
-      </xsl:otherwise>
-    </xsl:choose>
-    <!-- enum members may have additional authored content in the remarks node -->
-    <xsl:apply-templates select="ddue:remarks/ddue:content" />
-  </xsl:template>
-
   <xsl:template match="element" mode="derivedType">
     <tr>
       <td>
