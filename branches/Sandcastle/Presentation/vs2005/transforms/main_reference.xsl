@@ -146,6 +146,10 @@
       </xsl:if>
     </xsl:if>
 
+    <xsl:if test="/document/reference/containers/type[@api='T:System.ServiceModel.ClientBase`1']">
+		<p>Windows Communication Foundation (WCF) client objects that can call service.</p>
+    </xsl:if>
+
     <!-- Overload list page boilerplate -->
     <xsl:if test="$group = 'list' and $subgroup = 'overload'">
       <p>
@@ -421,7 +425,24 @@
   <xsl:template name="getOverloadSections">
     
   </xsl:template>
-  
+
+  <xsl:template name="getEnumMemberDescription">
+    <xsl:choose>
+      <xsl:when test="normalize-space(ddue:summary[1]) != ''">
+        <span sdata="memberAuthoredSummary">
+          <xsl:apply-templates select="ddue:summary[1]/ddue:para/node()" />
+        </span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span sdata="memberAuthoredSummary">
+          <xsl:apply-templates select="ddue:summary[2]/ddue:para/node()" />
+        </span>
+      </xsl:otherwise>
+    </xsl:choose>
+    <!-- enum members may have additional authored content in the remarks node -->
+    <xsl:apply-templates select="ddue:remarks/ddue:content" />
+  </xsl:template>
+
   <xsl:template match="syntax">
     <xsl:if test="count(*) > 0">
       <xsl:call-template name="section">
