@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-internal abstract class ILog
+public abstract class ILog
 {
 	[Conditional("DEBUG")]
 	public abstract void Debug(string message);
@@ -15,7 +15,7 @@ internal abstract class ILog
 	public abstract void Error(string format, params object[] args);
 }
 
-internal class Logger: ILog
+public class Logger: ILog
 {
 	private string logger;
 

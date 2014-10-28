@@ -17,72 +17,78 @@ internal abstract class ILog
 
 internal class Logger: ILog
 {
-	private static ILog logger = new Logger();
+	private string logger;
 
-	private Logger()
+	private Logger(string type)
 	{
+		logger = type;
 	}
 
 	public static ILog GetLogger(string type)
 	{
-		return logger;
+		return new Logger(type);
 	}
 
 	public static ILog GetLogger(Type type)
 	{
-		return logger;
+		return new Logger(type.Namespace);
+	}
+
+	public static ILog GetLogger<TSource>()
+	{
+		return new Logger(typeof(TSource).Namespace);
 	}
 
 	#region ILog console implementation
 	public override void Debug(string message)
 	{
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.Out.WriteLine(message);
+		Console.ForegroundColor = ConsoleColor.DarkGray;
+		Console.Out.WriteLine(logger + ": " + message);
 		Console.ResetColor();
 	}
 
 	public override void Debug(string format, params object[] args)
 	{
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.Out.WriteLine(format, args);
+		Console.ForegroundColor = ConsoleColor.DarkGray;
+		Console.Out.WriteLine(logger + ": " + String.Format(format, args));
 		Console.ResetColor();
 	}
 
 	public override void Info(string message)
 	{
-		Console.Out.WriteLine(message);
+		Console.Out.WriteLine(logger + ": " + message);
 	}
 
 	public override void Info(string format, params object[] args)
 	{
-		Console.Out.WriteLine(format, args);
+		Console.Out.WriteLine(logger + ": " + String.Format(format, args));
 	}
 
 	public override void Warn(string message)
 	{
 		Console.ForegroundColor = ConsoleColor.Yellow;
-		Console.Out.WriteLine(message);
+		Console.Out.WriteLine(logger + ": " + message);
 		Console.ResetColor();
 	}
 
 	public override void Warn(string format, params object[] args)
 	{
 		Console.ForegroundColor = ConsoleColor.Yellow;
-		Console.Out.WriteLine(format, args);
+		Console.Out.WriteLine(logger + ": " + String.Format(format, args));
 		Console.ResetColor();
 	}
 
 	public override void Error(string message)
 	{
 		Console.ForegroundColor = ConsoleColor.Red;
-		Console.Error.WriteLine(message);
+		Console.Error.WriteLine(logger + ": " + message);
 		Console.ResetColor();
 	}
 
 	public override void Error(string format, params object[] args)
 	{
 		Console.ForegroundColor = ConsoleColor.Red;
-		Console.Out.WriteLine(format, args);
+		Console.Out.WriteLine(logger + ": " + String.Format(format, args));
 		Console.ResetColor();
 	}
 	#endregion
