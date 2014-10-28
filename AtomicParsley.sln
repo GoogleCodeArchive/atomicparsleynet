@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtomicParsley", "AtomicParsley\AtomicParsley.csproj", "{9B073FAF-F072-4FEB-A697-4C50937A598D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ID3Tag", "ID3Tag\ID3Tag.csproj", "{8A557528-03BC-4CA0-AB96-5529A6EEFD82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP4", "MP4\MP4.csproj", "{3132CE44-5B6F-4F98-86E3-26A703CB4B34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B073FAF-F072-4FEB-A697-4C50937A598D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B073FAF-F072-4FEB-A697-4C50937A598D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B073FAF-F072-4FEB-A697-4C50937A598D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B073FAF-F072-4FEB-A697-4C50937A598D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A557528-03BC-4CA0-AB96-5529A6EEFD82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A557528-03BC-4CA0-AB96-5529A6EEFD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A557528-03BC-4CA0-AB96-5529A6EEFD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A557528-03BC-4CA0-AB96-5529A6EEFD82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
