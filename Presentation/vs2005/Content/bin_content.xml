@@ -1,0 +1,168 @@
+<content xml:space="preserve">
+
+	<!-- note text -->
+	<item id="preliminaryText">This API is preliminary and subject to change.</item>
+
+	<!-- topic titles -->
+	<item id="tocTitle">{0}</item>
+	<item id="rootTopicTitle">Serializations</item>
+	<item id="namespaceTopicTitle">{0} Serialization</item>
+	<item id="classTopicTitle">{0}</item>
+	<item id="structureTopicTitle">{0}</item>
+	<item id="enumerationTopicTitle">{0} Enumeration</item>
+
+	<item id="fieldTopicTitle">{0}</item>
+	<item id="propertyTopicTitle">{0}</item>
+
+	<!-- page titles -->
+	<item id="rootPageTitle">Binary Serialization Namespaces</item>
+	<item id="namespacePageTitle">{0} Binary Serialization Namespace</item>
+	<item id="classPageTitle">{0} Binary Block</item>
+	<item id="structurePageTitle">{0} Binary Block</item>
+	<item id="enumerationPageTitle">{0} Enumeration</item>
+
+	<item id="fieldPageTitle">{0} Binary Data Field</item>
+	<item id="propertyPageTitle">{0} Binary Data Field</item>
+
+	<!-- member titles -->
+	<item id="enumMembersTitle">Members</item>
+
+	<!-- index entries -->
+	<item id="rootIndexEntry">binary serialization namespaces</item>
+	<item id="namespaceIndexEntry">{0} binary serialization namespace</item>
+	<item id="classIndexEntry">{0} binary block</item>
+	<item id="structureIndexEntry">{0} binary block</item>
+	<item id="enumerationIndexEntry">{0} enumeration</item>
+	<item id="derivedTypesIndexEntry">{0}, derived blocks</item>
+	<item id="propertyIndexEntry">{0} binary data field</item>
+	<item id="fieldIndexEntry">{0} binary data field</item>
+	<item id="aboutTypeIndexEntry">{0}, data fields</item>
+
+	<!-- body -->
+
+	<!-- section titles -->
+	<item id="fieldsTitle">Data Fields</item>
+	<item id="fieldDataTitle">Data Serialization</item>
+	<item id="serializerTitle">Serializer</item>
+	<item id="BinaryReaderTypeTitle">Binary Reader</item>
+	<item id="BinaryWriterTypeTitle">Binary Writer</item>
+	<item id="valueTitle">Value</item>
+	<item id="propertyValueTitle">Field Value</item>
+	<item id="fieldValueTitle">Field Value</item>
+	<item id="namespacesTitle">Binary Serialization Namespaces</item>
+	<item id="typesTitle">Blocks</item>
+	<item id="familyTitle">Inheritance Hierarchy</item>
+	<item id="versionsTitle">Version Information</item>
+	<item id="platformsTitle">Platforms</item>
+	<item id="relatedTitle">See Also</item>
+	<item id="ExtensionUsageTitle">Usage Note</item>
+
+	<!-- table headers -->
+	<item id="namespaceNameHeader">Serialization</item>
+	<item id="namespaceDescriptionHeader">Description</item>
+	<item id="classNameHeader">Block</item>
+	<item id="structureNameHeader">Block</item>
+	<item id="enumerationNameHeader">Enumeration</item>
+
+	<item id="typeNameHeader">Name</item>
+	<item id="typeDescriptionHeader">Description</item>
+
+	<!-- filter control text -->
+	<item id="classTypesFilterLabel">Binary Blocks</item>
+	<item id="structureTypesFilterLabel">Binary Blocks</item>
+	<item id="enumerationTypesFilterLabel">Enumerations</item>
+	<item id="fieldMembersFilterLabel">Data Fields</item>
+
+	<!-- Used for Platform Notes -->
+	<item id="PlatformNote">
+		<b>{0} Platform Note:</b> {1}
+	</item>
+
+	<!-- Platform Notes -->
+
+	<item id="Platforms">Platforms</item>
+
+	<!-- inserted boilerplate -->
+	<item id="runningHeaderText">Binary Data Specification</item>
+	<item id="rootLink"><referenceLink target="R:Project">Serialization Namespaces</referenceLink></item>
+	<item id="obsoleteShort"><span class="obsolete">Obsolete.</span></item>
+	<item id="obsoleteLong"><span class="obsolete">This API is obsolete.</span></item>
+	<item id="nonobsoleteAlternative">The non-obsolete alternative is {0}.</item>
+	<item id="obsoleteRed"><font color="red"><b>Obsolete. </b></font></item>
+	<item id="ObsoleteBoilerPlate">
+		<font color="red"><b>Note: This API is now obsolete.</b></font>
+	</item>
+	<item id="definedBy">(Defined by {0}.)</item>
+	<item id="inheritedFrom">(Inherited from {0}.)</item>
+	<item id="locationInformation">Assembly: {0} (Module: {1})</item>
+	<item id="classLower">block</item>
+	<item id="structureLower">block</item>
+	<item id="enumerationLower">enumeration</item>
+
+	<!-- alt text for images -->
+
+	<item id="collapseAll">Collapse All</item>
+	<item id="expandAll">Expand All</item>
+
+  <item id="nonScrollingTypeLinkText">{0} <include item="{1}SubGroup"/></item>
+	<item id="SeeAlsoNamespaceLinkText">{0} Serialization Namespace</item>
+	<item id="SeeAlsoTypeLinkText">{0} <include item="{1}SubGroup"/></item>
+
+	<item id="classSubGroup">Block</item>
+	<item id="structureSubGroup">Block</item>
+	<item id="delegateSubGroup">Delegate</item>
+	<item id="enumerationSubGroup">Enumeration</item>
+
+	<item id="requirementsNamespaceLayout">
+		<b>Serialization Namespace:</b> 
+	</item>
+
+	<item id="requirementsPlatformsLayout">
+		<b>Platforms:</b> {0}
+	</item>
+
+	<item id="requirementsAssembliesLabel">
+		<b>Assemblies:</b>
+	</item>
+
+	<item id="requirementsAssemblyLabel">
+		<b>Assembly:</b>
+	</item>
+
+	<item id="assemblyNameAndModule">{0} (in {1}.{2})</item>
+
+	<item id="requirementsAssemblyLayout">
+		<b>Assembly:</b> {0} (in {1}.dll)
+	</item>
+
+	<!-- Used for Version Information Section -->
+	<item id="supportedIn_1">Supported in: {0}</item>
+	<item id="supportedIn_2">Supported in: {0}, {1}</item>
+	<item id="supportedIn_3">Supported in: {0}, {1}, {2}</item>
+	<item id="supportedIn_4">Supported in: {0}, {1}, {2}, {3}</item>
+	<item id="supportedIn_5">Supported in: {0}, {1}, {2}, {3}, {4}</item>
+	<item id="supportedIn_6">Supported in: {0}, {1}, {2}, {3}, {4}, {5}</item>
+	<item id="supportedIn_7">Supported in: {0}, {1}, {2}, {3}, {4}, {5}, {6}</item>
+	<item id="obsoleteWarning">Obsolete (compiler warning) in {0}</item>
+	<item id="obsoleteError">Obsolete (does not compile) in {0} and later</item>
+
+	<item id="ReturnValue">Return Value</item>
+	<item id="PropertyValue">Field Value</item>
+	<item id="FieldValue">Field Value</item>
+
+	<item id="derivedClasses">Derived Blocks</item>
+
+	<item id="defaultNamespace">( Default Serialization Namespace )</item>
+
+	<item id="typeLink">Type: {0}</item>
+
+	<!-- Internal only Boilerplate text -->
+	<item id="internalOnly">This API supports the Binary Serialization infrastructure and is not intended to be used directly from your code.</item>
+	<item id="infraStructure">Infrastructure. </item>
+
+	<item id="useBaseSummary">This data field overrides {0}.</item>
+	<item id="useBaseSee">See {0}.</item>
+	<item id="useBaseBoilerplate">This data field overrides {0}, and more complete documentation might be available in that topic.</item>
+
+	<item id="flagsSummary">This enumeration has a {0} attribute that allows a bitwise combination of its member values.</item>
+</content>

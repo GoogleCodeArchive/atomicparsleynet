@@ -21,13 +21,13 @@
             <xsl:apply-templates select="key('indexByAssembly',@name)" />
           </xsl:for-each>
           <!-- process the namespace nodes, which may be associated with more than one assembly -->
-          <xsl:apply-templates select="/reflection/apis/api[apidata[@group='namespace' and not(@serialization)]]" />
+          <xsl:apply-templates select="/reflection/apis/api[apidata[@group='namespace' and @serialization='binary']]" />
         </xsl:when>
 
         <!-- default is to sort by namespace -->
         <xsl:otherwise>
           <!-- process each namespace's api node, then process nodes for all the apis in the namespace -->
-          <xsl:for-each select="/reflection/apis/api[apidata[@group='namespace' and not(@serialization)]]">
+          <xsl:for-each select="/reflection/apis/api[apidata[@group='namespace' and @serialization='binary']]">
             <xsl:apply-templates select="." />
             <xsl:apply-templates select="key('index',@id)" />
           </xsl:for-each>
@@ -39,7 +39,7 @@
 
   <!-- namespace and member topics -->
   <xsl:template match="api">
-    <xsl:if test="not(topicdata/@notopic) and not(apidata/@serialization)">
+    <xsl:if test="not(topicdata/@notopic) and apidata[@serialization='binary']">
       <topic id="{@id}"/>
     </xsl:if>
   </xsl:template>

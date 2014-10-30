@@ -85,7 +85,14 @@
       </xsl:call-template>
     </xsl:variable>
     <topic id="{@id}" project="{$componentName}" file="{file/@name}">
-      <xsl:call-template name="AddMemberListTopics"/>
+      <xsl:choose>
+        <xsl:when test="topicdata/@subgroup='full'">
+          <xsl:call-template name="AddAllMembersTopics"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="AddMemberListTopics"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </topic>
   </xsl:template>
 
@@ -93,7 +100,7 @@
        and insert nodes for the declared member topics under the appropriate list topic. -->
   <xsl:template name="AddMemberListTopics">
     <xsl:variable name="typeId" select="@id" />
-    <xsl:variable name="declaredPrefix" select="concat(substring($typeId,3), '.')"/>
+    <xsl:variable name="declaredPrefix" select="concat(substring-after($typeId,':'), '.')"/>
     <xsl:variable name="componentName">
       <xsl:call-template name="GetComponentName">
         <xsl:with-param name="initialName" select="concat($projectPrefix,containers/library/@assembly)" />
@@ -163,13 +170,25 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template name="AddAllMembersTopics">
+    <xsl:variable name="declaredPrefix" select="concat(substring-after(@id,':'), '.')"/>
+    <!-- recurse to get declared child element topics, if any -->
+    <xsl:for-each select="key('index', elements/*[starts-with(substring-after(@api,':'), $declaredPrefix)]/@api)">
+      <!-- sort the elements in a member list topic by name -->
+      <xsl:sort select="topicdata/@eiiName | apidata/@name" />
+      <xsl:call-template name="AddMember">
+        <xsl:with-param name="declaredPrefix" select="$declaredPrefix"/>
+      </xsl:call-template>
+    </xsl:for-each>
+  </xsl:template>
+
   <xsl:template name="AddMemberListTree">
     <xsl:variable name="componentName">
       <xsl:call-template name="GetComponentName">
         <xsl:with-param name="initialName" select="concat($projectPrefix,containers/library/@assembly)" />
       </xsl:call-template>
     </xsl:variable>
-    <xsl:variable name="declaredPrefix" select="concat(substring(topicdata/@typeTopicId,3), '.')"/>
+    <xsl:variable name="declaredPrefix" select="concat(substring-after(topicdata/@typeTopicId,':'), '.')"/>
     <topic id="{@id}" project="{$componentName}" file="{file/@name}">
       <!-- recurse to get declared child element topics, if any -->
       <xsl:for-each select="key('index', elements/*[starts-with(substring-after(@api,':'), $declaredPrefix)]/@api)">
