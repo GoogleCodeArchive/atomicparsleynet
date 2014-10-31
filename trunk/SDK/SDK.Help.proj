@@ -8,7 +8,6 @@
 	</Target>
 
 	<Target Name="BuildRefProj" DependsOnTargets="BuildBinaries" Condition="'$(RefProj)'!=''">
-<Message Text="$(MSBuildToolsPath)"/>
 		<MSBuild ToolsVersion="4.0" Projects="$(RefProj).scproj" Properties="Configuration=$(Configuration); Product=$(Product)" />
 	</Target>
 

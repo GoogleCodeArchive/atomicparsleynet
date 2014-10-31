@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Presentation\vs2005\Content\bin_content.xml" />
+    <Xml Include="Presentation\vs2005\Content\reference_content.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+    <Xml Include="Presentation\vs2005\Content\shared_content.xml" />
+    <Xml Include="Presentation\vs2005\transforms\bin_sandcastle.xsl" />
+    <Xml Include="Presentation\vs2005\transforms\main_sandcastle.xsl" />
+    <Xml Include="Presentation\vs2005\transforms\utilities_bin.xsl" />
+    <Xml Include="ProductionTransforms\ApplyBinDocModel.xsl" />
+    <Xml Include="ProductionTransforms\ApplyVSDocModel.xsl" />
+    <Xml Include="ProductionTransforms\CreateVSToc.xsl" />
+    <Xml Include="ProductionTransforms\ReflectionToBinManifest.xsl" />
+    <Xml Include="ProductionTransforms\ReflectionToManifest.xsl" />
+    <Xml Include="Transforms\MergeComments.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Generic.targets" />
+    <None Include="Presentation\vs2005\configuration\sandcastle-bin.config" />
+    <None Include="Presentation\vs2005\configuration\sandcastle.config" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{022B0D3A-2276-414C-A173-7D780703647D}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)MP4\bin\Release\MP4.dll</NMakeOutput>
+    <NMakePreprocessorDefinitions>DEBUG;TRACE</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>echo Done</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>echo Done</NMakeReBuildCommandLine>
+    <OutDir>$(ProjectDir)Logs\</OutDir>
+    <IntDir>Logs\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>$(SolutionDir)MP4\bin\Release\MP4.dll</NMakeOutput>
+    <NMakePreprocessorDefinitions>TRACE</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>echo Done</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>echo Done</NMakeReBuildCommandLine>
+    <OutDir>$(ProjectDir)Logs\</OutDir>
+    <IntDir>Logs\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <Target Name="BuildBinaries">
+    <MSBuild Projects="..\MP4\MP4.csproj" Properties="Configuration=Release; Platform=AnyCPU" />
+  </Target>
+  <Target Name="CustomBuild" BeforeTargets="Build;ReBuild" DependsOnTargets="BuildBinaries">
+    <MSBuild Projects="MP4.Reference.scproj" Properties="Configuration=Release; Product=MP4" />
+  </Target>
+</Project>

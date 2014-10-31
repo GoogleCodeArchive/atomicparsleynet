@@ -4,6 +4,7 @@
 		<Name>MP4.Reference</Name>
 		<TopicStyle>vs2005</TopicStyle>
 		<LanguageId>1033</LanguageId>
+		<BinSerialization>true</BinSerialization>
 	</PropertyGroup>
 	<ItemGroup>
 		<Dlls Include="..\MP4\bin\$(Configuration)\MP4.dll" />

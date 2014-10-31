@@ -102,9 +102,15 @@
 
     <Exec Command='set DXROOT=$(MSBuildProjectDirectory)\&amp; "$(ProductionTools)\MRefBuilder.exe" &quot;$(DllDir)\*.dll&quot; &quot;$(DllDir)\*.exe&quot; /out:&quot;$(TopicStyleDir)\reflection.org&quot; /dep:&quot;$(DependencyDir)\*.dll&quot;,&quot;$(DependencyDir)\*.exe&quot; /internal+ /config:"$(GenericDir)\ProductionTools\MRefBuilder.config"' Condition="$(Internal)=='true'" />
 
-    <Exec Condition="'$(TopicStyle)' == 'prototype'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyPrototypeDocModel.xsl" /xsl:"$(ProductionTransforms)\AddGuidFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml"' />
-    <Exec Condition="'$(TopicStyle)' == 'vs2005' or '$(TopicStyle)' == 'vs2005ru'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=true /arg:IncludeInheritedOverloadTopics=true' />
-    <Exec Condition="'$(TopicStyle)' == 'hana'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=false /arg:IncludeInheritedOverloadTopics=true' />
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)\&amp; "$(ProductionTools)\MRefBuilder.exe" &quot;$(DllDir)\*.dll&quot; &quot;$(DllDir)\*.exe&quot; /out:&quot;$(TopicStyleDir)\reflection.bin.org&quot; /dep:&quot;$(DependencyDir)\*.dll&quot;,&quot;$(DependencyDir)\*.exe&quot; /internal+ /config:"$(GenericDir)\ProductionTools\MRefBuilder.config"' Condition="$(BinSerialization)=='true'" />
+
+    <PropertyGroup>
+      <BinSerializationXSL Condition="$(BinSerialization)=='true'">/xsl:"$(ProductionTransforms)\ApplyBinDocModel.xsl" /arg:BinReflection="$(TopicStyleDir)\reflection.bin.org"</BinSerializationXSL>
+    </PropertyGroup>
+
+    <Exec Condition="'$(TopicStyle)' == 'prototype'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyPrototypeDocModel.xsl" $(BinSerializationXSL) /xsl:"$(ProductionTransforms)\AddGuidFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml"' />
+    <Exec Condition="'$(TopicStyle)' == 'vs2005'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" $(BinSerializationXSL) /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=true /arg:IncludeInheritedOverloadTopics=true' />
+    <Exec Condition="'$(TopicStyle)' == 'hana'" Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(ProductionTransforms)\ApplyVSDocModel.xsl" $(BinSerializationXSL) /xsl:"$(ProductionTransforms)\AddFriendlyFilenames.xsl" "$(TopicStyleDir)\reflection.org" /out:"$(TopicStyleDir)\reflection.xml" /arg:IncludeAllMembersTopic=false /arg:IncludeInheritedOverloadTopics=true' />
   </Target>
   
   <!--Copy icons,styles and scripts to output-->
@@ -118,6 +124,8 @@
   <Target Name="Manifest" DependsOnTargets="Reflection">
     <Exec Command='"$(ProductionTools)\XslTransform.exe"  /xsl:"$(ProductionTransforms)\ReflectionToManifest.xsl"  reflection.xml /out:manifest.xml'
          WorkingDirectory="$(TopicStyleDir)" />
+    <Exec Command='"$(ProductionTools)\XslTransform.exe"  /xsl:"$(ProductionTransforms)\ReflectionToBinManifest.xsl"  reflection.xml /out:manifest.bin.xml'
+         WorkingDirectory="$(TopicStyleDir)" Condition="$(BinSerialization)=='true'" />
   </Target>
   
   <!--Generate an intermediate Toc file that simulates the Whidbey TOC format-->
@@ -131,6 +139,7 @@
   <Target Name="Html" DependsOnTargets="Toc">
     <Message Text="Call BuildAssembler..." />
     <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; set Presentation=$(Presentation)&amp; set reflectionfile=$(TopicStyleDir)\reflection.xml&amp; set CommentsDir=$(CommentsDir)&amp; set ReferenceAssemblies=$(ReferenceAssemblies)&amp; set OutputDir=$(OutputDir)\html&amp; "$(ProductionTools)\BuildAssembler.exe" /config:"$(Presentation)\configuration\sandcastle.config" "$(TopicStyleDir)\manifest.xml"' Condition="$(WebBuild)!='true'" />
+    <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; set Presentation=$(Presentation)&amp; set reflectionfile=$(TopicStyleDir)\reflection.xml&amp; set CommentsDir=$(CommentsDir)&amp; set ReferenceAssemblies=$(ReferenceAssemblies)&amp; set OutputDir=$(OutputDir)\html&amp; "$(ProductionTools)\BuildAssembler.exe" /config:"$(Presentation)\configuration\sandcastle-bin.config" "$(TopicStyleDir)\manifest.bin.xml"' Condition="$(BinSerialization)=='true'" />
     <Exec Command='set DXROOT=$(MSBuildProjectDirectory)&amp; set Presentation=$(Presentation)&amp; set reflectionfile=$(TopicStyleDir)\reflection.xml&amp; set CommentsDir=$(CommentsDir)&amp; set OutputDir=$(OutputDir)\html&amp; "$(ProductionTools)\BuildAssembler.exe" /config:"$(Presentation)\configuration\sandcastle-webref.config" "$(TopicStyleDir)\manifest.xml"' Condition="$(WebBuild)=='true'" />
   </Target>
 
