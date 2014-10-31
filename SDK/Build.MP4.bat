@@ -1,1 +1,1 @@
-Build.bat MP4 MP4.Reference MP4
+Build.bat /prod MP4 /ref MP4.Reference /build MP4

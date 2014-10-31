@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ID3Tag", "ID3Tag\ID3Tag.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP4", "MP4\MP4.csproj", "{3132CE44-5B6F-4F98-86E3-26A703CB4B34}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK", "SDK\SDK.vcxproj", "{022B0D3A-2276-414C-A173-7D780703647D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,8 @@ Global
 		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3132CE44-5B6F-4F98-86E3-26A703CB4B34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022B0D3A-2276-414C-A173-7D780703647D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{022B0D3A-2276-414C-A173-7D780703647D}.Release|Any CPU.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

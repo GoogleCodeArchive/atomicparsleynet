@@ -1,20 +1,34 @@
 @echo off
 
-rem %1: Product
-rem %2: Reference help project
-rem %3: Main project
+rem /prod: Product
+rem /ref: Reference help project
+rem /build: Main project build
 
-if "%1"=="" goto exit
-SET RefProjOption=
-SET ProjectOption=
-if not "%2"=="" SET RefProjOption=/p:RefProj=%2
-if not "%3"=="" SET ProjectOption=/p:ProjName=%3
+setlocal
+set Product=
+set RefProjOption=
+set ProjectOption=
+set DiagOption=
+:options
+if "%1"=="/prod" set Product=%2
+if "%1"=="/ref" set RefProjOption=/p:RefProj=%2
+if "%1"=="/build" set ProjectOption=/p:ProjName=%2
+if "%1"=="/diag" set DiagOption=/Verbosity:diag
+if not "%1"=="/diag" shift
+shift
+if not "%1"=="" goto options
+if "%Product%"=="" goto help
+if "%Product%"=="/p:Product=" goto help
+
 SET LogFileOption=
-if "%NOLOGFILE%"=="" SET LogFileOption=/l:FileLogger,Microsoft.Build.Engine;logfile=Logs\%1.log;encoding=utf-8
+if "%NOLOGFILE%"=="" SET LogFileOption=/l:FileLogger,Microsoft.Build.Engine;logfile=Logs\%Product%.log;encoding=utf-8
 
-del /q Logs\Error.%1.log > nul
-%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe SDK.Help.proj /p:Product=%1 %ProjectOption% %RefProjOption% %LogFileOption% /p:Configuration=Release
-rem /Verbosity:diag
-if "%NOLOGFILE%"=="" if not %errorlevel%==0 move Logs\%1.log Logs\Error.%1.log > nul
+del /q Logs\Error.%Product%.log > nul
+%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe SDK.Help.proj /p:Product=%Product% %ProjectOption% %RefProjOption% %LogFileOption% /p:Configuration=Release %DiagOption%
+if "%NOLOGFILE%"=="" if not %errorlevel%==0 move Logs\%Product%.log Logs\Error.%Product%.log > nul
 
+goto exit
+:help
+echo Usage: Build.bat /prod Product [/ref Reference] [/build: Build] [/diag]
 :exit
+endlocal

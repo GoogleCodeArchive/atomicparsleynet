@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Transforms">
+      <UniqueIdentifier>{40BB8CCB-BAF8-48B7-8DA3-67308C65EEFC}</UniqueIdentifier>
+      <Extensions>xsl;xslt</Extensions>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{63D749AA-2499-4DE8-AE97-05C4E24A80C7}</UniqueIdentifier>
+      <Extensions>xml</Extensions>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{B51DFA8F-CEE6-4626-A5FC-A1FFE9A6391D}</UniqueIdentifier>
+      <Extensions>config</Extensions>
+    </Filter>
+    <Filter Include="Tasks">
+      <UniqueIdentifier>{e79df341-fc29-409d-858b-74d887317591}</UniqueIdentifier>
+      <Extensions>tasks;targets</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ProductionTransforms\ApplyBinDocModel.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="ProductionTransforms\ApplyVSDocModel.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="ProductionTransforms\CreateVSToc.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="ProductionTransforms\ReflectionToBinManifest.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="ProductionTransforms\ReflectionToManifest.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="Transforms\MergeComments.xslt">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\Content\bin_content.xml">
+      <Filter>Content</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\Content\reference_content.xml">
+      <Filter>Content</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\Content\shared_content.xml">
+      <Filter>Content</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\transforms\bin_sandcastle.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\transforms\main_sandcastle.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+    <Xml Include="Presentation\vs2005\transforms\utilities_bin.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Presentation\vs2005\configuration\sandcastle.config">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="Presentation\vs2005\configuration\sandcastle-bin.config">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="Generic.targets">
+      <Filter>Tasks</Filter>
+    </None>
+  </ItemGroup>
+</Project>

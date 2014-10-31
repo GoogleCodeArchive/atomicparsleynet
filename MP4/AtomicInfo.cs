@@ -140,6 +140,7 @@ namespace MP4
 	/// <summary>
 	/// The basic data unit
 	/// </summary>
+	/// <seealso href="https://developer.apple.com/library/mac/documentation/QuickTime/QTFF"/>
 	public abstract class AtomicInfo : IBinSerializable
 	{
 		internal static readonly ILog log = Logger.GetLogger(typeof(AtomicInfo));
