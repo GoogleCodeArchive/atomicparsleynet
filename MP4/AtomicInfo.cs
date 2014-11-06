@@ -147,7 +147,7 @@ namespace MP4
 		private static readonly byte[] EmptyData = new byte[0];
 
 		/// <summary>
-		/// A 32-bit integer that identifies the atom type.
+		/// Identifies the atom type, typically represented as a four-character code.
 		/// </summary>
 		[XmlIgnore]
 		public AtomicCode AtomicID { get; set; }
