@@ -43,12 +43,14 @@
 	<!-- section titles -->
 	<item id="fieldsTitle">Data Fields</item>
 	<item id="fieldDataTitle">Data Serialization</item>
-	<item id="serializerTitle">Serializer</item>
+	<item id="serializerTitle">Encoded Data Serializer</item>
 	<item id="BinaryReaderTypeTitle">Binary Reader</item>
 	<item id="BinaryWriterTypeTitle">Binary Writer</item>
 	<item id="valueTitle">Value</item>
 	<item id="propertyValueTitle">Field Value</item>
 	<item id="fieldValueTitle">Field Value</item>
+	<item id="fieldLengthTitle">Field Length</item>
+	<item id="fieldCountTitle">Field Count</item>
 	<item id="namespacesTitle">Binary Serialization Namespaces</item>
 	<item id="typesTitle">Blocks</item>
 	<item id="familyTitle">Inheritance Hierarchy</item>
@@ -154,7 +156,7 @@
 
 	<item id="defaultNamespace">( Default Serialization Namespace )</item>
 
-	<item id="typeLink">Type: {0}</item>
+	<item id="typeLink">Type: {0} {1}</item>
 
 	<!-- Internal only Boilerplate text -->
 	<item id="internalOnly">This API supports the Binary Serialization infrastructure and is not intended to be used directly from your code.</item>
@@ -165,4 +167,39 @@
 	<item id="useBaseBoilerplate">This data field overrides {0}, and more complete documentation might be available in that topic.</item>
 
 	<item id="flagsSummary">This enumeration has a {0} attribute that allows a bitwise combination of its member values.</item>
+
+	<!-- Binary Formats -->
+	<item id="Int8Format">An 8-bit (1 byte) integer</item>
+	<item id="Int16Format">A 16-bit (2 bytes) integer</item>
+	<item id="Int24Format">A 24-bit (3 bytes) integer</item>
+	<item id="Int32Format">A 32-bit (4 bytes) integer</item>
+	<item id="Int64Format">A 64-bit (8 bytes) integer</item>
+	<item id="UInt8Format">An 8-bit (1 byte) unsigned integer</item>
+	<item id="UInt16Format">A 16-bit (2 bytes) unsigned integer</item>
+	<item id="UInt24Format">A 24-bit (3 bytes) unsigned integer</item>
+	<item id="UInt32Format">A 32-bit (4 bytes) unsigned integer</item>
+	<item id="UInt64Format">A 64-bit (8 bytes) unsigned integer</item>
+	<item id="SynchSafeInt16Format">A 14-bit (2 bytes) unsigned integer in synchsafe format</item>
+	<item id="SynchSafeInt32Format">A 28-bit (4 bytes) unsigned integer in synchsafe format</item>
+	<item id="SynchSafeInt64Format">A 56-bit (8 bytes) unsigned integer in synchsafe format</item>
+	<item id="BoolFormat">A Boolean value as an 4-byte integer value</item>
+	<item id="BitFormat">A Boolean value as an 1-byte integer value</item>
+	<item id="VariantBoolFormat">A Boolean value as an 2-byte integer value</item>
+	<item id="FloatFormat">A 32-bit (4 bytes) single-precision floating-point number</item>
+	<item id="DoubleFormat">A 64-bit (8 bytes) double-precision floating-point number</item>
+	<item id="DateFormat">A date as a 62-bit (8 bytes) number of 100-nanosecond intervals since January 1, 0001</item>
+	<item id="UNIXDateI32Format">A UNIX date as a 32-bit (4 bytes) signed number of seconds since January 1, 1970</item>
+	<item id="UNIXDateU32Format">A UNIX date as an 32-bit (4 bytes) unsigned number of seconds since January 1, 1970</item>
+	<item id="UNIXDate64Format">A UNIX date as a 64-bit (8 bytes) number of seconds since January 1, 1970</item>
+	<item id="MacDate32Format">A Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904</item>
+	<item id="MacDate64Format">A Macintosh date as an 64-bit (8 bytes) number of seconds since January 1, 1904</item>
+	<item id="OLEDateFormat">An OLE Automation date as an 64-bit (8 bytes) floating-point number of days since December 31, 1899</item>
+	<item id="FileTimeFormat">A Windows file time as an 64-bit (8 bytes) number of 100-nanosecond intervals since January 1, 1601</item>
+	<item id="BinaryFormat">A stream of binary data {0}</item>
+	<item id="CStringFormat">An encoded character string</item>
+	<item id="PStringFormat">An encoded character array {0}</item>
+	<item id="CharFormat">An encoded character</item>
+	<item id="SomeLengthFormat">with a length</item>
+	<item id="LengthFormat">with the previously defined length</item>
+	<item id="NumLengthFormat">with a fixed length equal to {0}</item>
 </content>

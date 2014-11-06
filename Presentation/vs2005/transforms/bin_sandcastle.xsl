@@ -18,12 +18,12 @@
 	<xsl:template name="body">
 		<!-- auto-inserted info -->
 		<!-- <xsl:apply-templates select="/document/reference/attributes" /> -->
-		<xsl:apply-templates select="/document/comments/preliminary" />
-		<xsl:apply-templates select="/document/comments/summary" />
 		<!-- assembly information -->
 		<xsl:if test="not($group='root' or $group='namespace')">
 			<xsl:call-template name="requirementsInfo"/>
 		</xsl:if>
+		<xsl:apply-templates select="/document/comments/preliminary" />
+		<xsl:apply-templates select="/document/comments/summary" />
 		<!-- members -->
 		<xsl:choose>
 			<xsl:when test="$group='root'">
@@ -82,14 +82,26 @@
 	<!-- block sections -->
 
 	<xsl:template match="reference" mode="field">
+		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
+		<xsl:variable name="formatArg" select="$binData/argument[type/@api = 'T:FRAFV.Binary.Serialization.BinFormat']|$binData/assignment[@name = 'Format']"/>
+		<xsl:variable name="hasEncoding" select="$formatArg/enumValue/field[@name = 'CString' or @name = 'PString' or @name = 'Char'] or not($formatArg) and returns//type[@api = 'T:System.String' or @api = 'T:System.Char']"/>
+		<xsl:variable name="hasLength" select="$formatArg/enumValue/field[@name = 'Binary' or @name = 'PString'] or not($formatArg) and returns/arrayOf/type[@api = 'T:System.Byte' or @api = 'T:System.Char']"/>
+
 		<xsl:call-template name="section">
 			<xsl:with-param name="toggleSwitch" select="'field'" />
 			<xsl:with-param name="title">
 				<include item="fieldDataTitle"/>
 			</xsl:with-param>
 			<xsl:with-param name="content">
-				<xsl:apply-templates select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute' and assignment[@name = 'BinaryReaderType' or @name = 'BinaryWriterType']]" mode="serializer" />
-				<xsl:apply-templates select="." mode="data"/>
+				<xsl:if test="$hasEncoding">
+					<xsl:apply-templates select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute' and assignment[@name = 'BinaryReaderType' or @name = 'BinaryWriterType']][1]" mode="serializer" />
+				</xsl:if>
+				<xsl:if test="$hasLength and $binData[not(assignment[@name = 'LengthCustomMethod']/value!='') or assignment[@name = 'LengthFormat']]">
+					<xsl:apply-templates select="." mode="length"/>
+				</xsl:if>
+				<xsl:if test="$binData">
+					<xsl:apply-templates select="." mode="data"/>
+				</xsl:if>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
@@ -120,6 +132,7 @@
 						</xsl:apply-templates-->
 						<referenceLink target="{value}" prefer-overload="false" show-templates="true" show-container="true"/>
 					</parameter>
+					<parameter/>
 				</include>
 				<br />
 				<xsl:call-template name="getElementDescription" />
@@ -133,7 +146,20 @@
 				<include item="fieldValueTitle"/>
 			</xsl:with-param>
 			<xsl:with-param name="content">
-				<xsl:call-template name="BinDataType"/>
+				<xsl:apply-templates select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" mode="field">
+					<xsl:with-param name="returns" select="returns"/>
+				</xsl:apply-templates>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="reference" mode="length">
+		<xsl:call-template name="subSection">
+			<xsl:with-param name="title">
+				<include item="fieldLengthTitle"/>
+			</xsl:with-param>
+			<xsl:with-param name="content">
+				<xsl:apply-templates select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" mode="length"/>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
