@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Presentation\vs2005\Content\bin_content.xml" />
+    <Xml Include="Presentation\vs2005\Content\bin_content.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="Presentation\vs2005\Content\reference_content.xml">
       <SubType>Designer</SubType>
     </Xml>
@@ -78,7 +80,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="BuildBinaries">
-    <MSBuild Projects="..\MP4\MP4.csproj" Properties="Configuration=Release; Platform=AnyCPU" />
+    <MSBuild ContinueOnError="true" Projects="..\MP4\MP4.csproj" Properties="Configuration=Release; Platform=AnyCPU" />
   </Target>
   <Target Name="CustomBuild" BeforeTargets="Build;ReBuild" DependsOnTargets="BuildBinaries">
     <MSBuild Projects="MP4.Reference.scproj" Properties="Configuration=Release; Product=MP4" />
