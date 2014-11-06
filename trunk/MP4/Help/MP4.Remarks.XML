@@ -214,6 +214,13 @@
 		<member name="F:MP4.AtomRequirements.ReqFamilialOne">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Version">
+			<remarks>
+				<para>
+					In a number of boxes there are two variant forms: version 0 using 32-bit fields, and
+					version 1 using 64-bit sizes for those same fields. In general, if a version 0 box (32-bit field sizes) can be
+					used, it should be; version 1 boxes should be used only when the 64-bit field sizes they permit, are required.
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Flags">
 		</member>

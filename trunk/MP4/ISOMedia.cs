@@ -70,14 +70,14 @@ namespace MP4
 			public bool Versioned = true;
 
 			/// <summary>
-			/// A 1-byte specification of the version of this atom.
+			/// The version of this atom.
 			/// </summary>
 			[XmlAttribute, DefaultValue(0)]
 			[BinData(BinFormat.UInt8, Condition = "Versioned")]
 			public int Version;
 
 			/// <summary>
-			/// Three bytes of space for future flags.
+			/// Future flags.
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt24, Condition = "Versioned")]
@@ -94,6 +94,9 @@ namespace MP4
 		{
 		}
 
+		/// <summary>
+		/// <c>'VOID'</c>
+		/// </summary>
 		public sealed partial class VoidBox : AtomicInfo
 		{
 			internal const string DefaultID = "VOID";
@@ -104,6 +107,9 @@ namespace MP4
 		{
 		}
 
+		/// <summary>
+		/// <c>'uuid'</c>
+		/// </summary>
 		public sealed partial class UUIDBox: ISOMUUIDBox
 		{
 			internal const string DefaultID = "uuid";
@@ -112,7 +118,7 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Movie sample data — usually this data can be interpreted only by using the movie resource.
+		/// Movie sample data <c>'mdat'</c> — usually this data can be interpreted only by using the movie resource.
 		/// </summary>
 		public sealed partial class MediaDataBox: AtomicInfo
 		{
@@ -161,23 +167,26 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Movie Header Atom
+		/// Movie Header Atom <c>'mdat'</c>
 		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(Duration)")]
 		public sealed partial class MovieHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "mvhd";
+			/// <summary>
+			/// Initializes a new instance of the Movie Header Atom <c>'mdat'</c>.
+			/// </summary>
 			public MovieHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the movie atom was created.
+			/// Specifies when the movie atom was created.
 			/// </summary>
 			[XmlAttribute]
 			[BinData(BinFormat.MacDate64, Condition = "Version == 1")]
 			[BinData(BinFormat.MacDate32)]
 			public DateTime CreationTime;
 			/// <summary>
-			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the movie atom was changed.
+			/// Specifies when the movie atom was changed.
 			/// </summary>
 			[XmlAttribute]
 			[BinData(BinFormat.MacDate64, Condition = "Version == 1")]
@@ -199,19 +208,19 @@ namespace MP4
 			[BinData(BinFormat.UInt32)]
 			public long Duration;
 			/// <summary>
-			/// A 32-bit fixed-point number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate.
+			/// A 16.16 fixed-point number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 16)]
 			[BinData(BinFormat.UInt32)]
 			public Fixed<uint, x16> PreferredRate = Fixed<uint, x16>.One;
 			/// <summary>
-			/// A 16-bit fixed-point number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
+			/// A 8.8 fixed-point number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 8)]
 			[BinData(BinFormat.UInt16)]
 			public Fixed<ushort, x8> PreferredVolume = Fixed<ushort, x8>.One;
 			/// <summary>
-			/// Ten bytes reserved. Set to 0.
+			/// Reserved. Set to 0.
 			/// </summary>
 			[XmlElement(DataType = "hexBinary")]
 			[BinData(LengthCustomMethod = "10")]
@@ -260,7 +269,7 @@ namespace MP4
 			[BinData]
 			public int CurrentTime;
 			/// <summary>
-			/// A 32-bit integer that indicates a value to use for the track ID number of the next track added to this movie. Note that 0 is not 
+			/// The track ID number of the next track added to this movie. Note that 0 is not 
 			/// a valid track ID value.
 			/// </summary>
 			[XmlAttribute]
@@ -269,6 +278,9 @@ namespace MP4
 		}
 
 		//TODO: ODF implementation
+		/// <summary>
+		/// <c>'iods'</c>
+		/// </summary>
 		public sealed partial class ObjectDescriptorBox : ISOMFullBox
 		{
 			internal const string DefaultID = "iods";
@@ -303,6 +315,9 @@ namespace MP4
 			public ushort Reserved;
 		}
 
+		/// <summary>
+		/// <c>'elst'</c>
+		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion()")]
 		public sealed partial class EditListBox : ISOMFullBox
 		{
@@ -313,6 +328,9 @@ namespace MP4
 			Collection<EdtsEntry> entryList;
 		}
 
+		/// <summary>
+		/// <c>'edts'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class EditBox : AtomicInfo
 		{
@@ -340,12 +358,15 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// User Data Atom
+		/// User Data Atom <c>'udta'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class UserDataBox: AtomicInfo
 		{
 			internal const string DefaultID = "udta";
+			/// <summary>
+			/// Initializes a new instance of the User Data Atom <c>'udta'</c>.
+			/// </summary>
 			public UserDataBox() : base(DefaultID) { }
 
 			[BinCustom]
@@ -353,7 +374,7 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// The Movie Atom
+		/// The Movie Atom <c>'moov'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieBox : AtomicInfo
@@ -425,7 +446,7 @@ namespace MP4
 			[XmlIgnore]
 			public AtomicInfo ReferenceMovie;
 			/// <summary>
-			/// Other boxes
+			/// Other atoms
 			/// </summary>
 			[BinCustom]
 			TypedBoxList boxList = TypedBoxList.Create<
@@ -442,11 +463,14 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Track Header Atom
+		/// Track Header Atom <c>'tkhd'</c>
 		/// </summary>
 		public sealed partial class TrackHeaderBox : ISOMFullBox
 		{
 			internal const string DefaultID = "tkhd";
+			/// <summary>
+			/// Initializes a new instance of the Track Header Atom <c>'tkhd'</c>.
+			/// </summary>
 			public TrackHeaderBox() : base(DefaultID) { }
 
 			[XmlAttribute]
@@ -536,12 +560,15 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Track Reference Atom
+		/// Track Reference Atom <c>'tref'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackReferenceBox : AtomicInfo
 		{
 			internal const string DefaultID = "tref";
+			/// <summary>
+			/// Initializes a new instance of the Track Reference Atom <c>'tref'</c>.
+			/// </summary>
 			public TrackReferenceBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -552,12 +579,15 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Track Atom
+		/// Track Atom <c>'trak'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackBox : AtomicInfo
 		{
 			internal const string DefaultID = "trak";
+			/// <summary>
+			/// Initializes a new instance of the Track Reference Atom <c>'tref'</c>.
+			/// </summary>
 			public TrackBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -639,23 +669,26 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Media Header Atom
+		/// Media Header Atom <c>'mdhd'</c>
 		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(Duration)")]
 		public sealed partial class MediaHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "mdhd";
+			/// <summary>
+			/// Initializes a new instance of the Media Header Atom <c>'mdhd'</c>.
+			/// </summary>
 			public MediaHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the media atom was created.
+			/// Specifies when the media atom was created.
 			/// </summary>
 			[XmlAttribute]
 			[BinData(BinFormat.MacDate64, Condition = "Version == 1")]
 			[BinData(BinFormat.MacDate32)]
 			public DateTime CreationTime;
 			/// <summary>
-			/// A 32-bit integer that specifies (in seconds since midnight, January 1, 1904) when the media atom was changed.
+			/// Specifies when the media atom was changed.
 			/// </summary>
 			[XmlAttribute]
 			[BinData(BinFormat.MacDate64, Condition = "Version == 1")]
@@ -675,13 +708,13 @@ namespace MP4
 			[BinData(BinFormat.UInt32)]
 			public long Duration;
 			/// <summary>
-			/// A 16-bit integer that specifies the language code for this media.
+			/// The language code for this media.
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt16)]
 			public PackedLanguage Language;
 			/// <summary>
-			/// A 16-bit integer that specifies the media’s playback quality—that is, its suitability for playback in a given environment.
+			/// The media’s playback quality—that is, its suitability for playback in a given environment.
 			/// </summary>
 			[XmlAttribute, DefaultValue((ushort)0)]
 			[BinData]
@@ -689,11 +722,14 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Handler Reference Atom
+		/// Handler Reference Atom <c>'hdlr'</c>
 		/// </summary>
 		public sealed partial class HandlerBox : ISOMFullBox
 		{
 			internal const string DefaultID = "hdlr";
+			/// <summary>
+			/// Initializes a new instance of the Handler Reference Atom <c>'hdlr'</c>.
+			/// </summary>
 			public HandlerBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -735,7 +771,7 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Media Atoms
+		/// Media Atom <c>'mdia'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MediaBox : AtomicInfo
@@ -756,7 +792,7 @@ namespace MP4
 			[XmlIgnore]
 			public MediaInformationBox Information { get { return boxList.Get<MediaInformationBox>(); } set { boxList.Set(value); } }
 			/// <summary>
-			/// Other
+			/// Other atoms
 			/// </summary>
 			[BinCustom]
 			TypedBoxList boxList = TypedBoxList.Create<
@@ -766,34 +802,37 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Video Media Information Header Atom
+		/// Video Media Information Header Atom <c>'vmhd'</c>
 		/// </summary>
 		public sealed partial class VideoMediaHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "vmhd";
+			/// <summary>
+			/// Initializes a new instance of the Video Media Information Header Atom <c>'vmhd'</c>.
+			/// </summary>
 			public VideoMediaHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 16-bit integer that specifies the transfer mode. The transfer mode specifies which Boolean operation QuickDraw should perform when
+			/// The transfer mode. The transfer mode specifies which Boolean operation QuickDraw should perform when
 			/// drawing or transferring an image from one location to another.
 			/// </summary>
 			[XmlAttribute, DefaultValue(GraphicsMode.SourceCopy)]
 			[BinData(BinFormat.UInt16)]
 			public GraphicsMode GraphicsMode;
 			/// <summary>
-			/// A 16-bit values that specify the red color for the transfer mode operation indicated in the graphics mode field.
+			/// The red color for the transfer mode operation indicated in the graphics mode field.
 			/// </summary>
 			[XmlAttribute, DefaultValue((ushort)0)]
 			[BinData]
 			public ushort OpcolorRed;
 			/// <summary>
-			/// A 16-bit values that specify the green color for the transfer mode operation indicated in the graphics mode field.
+			/// The green color for the transfer mode operation indicated in the graphics mode field.
 			/// </summary>
 			[XmlAttribute, DefaultValue((ushort)0)]
 			[BinData]
 			public ushort OpcolorGreen;
 			/// <summary>
-			/// A 16-bit values that specify the blue color for the transfer mode operation indicated in the graphics mode field.
+			/// The blue color for the transfer mode operation indicated in the graphics mode field.
 			/// </summary>
 			[XmlAttribute, DefaultValue((ushort)0)]
 			[BinData]
@@ -801,15 +840,18 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Sound Media Information Header Atom
+		/// Sound Media Information Header Atom <c>'smhd'</c>
 		/// </summary>
 		public sealed partial class SoundMediaHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "smhd";
+			/// <summary>
+			/// Initializes a new instance of the Sound Media Information Header Atom <c>'smhd'</c>.
+			/// </summary>
 			public SoundMediaHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 16-bit integer that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
+			/// A 8.8 fixed-point number that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
 			/// between the two speakers of a computer. This field is normally set to 0.
 			/// </summary>
 			[XmlIgnore]
@@ -823,6 +865,9 @@ namespace MP4
 			public ushort Reserved;
 		}
 
+		/// <summary>
+		/// <c>'hmhd'</c>
+		/// </summary>
 		public sealed partial class HintMediaHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "hmhd";
@@ -845,6 +890,9 @@ namespace MP4
 			public int SlidingAverageBitrate;
 		}
 
+		/// <summary>
+		/// <c>'nmhd'</c>
+		/// </summary>
 		public sealed partial class MPEGMediaHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "nmhd";
@@ -864,11 +912,14 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Data Reference Atom
+		/// Data Reference Atom <c>'dref'</c>
 		/// </summary>
 		public sealed partial class DataReferenceBox : ISOMFullBox
 		{
 			internal const string DefaultID = "dref";
+			/// <summary>
+			/// Initializes a new instance of the Data Reference Atom <c>'dref'</c>.
+			/// </summary>
 			public DataReferenceBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -879,12 +930,15 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Data Information Atom
+		/// Data Information Atom <c>'dinf'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DataInformationBox : AtomicInfo
 		{
 			internal const string DefaultID = "dinf";
+			/// <summary>
+			/// Initializes a new instance of the Data Information Atom <c>'dinf'</c>.
+			/// </summary>
 			public DataInformationBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -910,6 +964,9 @@ namespace MP4
 			public override string Location { get; set; }
 		}
 
+		/// <summary>
+		/// <c>'url '</c>
+		/// </summary>
 		public sealed partial class DataEntryURLBox : ISOMDataEntryFields
 		{
 			internal const string DefaultID = "url ";
@@ -920,6 +977,9 @@ namespace MP4
 			public override string Location { get; set; }
 		}
 
+		/// <summary>
+		/// <c>'urn '</c>
+		/// </summary>
 		public sealed partial class DataEntryURNBox : ISOMDataEntryFields
 		{
 			internal const string DefaultID = "urn ";
@@ -945,6 +1005,9 @@ namespace MP4
 			public int SampleDelta;
 		}
 
+		/// <summary>
+		/// <c>'stts'</c>
+		/// </summary>
 		public sealed partial class TimeToSampleBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stts";
@@ -965,6 +1028,9 @@ namespace MP4
 			public int DecodingOffset;
 		}
 
+		/// <summary>
+		/// <c>'ctts'</c>
+		/// </summary>
 		public sealed partial class CompositionOffsetBox : ISOMFullBox
 		{
 			internal const string DefaultID = "ctts";
@@ -989,6 +1055,9 @@ namespace MP4
 			public ushort[] FragmentSizes;
 		}
 
+		/// <summary>
+		/// <c>'STSF'</c>
+		/// </summary>
 		public sealed partial class SampleFragmentBox : ISOMFullBox
 		{
 			internal const string DefaultID = "STSF";
@@ -1032,6 +1101,9 @@ namespace MP4
 			public byte[] Data;
 		}
 
+		/// <summary>
+		/// <c>'esds'</c>
+		/// </summary>
 		public sealed partial class ESDBox : ISOMFullBox
 		{
 			internal const string DefaultID = "esds";
@@ -1083,6 +1155,9 @@ namespace MP4
 				ProtectionInfoBox>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'lsrC'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class LASeRConfigurationBox : AtomicInfo
 		{
@@ -1094,6 +1169,9 @@ namespace MP4
 			public byte[] Header;
 		}
 
+		/// <summary>
+		/// <c>'lsr1'</c>
+		/// </summary>
 		public sealed partial class LASeRSampleEntryBox : ISOMSampleEntryFields
 		{
 			internal const string DefaultID = "lsr1";
@@ -1116,6 +1194,9 @@ namespace MP4
 				MPEG4BitRateBox>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'pasp'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PixelAspectRatioBox : AtomicInfo
 		{
@@ -1130,6 +1211,9 @@ namespace MP4
 			public int VSpacing;
 		}
 
+		/// <summary>
+		/// <c>'rvcc'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RVCConfigurationBox : AtomicInfo
 		{
@@ -1419,6 +1503,9 @@ namespace MP4
 			public byte[] Data;
 		}
 
+		/// <summary>
+		/// <c>'dac3'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class AC3ConfigBox : AtomicInfo
 		{
@@ -1457,6 +1544,9 @@ namespace MP4
 			}
 		}
 
+		/// <summary>
+		/// <c>'ac-3'</c>
+		/// </summary>
 		public sealed partial class AC3SampleEntryBox : ISOMAudioSampleEntry
 		{
 			internal const string DefaultID = "ac-3";
@@ -1520,6 +1610,9 @@ namespace MP4
 			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'metx'</c>
+		/// </summary>
 		public sealed partial class MetaDataSampleEntryBox : ISOMSampleEntryFields
 		{
 			internal const string DefaultID = "metx";
@@ -1545,6 +1638,9 @@ namespace MP4
 				MPEG4BitRateBox>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'stsd'</c>
+		/// </summary>
 		public sealed partial class SampleDescriptionBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stsd";
@@ -1565,6 +1661,9 @@ namespace MP4
 			protected abstract int[] Sizes { get; set; }
 		}
 
+		/// <summary>
+		/// <c>'stsz'</c>
+		/// </summary>
 		public sealed partial class FixedSampleSizeBox : SampleSizeBox
 		{
 			internal const string DefaultID = "stsz";
@@ -1582,6 +1681,9 @@ namespace MP4
 			protected override int[] Sizes { get; set; }
 		}
 
+		/// <summary>
+		/// <c>'stz2'</c>
+		/// </summary>
 		public sealed partial class CompactSampleSizeBox : SampleSizeBox
 		{
 			internal const string DefaultID = "stz2";
@@ -1600,6 +1702,9 @@ namespace MP4
 			protected override int[] Sizes { get; set; }
 		}
 
+		/// <summary>
+		/// <c>'stco'</c>
+		/// </summary>
 		public sealed partial class ChunkOffsetBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stco";
@@ -1610,6 +1715,9 @@ namespace MP4
 			public int[] Offsets;
 		}
 
+		/// <summary>
+		/// <c>'co64'</c>
+		/// </summary>
 		public sealed partial class ChunkLargeOffsetBox : ISOMFullBox
 		{
 			internal const string DefaultID = "co64";
@@ -1634,6 +1742,9 @@ namespace MP4
 			public int SampleDescriptionIndex;
 		}
 
+		/// <summary>
+		/// <c>'stsc'</c>
+		/// </summary>
 		public sealed partial class SampleToChunkBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stsc";
@@ -1643,6 +1754,9 @@ namespace MP4
 			List<StscEntry> entries = new List<StscEntry>();
 		}
 
+		/// <summary>
+		/// <c>'stss'</c>
+		/// </summary>
 		public sealed partial class SyncSampleBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stss";
@@ -1664,6 +1778,9 @@ namespace MP4
 			public int SyncSampleNumber;//s32
 		}
 
+		/// <summary>
+		/// <c>'stsh'</c>
+		/// </summary>
 		public sealed partial class ShadowSyncBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stsh";
@@ -1673,6 +1790,9 @@ namespace MP4
 			List<StshEntry> entries = new List<StshEntry>();
 		}
 
+		/// <summary>
+		/// <c>'stdp'</c>
+		/// </summary>
 		public sealed partial class DegradationPriorityBox : ISOMFullBox
 		{
 			internal const string DefaultID = "stdp";
@@ -1686,6 +1806,9 @@ namespace MP4
 			public short[] Priorities;
 		}
 
+		/// <summary>
+		/// <c>'padb'</c>
+		/// </summary>
 		public sealed partial class PaddingBitsBox : ISOMFullBox
 		{
 			internal const string DefaultID = "padb";
@@ -1695,6 +1818,9 @@ namespace MP4
 			public sbyte[] PadBits;
 		}
 
+		/// <summary>
+		/// <c>'sdtp'</c>
+		/// </summary>
 		public sealed partial class SampleDependencyTypeBox : ISOMFullBox
 		{
 			internal const string DefaultID = "sdtp";
@@ -1735,6 +1861,9 @@ namespace MP4
 			public int Reserved;
 		}
 
+		/// <summary>
+		/// <c>'subs'</c>
+		/// </summary>
 		public sealed partial class SubSampleInformationBox : ISOMFullBox
 		{
 			internal const string DefaultID = "subs";
@@ -1745,12 +1874,15 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Sample Table Atom
+		/// Sample Table Atom <c>'stbl'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class SampleTableBox : AtomicInfo
 		{
 			internal const string DefaultID = "stbl";
+			/// <summary>
+			/// Initializes a new instance of the Sample Table Atom <c>'stbl'</c>.
+			/// </summary>
 			public SampleTableBox() : base(DefaultID) { }
 
 			/// <summary>
@@ -1861,7 +1993,9 @@ namespace MP4
 				SampleFragmentBox>(AllowUnknownBox);
 		}
 
-		//__tag_media_info_box
+		/// <summary>
+		/// <c>'minf'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MediaInformationBox : AtomicInfo
 		{
@@ -1902,12 +2036,15 @@ namespace MP4
 
 
 		/// <summary>
-		/// Unused space available in file.
+		/// Unused space available in file <c>'free'</c>.
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class FreeSpaceBox: AtomicInfo
 		{
 			internal const string DefaultID = "free";
+			/// <summary>
+			/// Initializes a new instance of the Unused space atom <c>'free'</c>.
+			/// </summary>
 			public FreeSpaceBox() : base(DefaultID) { }
 
 			[XmlIgnore]
@@ -1916,11 +2053,14 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// ISO Copyright statement
+		/// ISO Copyright statement <c>'cprt'</c>
 		/// </summary>
 		public sealed partial class CopyrightBox : ISOMFullBox
 		{
 			internal const string DefaultID = "cprt";
+			/// <summary>
+			/// Initializes a new instance of the ISO Copyright statement atom <c>'cprt'</c>.
+			/// </summary>
 			public CopyrightBox() : base(DefaultID) { }
 
 			[XmlIgnore]
@@ -1942,6 +2082,9 @@ namespace MP4
 		}
 
 		//this is using chpl format according to some NeroRecode samples
+		/// <summary>
+		/// <c>'chpl'</c>
+		/// </summary>
 		public sealed partial class ChapterListBox : ISOMFullBox
 		{
 			internal const string DefaultID = "chpl";
@@ -1955,16 +2098,19 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Track reference type atom
+		/// Track reference type atom <c>'REFT'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public partial class TrackReferenceTypeBox : AtomicInfo
 		{
 			internal const string DefaultID = "REFT";
+			/// <summary>
+			/// Initializes a new instance of the Track reference type atom <c>'REFT'</c>.
+			/// </summary>
 			public TrackReferenceTypeBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A list of track ID values (32-bit integers) specifying the related tracks. Note that this is one case where track ID values can be
+			/// A list of track ID values specifying the related tracks. Note that this is one case where track ID values can be
 			/// set to 0. Unused entries in the atom may have a track ID value of 0. Setting the track ID to 0 may be more convenient than deleting
 			/// the reference.
 			/// </summary>
@@ -1984,6 +2130,9 @@ namespace MP4
 
 		public sealed class ChapterTrackReferenceBox : TrackReferenceTypeBox { }
 
+		/// <summary>
+		/// <c>'jP  '</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class JPEG2000Atom: AtomicInfo
 		{
@@ -1996,7 +2145,7 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// The File Type Compatibility Atom
+		/// The File Type Compatibility Atom <c>'ftyp'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class FileTypeBox: AtomicInfo
@@ -2008,13 +2157,13 @@ namespace MP4
 			public FileTypeBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 32-bit unsigned integer that identifies compatible file format.
+			/// Identifies compatible file format.
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode Brand;
 			/// <summary>
-			/// A 32-bit field that indicates the file format specification version.
+			/// The file format specification version; minor version of the major brand in general.
 			/// </summary>
 			[XmlIgnore]
 			[BinData]
@@ -2029,6 +2178,9 @@ namespace MP4
 			public AtomicCode[] CompatibleBrand = EmptyBrands;
 		}
 
+		/// <summary>
+		/// <c>'pdin'</c>
+		/// </summary>
 		public sealed partial class ProgressiveDownloadBox : ISOMFullBox
 		{
 			internal const string DefaultID = "pdin";
@@ -2478,6 +2630,9 @@ namespace MP4
 
 /*V2 boxes - Movie Fragments*/
 
+		/// <summary>
+		/// <c>'mehd'</c>
+		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(FragmentDuration)")]
 		public sealed partial class MovieExtendsHeaderBox : ISOMFullBox
 		{
@@ -2490,7 +2645,9 @@ namespace MP4
 			public long FragmentDuration;
 		}
 
-		//__tag_mvex_box
+		/// <summary>
+		/// <c>'mvex'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieExtendsBox : AtomicInfo
 		{
@@ -2508,6 +2665,9 @@ namespace MP4
 		}
 
 		/*the TrackExtends contains default values for the track fragments*/
+		/// <summary>
+		/// <c>'trex'</c>
+		/// </summary>
 		public sealed partial class TrackExtendsBox : ISOMFullBox
 		{
 			internal const string DefaultID = "trex";
@@ -2530,7 +2690,10 @@ namespace MP4
 			public int DefaultSampleFlags;
 		}
 
-/*indicates the seq num of this fragment*/
+		/*indicates the seq num of this fragment*/
+		/// <summary>
+		/// <c>'mfhd'</c>
+		/// </summary>
 		public sealed partial class MovieFragmentHeaderBox : ISOMFullBox
 		{
 			internal const string DefaultID = "mfhd";
@@ -2541,7 +2704,10 @@ namespace MP4
 			public int SequenceNumber;
 		}
 
-/*MovieFragment is a container IN THE FILE, contains 1 fragment*/
+		/*MovieFragment is a container IN THE FILE, contains 1 fragment*/
+		/// <summary>
+		/// <c>'moof'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MovieFragmentBox : AtomicInfo
 		{
@@ -2562,6 +2728,9 @@ namespace MP4
 				TrackFragmentBox[]>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'tfhd'</c>
+		/// </summary>
 		public sealed partial class TrackFragmentHeaderBox : ISOMFullBox
 		{
 			internal const string DefaultID = "tfhd";
@@ -2594,6 +2763,9 @@ namespace MP4
 			//public int EmptyDuration;
 		}
 
+		/// <summary>
+		/// <c>'tfdt'</c>
+		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(BaseMediaDecodeTime)")]
 		public sealed partial class TFBaseMediaDecodeTimeBox : ISOMFullBox
 		{
@@ -2606,6 +2778,9 @@ namespace MP4
 			public long BaseMediaDecodeTime;
 		}
 
+		/// <summary>
+		/// <c>'traf'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TrackFragmentBox : AtomicInfo
 		{
@@ -2640,6 +2815,9 @@ namespace MP4
 				TrackFragmentRunBox[]>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'trun'</c>
+		/// </summary>
 		public sealed partial class TrackFragmentRunBox : ISOMFullBox
 		{
 			internal const string DefaultID = "trun";
@@ -2705,7 +2883,7 @@ namespace MP4
 			public int[] AltBrand;
 		}
 
-/*RTP Hint Track Sample Entry*/
+		/*RTP Hint Track Sample Entry*/
 		public sealed partial class HintSampleEntryBox : ISOMSampleEntryFields
 		{
 			//this type is used internally for protocols that share the same base entry
@@ -2723,6 +2901,9 @@ namespace MP4
 			BoxCollection boxList = new BoxCollection();
 		}
 
+		/// <summary>
+		/// <c>'rtp '</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RTPBox : AtomicInfo
 		{
@@ -2737,6 +2918,9 @@ namespace MP4
 			public string SDPText;
 		}
 
+		/// <summary>
+		/// <c>'sdp '</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class SDPBox : AtomicInfo
 		{
@@ -2748,6 +2932,9 @@ namespace MP4
 			public string SDPText;
 		}
 
+		/// <summary>
+		/// <c>'rtpo'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RTPOBox : AtomicInfo
 		{
@@ -2761,6 +2948,9 @@ namespace MP4
 			public int TimeOffset;//s32
 		}
 
+		/// <summary>
+		/// <c>'hnti'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class HintTrackInfoBox : AtomicInfo
 		{
@@ -2789,6 +2979,9 @@ namespace MP4
 				TypedBoxList.Or<RTPBox, SDPBox>>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'rely'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class RelyHintBox : AtomicInfo
 		{
@@ -2808,6 +3001,9 @@ namespace MP4
 /***********************************************************
 			data entry tables for RTP
 ***********************************************************/
+		/// <summary>
+		/// <c>'tims'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TSHintEntryBox : AtomicInfo
 		{
@@ -2819,6 +3015,9 @@ namespace MP4
 			public int TimeScale;
 		}
 
+		/// <summary>
+		/// <c>'tsro'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TimeOffHintEntryBox : AtomicInfo
 		{
@@ -2830,6 +3029,9 @@ namespace MP4
 			public int TimeOffset;
 		}
 
+		/// <summary>
+		/// <c>'snro'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class SeqOffHintEntryBox : AtomicInfo
 		{
@@ -2845,7 +3047,10 @@ namespace MP4
 			hint track information boxes for RTP
 ***********************************************************/
 
-/*Total number of bytes that will be sent, including 12-byte RTP headers, but not including any network headers*/
+		/*Total number of bytes that will be sent, including 12-byte RTP headers, but not including any network headers*/
+		/// <summary>
+		/// <c>'trpy'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TRPYBox : AtomicInfo
 		{
@@ -2857,8 +3062,9 @@ namespace MP4
 			public long RTPBytesSent;
 		}
 
+		/*The total number of bytes that will be sent, including 12-byte RTP headers, but not including any network headers*/
 		/// <summary>
-		/// The total number of bytes that will be sent, including 12-byte RTP headers, but not including any network headers.
+		/// <c>'totl'</c>
 		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TOTLBox: AtomicInfo
@@ -2872,6 +3078,9 @@ namespace MP4
 		}
 
 		/*Total number of network packets that will be sent*/
+		/// <summary>
+		/// <c>'nump'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NUMPBox : AtomicInfo
 		{
@@ -2884,6 +3093,9 @@ namespace MP4
 		}
 
 		/*32-bits version of nump used in Darwin*/
+		/// <summary>
+		/// <c>'npck'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NPCKBox : AtomicInfo
 		{
@@ -2897,6 +3109,9 @@ namespace MP4
 
 
 		/*Total number of bytes that will be sent, not including 12-byte RTP headers*/
+		/// <summary>
+		/// <c>'tpyl'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NTYLBox : AtomicInfo
 		{
@@ -2909,6 +3124,9 @@ namespace MP4
 		}
 
 		/*32-bits version of tpyl used in Darwin*/
+		/// <summary>
+		/// <c>'tpay'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TPAYBox : AtomicInfo
 		{
@@ -2921,6 +3139,9 @@ namespace MP4
 		}
 
 		/*Maximum data rate in bits per second.*/
+		/// <summary>
+		/// <c>'maxr'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class MAXRBox : AtomicInfo
 		{
@@ -2937,6 +3158,9 @@ namespace MP4
 
 
 		/*Total number of bytes from the media track to be sent*/
+		/// <summary>
+		/// <c>'dmed'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DMEDBox : AtomicInfo
 		{
@@ -2949,6 +3173,9 @@ namespace MP4
 		}
 
 		/*Number of bytes of immediate data to be sent*/
+		/// <summary>
+		/// <c>'dimm'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DIMMBox : AtomicInfo
 		{
@@ -2962,6 +3189,9 @@ namespace MP4
 
 
 		/*Number of bytes of repeated data to be sent*/
+		/// <summary>
+		/// <c>'drep'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DREPBox : AtomicInfo
 		{
@@ -2974,6 +3204,9 @@ namespace MP4
 		}
 
 		/*Smallest relative transmission time, in milliseconds. signed integer for smoothing*/
+		/// <summary>
+		/// <c>'tmin'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TMINBox : AtomicInfo
 		{
@@ -2986,6 +3219,9 @@ namespace MP4
 		}
 
 		/*Largest relative transmission time, in milliseconds.*/
+		/// <summary>
+		/// <c>'tmax'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class TMAXBox : AtomicInfo
 		{
@@ -2998,6 +3234,9 @@ namespace MP4
 		}
 
 		/*Largest packet, in bytes, including 12-byte RTP header*/
+		/// <summary>
+		/// <c>'pmax'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PMAXBox : AtomicInfo
 		{
@@ -3010,6 +3249,9 @@ namespace MP4
 		}
 
 		/*Longest packet duration, in milliseconds*/
+		/// <summary>
+		/// <c>'dmax'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class DMAXBox : AtomicInfo
 		{
@@ -3022,6 +3264,9 @@ namespace MP4
 		}
 
 		/*32-bit payload type number, followed by rtpmap payload string */
+		/// <summary>
+		/// <c>'payt'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PAYTBox : AtomicInfo
 		{
@@ -3037,6 +3282,9 @@ namespace MP4
 		}
 
 
+		/// <summary>
+		/// <c>'name'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class NameBox : AtomicInfo
 		{
@@ -3048,6 +3296,9 @@ namespace MP4
 			public string String;
 		}
 
+		/// <summary>
+		/// <c>'hinf'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class HintInfoBox : AtomicInfo
 		{
@@ -3187,6 +3438,9 @@ namespace MP4
 			public int SAPDeltaTime { get { return (int)sapData.Bits(28, 0); } set { sapData = sapData.Bits(28, 0, (uint)value); } }
 		}
 
+		/// <summary>
+		/// <c>'sidx'</c>
+		/// </summary>
 		public sealed partial class SegmentIndexBox : ISOMFullBox
 		{
 			internal const string DefaultID = "sidx";
@@ -3214,6 +3468,9 @@ namespace MP4
 			public List<SIDXReference> Refs = new List<SIDXReference>();
 		}
 
+		/// <summary>
+		/// <c>'pcrb'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class PcrInfoBox : AtomicInfo
 		{
@@ -3238,6 +3495,9 @@ namespace MP4
 			public int GroupDescriptionIndex;
 		}
 
+		/// <summary>
+		/// <c>'sbgp'</c>
+		/// </summary>
 		public sealed partial class SampleGroupBox : ISOMFullBox
 		{
 			internal const string DefaultID = "sbgp";
@@ -3254,6 +3514,9 @@ namespace MP4
 			List<SampleGroupEntry> sampleEntries = new List<SampleGroupEntry>();
 		}
 
+		/// <summary>
+		/// <c>'sgpd'</c>
+		/// </summary>
 		public sealed partial class SampleGroupDescriptionBox : ISOMFullBox
 		{
 			internal const string DefaultID = "sgpd";
@@ -3339,7 +3602,7 @@ namespace MP4
 			public string TempFile;
 		}
 
-/*file mapping handler. used if supported, only on read mode for complete files  (not in file download)*/
+		/*file mapping handler. used if supported, only on read mode for complete files  (not in file download)*/
 		public sealed partial class FileMappingDataMap : ISOMBaseDataHandler
 		{
 			[XmlAttribute]

@@ -583,8 +583,11 @@ append 'S', 'W' or 'B': lat=55S, long=90.23W, alt=90.25B"
 
 		static void ShowVersionInfo(TextWriter writer)
 		{
+			var assm = typeof(Program).Assembly;
+			var ver = (System.Reflection.AssemblyFileVersionAttribute)assm.GetCustomAttributes(
+				typeof(System.Reflection.AssemblyFileVersionAttribute), true).FirstOrDefault();
 			writer.WriteLine("AtomicParsley version: {0} (.NET)",
-				typeof(Program).Assembly.GetName().Version.ToString(3));
+				ver != null ? ver.Version : assm.GetName().Version.ToString(3));
 		}
 
 		static void WriteOptionSummary(TextWriter writer, string title, params Option[] opts)
