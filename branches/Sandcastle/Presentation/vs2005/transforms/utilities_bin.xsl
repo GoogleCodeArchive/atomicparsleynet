@@ -725,7 +725,7 @@
 				<xsl:when test="$comments/bincondition_summary">
 					<include item="conditionSummary">
 						<parameter>
-							<xsl:apply-templates select="$comments/bincondition_summary"/>
+							<xsl:apply-templates select="$comments/bincondition_summary/node()"/>
 						</parameter>
 					</include>
 				</xsl:when>

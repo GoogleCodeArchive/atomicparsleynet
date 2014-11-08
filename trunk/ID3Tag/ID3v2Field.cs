@@ -56,15 +56,15 @@ namespace ID3v2
 	/// "The frame body consists of a description of the string, represented as a
 	/// terminated string, followed by the actual string."
 	///
-	///     Description       <text string according to encoding> $00 (00)
-	///     Value             <text string according to encoding>
+	///     Description       &lt;text string according to encoding&gt; $00 (00)
+	///     Value             &lt;text string according to encoding&gt;
 	///
 	/// Note how description is expressly *worded* as having a NULL terminator, but
 	/// the text field is not.  GEOB text clarifies things better: "The first two
 	/// strings [mime & filename] may be omitted, leaving only their terminations.
 	///
-	///     MIME type              <text string> $00
-	///     Filename               <text string according to encoding> $00 (00)
+	///     MIME type              &lt;text string&gt; $00
+	///     Filename               &lt;text string according to encoding&gt; $00 (00)
 	///
 	/// so these trailing $00 (00) are the terminators for the strings - not
 	/// separators between n-length string fields.  If the string is devoid of
