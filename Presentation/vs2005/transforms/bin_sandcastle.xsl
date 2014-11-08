@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.1">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.1"
+	xmlns:msxsl="urn:schemas-microsoft-com:xslt">
 
 	<!-- stuff specified to comments authored in DDUEXML -->
 	<xsl:param name="omitXmlnsBoilerplate" select="'false'" />
@@ -18,12 +19,13 @@
 	<xsl:template name="body">
 		<!-- auto-inserted info -->
 		<!-- <xsl:apply-templates select="/document/reference/attributes" /> -->
+		<xsl:apply-templates select="/document/comments/preliminary" />
+		<xsl:apply-templates select="/document/comments/summary" />
 		<!-- assembly information -->
 		<xsl:if test="not($group='root' or $group='namespace')">
 			<xsl:call-template name="requirementsInfo"/>
 		</xsl:if>
-		<xsl:apply-templates select="/document/comments/preliminary" />
-		<xsl:apply-templates select="/document/comments/summary" />
+		<xsl:apply-templates select="/document/comments/binblock_summary" />
 		<!-- members -->
 		<xsl:choose>
 			<xsl:when test="$group='root'">
@@ -56,18 +58,6 @@
 
 	</xsl:template> 
 
-	<xsl:template name="getConditionDescription">
-		<xsl:apply-templates select="/document/comments/condition_summary" />
-	</xsl:template>
-
-	<xsl:template name="getLengthDescription">
-		<xsl:apply-templates select="/document/comments/length_summary" />
-	</xsl:template>
-
-	<xsl:template name="getCountDescription">
-		<xsl:apply-templates select="/document/comments/count_summary" />
-	</xsl:template>
-
 	<xsl:template name="getElementDescription">
 		<xsl:apply-templates select="summary[1]" />
 	</xsl:template>
@@ -81,29 +71,73 @@
 
 	<!-- block sections -->
 
-	<xsl:template match="reference" mode="field">
-		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
-		<xsl:variable name="formatArg" select="$binData/argument[type/@api = 'T:FRAFV.Binary.Serialization.BinFormat']|$binData/assignment[@name = 'Format']"/>
-		<xsl:variable name="hasEncoding" select="$formatArg/enumValue/field[@name = 'CString' or @name = 'PString' or @name = 'Char'] or not($formatArg) and returns//type[@api = 'T:System.String' or @api = 'T:System.Char']"/>
-		<xsl:variable name="hasLength" select="$formatArg/enumValue/field[@name = 'Binary' or @name = 'PString'] or not($formatArg) and returns/arrayOf/type[@api = 'T:System.Byte' or @api = 'T:System.Char']"/>
+	<xsl:template match="attribute" mode="field">
+		<xsl:param name="comments" select="parent::attributes/parent::*"/>
 
-		<xsl:call-template name="section">
-			<xsl:with-param name="toggleSwitch" select="'field'" />
-			<xsl:with-param name="title">
-				<include item="fieldDataTitle"/>
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:if test="$hasEncoding">
-					<xsl:apply-templates select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute' and assignment[@name = 'BinaryReaderType' or @name = 'BinaryWriterType']][1]" mode="serializer" />
-				</xsl:if>
-				<xsl:if test="$hasLength and $binData[not(assignment[@name = 'LengthCustomMethod']/value!='') or assignment[@name = 'LengthFormat']]">
-					<xsl:apply-templates select="." mode="length"/>
-				</xsl:if>
-				<xsl:if test="$binData">
-					<xsl:apply-templates select="." mode="data"/>
-				</xsl:if>
-			</xsl:with-param>
-		</xsl:call-template>
+		<include item="typeLink">
+			<parameter>
+				<span class="keyword">
+					<xsl:apply-templates select="." mode="formatlink"/>
+				</span>
+			</parameter>
+			<parameter>
+				<xsl:apply-templates select="." mode="formatinfo"/>
+			</parameter>
+			<parameter>
+				<xsl:apply-templates select="." mode="conditioninfo">
+					<xsl:with-param name="comments" select="$comments"/>
+				</xsl:apply-templates>
+			</parameter>
+		</include>
+		<br />
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="length">
+		<xsl:param name="comments" select="parent::attributes/parent::*"/>
+		<xsl:variable name="lengthFormat">
+			<xsl:call-template name="ResolveLengthFormat"/>
+		</xsl:variable>
+
+		<xsl:if test="normalize-space($lengthFormat) != ''">
+			<include item="typeLink">
+				<parameter>
+					<span class="keyword">
+						<xsl:value-of select="$lengthFormat"/>
+					</span>
+				</parameter>
+				<parameter>
+					<include item="{$lengthFormat}Format"/>
+				</parameter>
+				<parameter>
+					<xsl:apply-templates select="." mode="conditioninfo">
+						<xsl:with-param name="comments" select="$comments"/>
+					</xsl:apply-templates>
+				</parameter>
+			</include>
+			<br />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="count">
+		<xsl:param name="comments" select="parent::attributes/parent::*"/>
+		<xsl:variable name="countFormat">
+			<xsl:call-template name="ResolveCountFormat"/>
+		</xsl:variable>
+
+		<xsl:if test="normalize-space($countFormat) != ''">
+			<include item="typeLink">
+				<parameter>
+					<span class="keyword">
+						<xsl:value-of select="$countFormat"/>
+					</span>
+				</parameter>
+				<parameter>
+					<include item="{$countFormat}Format"/>
+				</parameter>
+				<parameter/>
+			</include>
+			<br />
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="attribute" mode="serializer">
@@ -117,7 +151,7 @@
 		</xsl:call-template>
 	</xsl:template>
 
-		<xsl:template match="assignment" mode="serializer">
+	<xsl:template match="assignment" mode="serializer">
 		<dl serializerType="{@name}">
 			<dt>
 				<span class="parameter">
@@ -133,6 +167,7 @@
 						<referenceLink target="{value}" prefer-overload="false" show-templates="true" show-container="true"/>
 					</parameter>
 					<parameter/>
+					<parameter/>
 				</include>
 				<br />
 				<xsl:call-template name="getElementDescription" />
@@ -140,80 +175,10 @@
 		</dl>
 	</xsl:template>
 
-	<xsl:template match="reference" mode="data">
-		<xsl:call-template name="subSection">
-			<xsl:with-param name="title">
-				<include item="fieldValueTitle"/>
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:apply-templates select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" mode="field">
-					<xsl:with-param name="returns" select="returns"/>
-				</xsl:apply-templates>
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:template>
-
-	<xsl:template match="reference" mode="length">
-		<xsl:call-template name="subSection">
-			<xsl:with-param name="title">
-				<include item="fieldLengthTitle"/>
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:apply-templates select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" mode="length"/>
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:template>
-
-	<xsl:template match="summary">
+	<xsl:template match="summary|value|returns|bincondition_summary|binlength_summary|bincount_summary|bindata_summary|binblock_summary">
 		<div class="summary">
 			<xsl:apply-templates />
 		</div>
-	</xsl:template>
-
-	<xsl:template match="value">
-		<xsl:call-template name="subSection">
-			<xsl:with-param name="title">
-				<include item="fieldValueTitle" />
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:apply-templates />
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:template>
-
-	<xsl:template match="returns">
-		<xsl:call-template name="subSection">
-			<xsl:with-param name="title">
-				<include item="propertyValueTitle" />
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:apply-templates />
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:template>
-
-	<xsl:template match="templates">
-		<xsl:call-template name="section">
-			<xsl:with-param name="toggleSwitch" select="'templates'" />
-			<xsl:with-param name="title">
-				<include item="templatesTitle" />
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<dl>
-					<xsl:for-each select="template">
-						<xsl:variable name="templateName" select="@name" />
-						<dt>
-							<span class="parameter">
-								<xsl:value-of select="$templateName"/>
-							</span>
-						</dt>
-						<dd>
-							<xsl:apply-templates select="/document/comments/typeparam[@name=$templateName]" />
-						</dd>
-					</xsl:for-each>
-				</dl>
-			</xsl:with-param>
-		</xsl:call-template>
 	</xsl:template>
 
 	<xsl:template match="remarks">
@@ -228,26 +193,26 @@
 		<p><xsl:apply-templates /></p>
 	</xsl:template>
 
-<xsl:template name="seealso">
-	<xsl:if test="$hasSeeAlsoSection">
-		<xsl:call-template name="section">
-			<xsl:with-param name="toggleSwitch" select="'seeAlso'" />
-			<xsl:with-param name="title">
-				<include item="relatedTitle" />
-			</xsl:with-param>
-			<xsl:with-param name="content">
-				<xsl:call-template name="autogenSeeAlsoLinks"/>
-				<xsl:for-each select="/document/comments//seealso | /document/reference/elements/element/overloads//seealso">
-					<div class="seeAlsoStyle">
-						<xsl:apply-templates select=".">
-							<xsl:with-param name="displaySeeAlso" select="true()" />
-						</xsl:apply-templates>
-					</div>
-				</xsl:for-each>
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:if>
-</xsl:template>
+	<xsl:template name="seealso">
+		<xsl:if test="$hasSeeAlsoSection">
+			<xsl:call-template name="section">
+				<xsl:with-param name="toggleSwitch" select="'seeAlso'" />
+				<xsl:with-param name="title">
+					<include item="relatedTitle" />
+				</xsl:with-param>
+				<xsl:with-param name="content">
+					<xsl:call-template name="autogenSeeAlsoLinks"/>
+					<xsl:for-each select="/document/comments//seealso | /document/reference/elements/element/overloads//seealso">
+						<div class="seeAlsoStyle">
+							<xsl:apply-templates select=".">
+								<xsl:with-param name="displaySeeAlso" select="true()" />
+							</xsl:apply-templates>
+						</div>
+					</xsl:for-each>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
 
 	<xsl:template match="list[@type='bullet']">
 		<ul>
@@ -405,7 +370,25 @@
 		<referenceLink target="{$id}" qualified="{$qualified}" />
 
 	</xsl:template>
- 
+
+	<xsl:template name="fieldsection">
+		<xsl:param name="name"/>
+		<xsl:param name="term"/>
+		<xsl:param name="content"/>
+		<xsl:param name="exists" select="$content and (normalize-space($content) != '' or msxsl:node-set($content)/*)"/>
+
+		<xsl:if test="$exists">
+			<dl fieldName="{$name}">
+				<dt>
+					<xsl:copy-of select="$term" />
+				</dt>
+				<dd>
+					<xsl:copy-of select="$content" />
+				</dd>
+			</dl>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template name="section">
 		<xsl:param name="toggleSwitch" />
 		<xsl:param name="title" />
@@ -414,20 +397,22 @@
 		<xsl:variable name="toggleTitle" select="concat($toggleSwitch,'Toggle')" />
 		<xsl:variable name="toggleSection" select="concat($toggleSwitch,'Section')" />
 
-		<h1 class="heading">
-			<span onclick="ExpandCollapse({$toggleTitle})" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey({$toggleTitle}, event)" tabindex="0">
-			<img id="{$toggleTitle}" class="toggle" name="toggleSwitch">
-				<includeAttribute name="src" item="iconPath">
-					<parameter>collapse_all.gif</parameter>
-				</includeAttribute>
-			</img>
-			<xsl:copy-of select="$title" />
-			</span>
-		</h1>
+		<xsl:if test="$content and (normalize-space($content) != '' or msxsl:node-set($content)/*)">
+			<h1 class="heading">
+				<span onclick="ExpandCollapse({$toggleTitle})" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey({$toggleTitle}, event)" tabindex="0">
+					<img id="{$toggleTitle}" class="toggle" name="toggleSwitch">
+						<includeAttribute name="src" item="iconPath">
+							<parameter>collapse_all.gif</parameter>
+						</includeAttribute>
+					</img>
+					<xsl:copy-of select="$title" />
+				</span>
+			</h1>
 
-		<div id="{$toggleSection}" class="section" name="collapseableSection" style="">
-			<xsl:copy-of select="$content" />
-		</div>
+			<div id="{$toggleSection}" class="section" name="collapseableSection" style="">
+				<xsl:copy-of select="$content" />
+			</div>
+		</xsl:if>
 
 	</xsl:template>
 
@@ -435,10 +420,12 @@
 		<xsl:param name="title" />
 		<xsl:param name="content" />
 
-		<h4 class="subHeading">
-			<xsl:copy-of select="$title" />
-		</h4>
-		<xsl:copy-of select="$content" />
+		<xsl:if test="$content and (normalize-space($content) != '' or msxsl:node-set($content)/*)">
+			<h4 class="subHeading">
+				<xsl:copy-of select="$title" />
+			</h4>
+			<xsl:copy-of select="$content" />
+		</xsl:if>
 
 	</xsl:template>
 

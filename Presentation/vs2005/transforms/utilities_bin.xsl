@@ -446,6 +446,9 @@
 									<include item="memberNameHeader"/>
 								</th>
 								<th class="descriptionColumn">
+									<include item="memberValueHeader" />
+								</th>
+								<th class="descriptionColumn">
 									<include item="memberDescriptionHeader" />
 								</th>
 							</tr>
@@ -470,139 +473,350 @@
 
 					<xsl:variable name="fieldName" select="normalize-space(apidata/@name)" />
 					<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
-					<xsl:variable name="formatArg" select="$binData/argument[type/@api = 'T:FRAFV.Binary.Serialization.BinFormat']|$binData/assignment[@name = 'Format']"/>
-					<xsl:variable name="hasLength" select="$formatArg/enumValue/field[@name = 'Binary' or @name = 'PString'] or not($formatArg) and returns/arrayOf/type[@api = 'T:System.Byte' or @api = 'T:System.Char']"/>
+					<xsl:variable name="binArray" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']" />
+					<xsl:variable name="lengthItem">
+						<xsl:choose>
+							<xsl:when test="$binArray or bincount_summary">lengthItemFieldName</xsl:when>
+							<xsl:otherwise>lengthFieldName</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 
-					<xsl:if test="$hasLength and $binData[not(assignment[@name = 'LengthCustomMethod']/value!='') or assignment[@name = 'LengthFormat']]">
-						<dl fieldName="{$fieldName} Length">
-							<dt>
-								<span class="parameter">
-									<xsl:value-of select="concat($fieldName,' Length')"/>
-								</span>
-							</dt>
-							<dd>
-								<xsl:apply-templates select="$binData" mode="length"/>
-							</dd>
-						</dl>
-					</xsl:if>
+					<xsl:call-template name="fieldsection">
+						<xsl:with-param name="name" select="concat($fieldName,' Count')"/>
+						<xsl:with-param name="term">
+							<span class="parameter">
+								<include item="countFieldName">
+									<parameter>
+										<xsl:value-of select="$fieldName"/>
+									</parameter>
+								</include>
+							</span>
+						</xsl:with-param>
+						<xsl:with-param name="content">
+							<xsl:apply-templates select="$binArray" mode="count"/>
+							<xsl:apply-templates select="bincount_summary"/>
+						</xsl:with-param>
+					</xsl:call-template>
 
-					<dl fieldName="{$fieldName}">
-						<dt>
-							<referenceLink target="{@api}" />
-						</dt>
-						<dd>
-							<xsl:apply-templates select="$binData" mode="field">
-								<xsl:with-param name="returns" select="returns"/>
-							</xsl:apply-templates>
+					<xsl:call-template name="fieldsection">
+						<xsl:with-param name="name" select="concat($fieldName,' Length')"/>
+						<xsl:with-param name="term">
+							<span class="parameter">
+								<include item="{$lengthItem}">
+									<parameter>
+										<xsl:value-of select="$fieldName"/>
+									</parameter>
+								</include>
+							</span>
+						</xsl:with-param>
+						<xsl:with-param name="content">
+							<xsl:apply-templates select="$binData" mode="length"/>
+							<xsl:apply-templates select="binlength_summary"/>
+						</xsl:with-param>
+					</xsl:call-template>
+
+					<xsl:call-template name="fieldsection">
+						<xsl:with-param name="name" select="$fieldName"/>
+						<xsl:with-param name="term">
+							<xsl:choose>
+								<xsl:when test="$binData and not($binData[not(assignment[@name = 'Condition' and value != ''])])">
+									<include item="fieldNameOptional">
+										<parameter>
+											<referenceLink target="{@api}" />
+										</parameter>
+									</include>
+								</xsl:when>
+								<xsl:otherwise>
+									<referenceLink target="{@api}" />
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:with-param>
+						<xsl:with-param name="content">
+							<xsl:apply-templates select="$binData" mode="field"/>
+							<xsl:apply-templates select="bindata_summary"/>
 							<xsl:call-template name="getElementDescription" />
-						</dd>
-					</dl>
+						</xsl:with-param>
+						<xsl:with-param name="exists" select="true()"/>
+					</xsl:call-template>
 				</xsl:for-each>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
-	<xsl:template match="attribute" mode="field">
-		<xsl:param name="returns" />
-		<xsl:variable name="formatArg" select="argument[type/@api = 'T:FRAFV.Binary.Serialization.BinFormat']|assignment[@name = 'Format']"/>
+	<xsl:template match="reference" mode="field">
+		<xsl:variable name="binBlock" select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute']" />
+		<xsl:variable name="hasEncoding">
+			<xsl:call-template name="HasEncoding"/>
+		</xsl:variable>
+
+		<xsl:call-template name="section">
+			<xsl:with-param name="toggleSwitch" select="'field'" />
+			<xsl:with-param name="title">
+				<include item="fieldDataTitle"/>
+			</xsl:with-param>
+			<xsl:with-param name="content">
+				<xsl:if test="normalize-space($hasEncoding)!=''">
+					<xsl:apply-templates select="$binBlock[assignment[@name = 'BinaryReaderType' or @name = 'BinaryWriterType']][1]" mode="serializer" />
+				</xsl:if>
+				<xsl:apply-templates select="." mode="count"/>
+				<xsl:apply-templates select="." mode="length"/>
+				<xsl:apply-templates select="." mode="data"/>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="reference" mode="data">
+		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
+
+		<xsl:call-template name="subSection">
+			<xsl:with-param name="title">
+				<include item="fieldValueTitle"/>
+			</xsl:with-param>
+			<xsl:with-param name="content">
+				<xsl:apply-templates select="$binData" mode="field">
+					<xsl:with-param name="comments" select="/document/comments"/>
+				</xsl:apply-templates>
+				<xsl:apply-templates select="/document/comments/bindata_summary"/>
+				<xsl:apply-templates select="/document/comments/value"/>
+				<xsl:apply-templates select="/document/comments/returns"/>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="reference" mode="length">
+		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
+		<xsl:variable name="binArray" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']" />
+		<xsl:variable name="lengthItem">
+			<xsl:choose>
+				<xsl:when test="$binArray or bincount_summary">fieldItemLengthTitle</xsl:when>
+				<xsl:otherwise>fieldLengthTitle</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+		<xsl:call-template name="subSection">
+			<xsl:with-param name="title">
+				<include item="{$lengthItem}"/>
+			</xsl:with-param>
+			<xsl:with-param name="content">
+				<xsl:apply-templates select="$binData" mode="length">
+					<xsl:with-param name="comments" select="/document/comments"/>
+				</xsl:apply-templates>
+				<xsl:apply-templates select="/document/comments/binlength_summary"/>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="reference" mode="count">
+		<xsl:variable name="binArray" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']" />
+
+		<xsl:call-template name="subSection">
+			<xsl:with-param name="title">
+				<include item="fieldCountTitle"/>
+			</xsl:with-param>
+			<xsl:with-param name="content">
+				<xsl:apply-templates select="$binArray" mode="count">
+					<xsl:with-param name="comments" select="/document/comments"/>
+				</xsl:apply-templates>
+				<xsl:apply-templates select="/document/comments/bincount_summary"/>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="formatlink">
+		<xsl:variable name="context" select="parent::attributes/parent::*"/>
 		<xsl:variable name="format">
-			<xsl:choose>
-				<xsl:when test="$formatArg">
-					<xsl:value-of select="$formatArg/enumValue/field/@name"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="$returns" mode="binformat"/>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:call-template name="ResolveFormat"/>
 		</xsl:variable>
-		<xsl:variable name="lengthFormatArg" select="assignment[@name = 'LengthFormat']"/>
-		<xsl:variable name="lengthCustomMethod" select="assignment[@name = 'LengthCustomMethod']/value"/>
+		<xsl:variable name="binArray" select="$context/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']" />
 
-		<include item="typeLink">
-			<parameter>
-				<span class="keyword">
-					<xsl:value-of select="$format"/>
-				</span>
-			</parameter>
-			<parameter>
-				<include item="{$format}Format">
-					<xsl:choose>
-						<xsl:when test="$lengthFormatArg">
-							<parameter>
-								<include item="LengthFormat"/>
-							</parameter>
-						</xsl:when>
-						<xsl:when test="$lengthCustomMethod!='' and translate($lengthCustomMethod, '0123456789', '')=''">
-							<parameter>
-								<include item="NumLengthFormat">
-									<parameter>
-										<xsl:value-of select="$lengthCustomMethod"/>
-									</parameter>
-								</include>
-							</parameter>
-						</xsl:when>
-						<xsl:when test="$lengthCustomMethod!=''">
-							<parameter>
-								<include item="SomeLengthFormat"/>
-							</parameter>
-						</xsl:when>
-						<xsl:when test="$format='Binary' or $format='PString'">
-							<parameter>
-								<include item="LengthFormat"/>
-							</parameter>
-						</xsl:when>
-					</xsl:choose>
-				</include>
-			</parameter>
-		</include>
-		<br />
-	</xsl:template>
-
-	<xsl:template match="attribute" mode="length">
-		<xsl:variable name="lengthFormatArg" select="assignment[@name = 'LengthFormat']"/>
-		<xsl:variable name="lengthCustomMethod" select="assignment[@name = 'LengthCustomMethod']/value"/>
-		<xsl:variable name="lengthFormat">
-			<xsl:choose>
-				<xsl:when test="$lengthFormatArg">
-					<xsl:value-of select="$lengthFormatArg/enumValue/field/@name"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute']/assignment[@name = 'LengthFormat'][1]/enumValue/field/@name"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-
-		<include item="typeLink">
-			<parameter>
-				<span class="keyword">
-					<xsl:value-of select="$lengthFormat"/>
-				</span>
-			</parameter>
-			<parameter>
-				<include item="{$lengthFormat}Format"/>
-			</parameter>
-		</include>
-		<br />
-	</xsl:template>
-
-	<xsl:template match="returns" mode="binformat">
 		<xsl:choose>
-			<xsl:when test="type[1]/@api = 'T:System.SByte'">Int8</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Int16'">Int16</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Int32'">Int32</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Int64'">Int64</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Byte'">UInt8</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.UInt16'">UInt16</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.UInt32'">UInt32</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.UInt64'">UInt64</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Boolean'">Bit</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Single'">Float</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Double'">Double</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.String'">CString</xsl:when>
-			<xsl:when test="type[1]/@api = 'T:System.Char'">Char</xsl:when>
-			<xsl:when test="arrayOf/type[1]/@api = 'T:System.Byte'">Binary</xsl:when>
-			<xsl:when test="arrayOf/type[1]/@api = 'T:System.Char'">PString</xsl:when>
+			<xsl:when test="$format = 'Binary' or $format = 'UInt8'">Byte</xsl:when>
+			<xsl:when test="$format = 'PString'">Char</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$format"/>
+			</xsl:otherwise>
 		</xsl:choose>
+		<xsl:if test="$format='Binary' or $format='PString' or binlength_summary">[<xsl:call-template name="ResolveLengthNumber"/>]</xsl:if>
+		<xsl:for-each select="$binArray">[<xsl:call-template name="ResolveCountNumber"/>]</xsl:for-each>
+		<xsl:if test="not($binArray) and $context/bincount_summary">[]</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="formatinfo">
+		<xsl:variable name="context" select="parent::attributes/parent::*"/>
+		<xsl:variable name="format">
+			<xsl:call-template name="ResolveFormat"/>
+		</xsl:variable>
+		<xsl:variable name="lengthFormat">
+			<xsl:call-template name="ResolveLengthFormat"/>
+		</xsl:variable>
+		<xsl:variable name="lengthNum">
+			<xsl:call-template name="ResolveLengthNumber"/>
+		</xsl:variable>
+		<xsl:variable name="binArray" select="$context/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']|$context/bincount_summary" />
+		<xsl:variable name="formatItem">
+			<xsl:choose>
+				<xsl:when test="$binArray or $context/bincount_summary">ArrayFormat</xsl:when>
+				<xsl:otherwise>Format</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="countFormat">
+			<xsl:for-each select="$binArray">
+				<xsl:call-template name="ResolveCountFormat"/>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="countNum">
+			<xsl:for-each select="$binArray">
+				<xsl:call-template name="ResolveCountNumber"/>
+			</xsl:for-each>
+		</xsl:variable>
+
+		<include item="{$format}{$formatItem}">
+			<xsl:choose>
+				<xsl:when test="normalize-space($lengthNum) != ''">
+					<parameter>
+						<include item="NumLengthFormat">
+							<parameter>
+								<xsl:value-of select="$lengthNum"/>
+							</parameter>
+						</include>
+					</parameter>
+				</xsl:when>
+				<xsl:when test="normalize-space($lengthFormat) != ''">
+					<parameter>
+						<include item="LengthFormat"/>
+					</parameter>
+				</xsl:when>
+				<xsl:when test="$format='Binary' or $format='PString' or binlength_summary">
+					<parameter>
+						<include item="SomeLengthFormat"/>
+					</parameter>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="normalize-space($countNum) != ''">
+					<parameter>
+						<include item="NumCountFormat">
+							<parameter>
+								<xsl:value-of select="$countNum"/>
+							</parameter>
+						</include>
+					</parameter>
+				</xsl:when>
+				<xsl:when test="normalize-space(countFormat) != ''">
+					<parameter>
+						<include item="CountFormat"/>
+					</parameter>
+				</xsl:when>
+				<xsl:when test="$binArray or $context/bincount_summary">
+					<parameter>
+						<include item="SomeCountFormat"/>
+					</parameter>
+				</xsl:when>
+			</xsl:choose>
+		</include>
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="conditioninfo">
+		<xsl:param name="comments" select="parent::attributes/parent::*"/>
+		<xsl:variable name="conditionArg" select="assignment[@name = 'Condition' and value != '']"/>
+
+		<xsl:if test="$conditionArg">
+			<xsl:choose>
+				<xsl:when test="$comments/bincondition_summary">
+					<include item="conditionSummary">
+						<parameter>
+							<xsl:apply-templates select="$comments/bincondition_summary"/>
+						</parameter>
+					</include>
+				</xsl:when>
+				<xsl:otherwise>
+					<include item="condition"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="ResolveFormat">
+		<xsl:variable name="context" select="parent::attributes/parent::*"/>
+		<xsl:variable name="formatArg" select="argument[type/@api = 'T:FRAFV.Binary.Serialization.BinFormat']|assignment[@name = 'Format']"/>
+		<xsl:variable name="type" select="$context/returns/type[1]/@api"/>
+		<xsl:variable name="array" select="$context/returns/arrayOf/type[1]/@api"/>
+		<xsl:choose>
+			<xsl:when test="$formatArg[enumValue/field/@name != 'Auto']">
+				<xsl:value-of select="$formatArg/enumValue/field/@name"/>
+			</xsl:when>
+			<xsl:when test="$type = 'T:System.SByte'">Int8</xsl:when>
+			<xsl:when test="$type = 'T:System.Int16'">Int16</xsl:when>
+			<xsl:when test="$type = 'T:System.Int32'">Int32</xsl:when>
+			<xsl:when test="$type = 'T:System.Int64'">Int64</xsl:when>
+			<xsl:when test="$type = 'T:System.Byte'">UInt8</xsl:when>
+			<xsl:when test="$type = 'T:System.UInt16'">UInt16</xsl:when>
+			<xsl:when test="$type = 'T:System.UInt32'">UInt32</xsl:when>
+			<xsl:when test="$type = 'T:System.UInt64'">UInt64</xsl:when>
+			<xsl:when test="$type = 'T:System.Boolean'">Bit</xsl:when>
+			<xsl:when test="$type = 'T:System.Single'">Float</xsl:when>
+			<xsl:when test="$type = 'T:System.Double'">Double</xsl:when>
+			<xsl:when test="$type = 'T:System.String'">CString</xsl:when>
+			<xsl:when test="$type = 'T:System.Char'">Char</xsl:when>
+			<xsl:when test="$array = 'T:System.Byte'">Binary</xsl:when>
+			<xsl:when test="$array = 'T:System.Char'">PString</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="ResolveLengthFormat">
+		<xsl:variable name="format">
+			<xsl:call-template name="ResolveFormat"/>
+		</xsl:variable>
+		<xsl:variable name="lengthFormatArg" select="assignment[@name = 'LengthFormat']"/>
+		<xsl:variable name="lengthCustomMethodArg" select="assignment[@name = 'LengthCustomMethod' and value != '']"/>
+		<xsl:choose>
+			<xsl:when test="$lengthFormatArg[enumValue/field/@name != 'Auto']">
+				<xsl:value-of select="$lengthFormatArg/enumValue/field/@name"/>
+			</xsl:when>
+			<xsl:when test="not($lengthCustomMethodArg) and ($format='Binary' or $format='PString')">
+				<xsl:value-of select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinBlockAttribute']/assignment[@name = 'LengthFormat' and enumValue/field/@name != 'Auto'][1]/enumValue/field/@name"/>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="ResolveLengthNumber">
+		<xsl:variable name="lengthCustomMethodArg" select="assignment[@name = 'LengthCustomMethod' and value != '']"/>
+		<xsl:if test="$lengthCustomMethodArg and translate($lengthCustomMethodArg/value, '0123456789', '')=''">
+			<xsl:value-of select="$lengthCustomMethodArg/value"/>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="ResolveCountFormat">
+		<xsl:variable name="countFormatArg" select="assignment[@name = 'CountFormat']"/>
+		<xsl:variable name="countCustomMethodArg" select="assignment[@name = 'CountCustomMethod' and value != '']"/>
+		<xsl:choose>
+			<xsl:when test="$countFormatArg[enumValue/field/@name != 'Auto']">
+				<xsl:value-of select="$countFormatArg/enumValue/field/@name"/>
+			</xsl:when>
+			<xsl:when test="not($countCustomMethodArg)">
+				<xsl:value-of select="containers//type/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']/assignment[@name = 'CountFormat' and enumValue/field/@name != 'Auto'][1]/enumValue/field/@name"/>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="ResolveCountNumber">
+		<xsl:variable name="countCustomMethodArg" select="assignment[@name = 'CountCustomMethod' and value != '']"/>
+		<xsl:if test="$countCustomMethodArg and translate($countCustomMethodArg/value, '0123456789', '')=''">
+			<xsl:value-of select="$countCustomMethodArg/value"/>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="HasEncoding">
+		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
+
+		<xsl:for-each select="$binData">
+			<xsl:variable name="format">
+				<xsl:call-template name="ResolveFormat"/>
+			</xsl:variable>
+			<xsl:if test="$format = 'CString' or $format = 'PString' or $format = 'Char'">
+				<xsl:value-of select="$format"/>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template name="IsMemberSupportedOnXna">

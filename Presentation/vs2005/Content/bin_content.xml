@@ -47,10 +47,10 @@
 	<item id="BinaryReaderTypeTitle">Binary Reader</item>
 	<item id="BinaryWriterTypeTitle">Binary Writer</item>
 	<item id="valueTitle">Value</item>
-	<item id="propertyValueTitle">Field Value</item>
 	<item id="fieldValueTitle">Field Value</item>
 	<item id="fieldLengthTitle">Field Length</item>
-	<item id="fieldCountTitle">Field Count</item>
+	<item id="fieldItemLengthTitle">Field Item Length</item>
+	<item id="fieldCountTitle">Field Items Count</item>
 	<item id="namespacesTitle">Binary Serialization Namespaces</item>
 	<item id="typesTitle">Blocks</item>
 	<item id="familyTitle">Inheritance Hierarchy</item>
@@ -68,6 +68,9 @@
 
 	<item id="typeNameHeader">Name</item>
 	<item id="typeDescriptionHeader">Description</item>
+	<item id="memberNameHeader">Name</item>
+	<item id="memberValueHeader">Value</item>
+	<item id="memberDescriptionHeader">Description</item>
 
 	<!-- filter control text -->
 	<item id="classTypesFilterLabel">Binary Blocks</item>
@@ -96,6 +99,8 @@
 	</item>
 	<item id="definedBy">(Defined by {0}.)</item>
 	<item id="inheritedFrom">(Inherited from {0}.)</item>
+	<item id="condition">(Optional)</item>
+	<item id="conditionSummary">({0})</item>
 	<item id="locationInformation">Assembly: {0} (Module: {1})</item>
 	<item id="classLower">block</item>
 	<item id="structureLower">block</item>
@@ -156,7 +161,11 @@
 
 	<item id="defaultNamespace">( Default Serialization Namespace )</item>
 
-	<item id="typeLink">Type: {0} {1}</item>
+	<item id="countFieldName">{0} items count</item>
+	<item id="lengthFieldName">{0} length</item>
+	<item id="lengthItemFieldName">{0} item length</item>
+	<item id="fieldNameOptional">{0} (Optional)</item>
+	<item id="typeLink">Type: {0} {1} {2}</item>
 
 	<!-- Internal only Boilerplate text -->
 	<item id="internalOnly">This API supports the Binary Serialization infrastructure and is not intended to be used directly from your code.</item>
@@ -169,37 +178,70 @@
 	<item id="flagsSummary">This enumeration has a {0} attribute that allows a bitwise combination of its member values.</item>
 
 	<!-- Binary Formats -->
-	<item id="Int8Format">An 8-bit (1 byte) integer</item>
-	<item id="Int16Format">A 16-bit (2 bytes) integer</item>
-	<item id="Int24Format">A 24-bit (3 bytes) integer</item>
-	<item id="Int32Format">A 32-bit (4 bytes) integer</item>
-	<item id="Int64Format">A 64-bit (8 bytes) integer</item>
-	<item id="UInt8Format">An 8-bit (1 byte) unsigned integer</item>
-	<item id="UInt16Format">A 16-bit (2 bytes) unsigned integer</item>
-	<item id="UInt24Format">A 24-bit (3 bytes) unsigned integer</item>
-	<item id="UInt32Format">A 32-bit (4 bytes) unsigned integer</item>
-	<item id="UInt64Format">A 64-bit (8 bytes) unsigned integer</item>
-	<item id="SynchSafeInt16Format">A 14-bit (2 bytes) unsigned integer in synchsafe format</item>
-	<item id="SynchSafeInt32Format">A 28-bit (4 bytes) unsigned integer in synchsafe format</item>
-	<item id="SynchSafeInt64Format">A 56-bit (8 bytes) unsigned integer in synchsafe format</item>
-	<item id="BoolFormat">A Boolean value as an 4-byte integer value</item>
-	<item id="BitFormat">A Boolean value as an 1-byte integer value</item>
-	<item id="VariantBoolFormat">A Boolean value as an 2-byte integer value</item>
-	<item id="FloatFormat">A 32-bit (4 bytes) single-precision floating-point number</item>
-	<item id="DoubleFormat">A 64-bit (8 bytes) double-precision floating-point number</item>
-	<item id="DateFormat">A date as a 62-bit (8 bytes) number of 100-nanosecond intervals since January 1, 0001</item>
-	<item id="UNIXDateI32Format">A UNIX date as a 32-bit (4 bytes) signed number of seconds since January 1, 1970</item>
-	<item id="UNIXDateU32Format">A UNIX date as an 32-bit (4 bytes) unsigned number of seconds since January 1, 1970</item>
-	<item id="UNIXDate64Format">A UNIX date as a 64-bit (8 bytes) number of seconds since January 1, 1970</item>
-	<item id="MacDate32Format">A Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904</item>
-	<item id="MacDate64Format">A Macintosh date as an 64-bit (8 bytes) number of seconds since January 1, 1904</item>
-	<item id="OLEDateFormat">An OLE Automation date as an 64-bit (8 bytes) floating-point number of days since December 31, 1899</item>
-	<item id="FileTimeFormat">A Windows file time as an 64-bit (8 bytes) number of 100-nanosecond intervals since January 1, 1601</item>
-	<item id="BinaryFormat">A stream of binary data {0}</item>
-	<item id="CStringFormat">An encoded character string</item>
-	<item id="PStringFormat">An encoded character array {0}</item>
-	<item id="CharFormat">An encoded character</item>
+	<item id="Int8Format">— an 8-bit (1 byte) integer</item>
+	<item id="Int16Format">— a 16-bit (2 bytes) integer</item>
+	<item id="Int24Format">— a 24-bit (3 bytes) integer</item>
+	<item id="Int32Format">— a 32-bit (4 bytes) integer</item>
+	<item id="Int64Format">— a 64-bit (8 bytes) integer</item>
+	<item id="UInt8Format">— an 8-bit (1 byte) unsigned integer</item>
+	<item id="UInt16Format">— a 16-bit (2 bytes) unsigned integer</item>
+	<item id="UInt24Format">— a 24-bit (3 bytes) unsigned integer</item>
+	<item id="UInt32Format">— a 32-bit (4 bytes) unsigned integer</item>
+	<item id="UInt64Format">— a 64-bit (8 bytes) unsigned integer</item>
+	<item id="SynchSafeInt16Format">— a 14-bit (2 bytes) unsigned integer in synchsafe format</item>
+	<item id="SynchSafeInt32Format">— a 28-bit (4 bytes) unsigned integer in synchsafe format</item>
+	<item id="SynchSafeInt64Format">— a 56-bit (8 bytes) unsigned integer in synchsafe format</item>
+	<item id="BoolFormat">— a Boolean value as a 4-byte integer value</item>
+	<item id="BitFormat">— a Boolean value as a 1-byte integer value</item>
+	<item id="VariantBoolFormat">— a Boolean value as an 2-byte integer value</item>
+	<item id="FloatFormat">— a 32-bit (4 bytes) single-precision floating-point number</item>
+	<item id="DoubleFormat">— a 64-bit (8 bytes) double-precision floating-point number</item>
+	<item id="DateFormat">— a date as a 62-bit (8 bytes) number of 100-nanosecond intervals since January 1, 0001</item>
+	<item id="UNIXDateI32Format">— a UNIX date as a 32-bit (4 bytes) signed number of seconds since January 1, 1970</item>
+	<item id="UNIXDateU32Format">— a UNIX date as a 32-bit (4 bytes) unsigned number of seconds since January 1, 1970</item>
+	<item id="UNIXDate64Format">— a UNIX date as a 64-bit (8 bytes) number of seconds since January 1, 1970</item>
+	<item id="MacDate32Format">— a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904</item>
+	<item id="MacDate64Format">— a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904</item>
+	<item id="OLEDateFormat">— an OLE Automation date as a 64-bit (8 bytes) floating-point number of days since December 31, 1899</item>
+	<item id="FileTimeFormat">— a Windows file time as a 64-bit (8 bytes) number of 100-nanosecond intervals since January 1, 1601</item>
+	<item id="BinaryFormat">— a stream of binary data {0}</item>
+	<item id="CStringFormat">— an encoded character string</item>
+	<item id="PStringFormat">— an encoded character array {0}</item>
+	<item id="CharFormat">— an encoded character</item>
 	<item id="SomeLengthFormat">with a length</item>
 	<item id="LengthFormat">with the previously defined length</item>
 	<item id="NumLengthFormat">with a fixed length equal to {0}</item>
+	<item id="Int8ArrayFormat">— an array of 8-bit integers {0}</item>
+	<item id="Int16ArrayFormat">— an array of 16-bit integers {0}</item>
+	<item id="Int24ArrayFormat">— an array of 24-bit integers {0}</item>
+	<item id="Int32ArrayFormat">— an array of 32-bit integers {0}</item>
+	<item id="Int64ArrayFormat">— an array of 64-bit integers {0}</item>
+	<item id="UInt8ArrayFormat">— an array of bytes {0}</item>
+	<item id="UInt16ArrayFormat">— an array of 16-bit unsigned integers {0}</item>
+	<item id="UInt24ArrayFormat">— an array of 24-bit unsigned integers {0}</item>
+	<item id="UInt32ArrayFormat">— an array of 32-bit unsigned integers {0}</item>
+	<item id="UInt64ArrayFormat">— an array of 64-bit unsigned integers {0}</item>
+	<item id="SynchSafeInt16ArrayFormat">— an array of 14-bit (2 bytes for each) unsigned integers in synchsafe format {0}</item>
+	<item id="SynchSafeInt32ArrayFormat">— an array of 28-bit (4 bytes for each) unsigned integers in synchsafe format {0}</item>
+	<item id="SynchSafeInt64ArrayFormat">— an array of 56-bit (8 bytes for each) unsigned integers in synchsafe format {0}</item>
+	<item id="BoolArrayFormat">— a Boolean value array as an array of 4-byte integers {0}</item>
+	<item id="BitArrayFormat">— a Boolean value array as an array of 1-byte integers {0}</item>
+	<item id="VariantBoolArrayFormat">— a Boolean value as an array of 2-byte integers {0}</item>
+	<item id="FloatArrayFormat">— an array of 32-bit single-precision floating-point numbers {0}</item>
+	<item id="DoubleArrayFormat">— an array of 64-bit double-precision floating-point numbers {0}</item>
+	<item id="DateArrayFormat">— a date array as an array of 62-bit (8 bytes for each) numbers {0}</item>
+	<item id="UNIXDateI32ArrayFormat">— a UNIX date array as an array of 32-bit signed numbers {0}</item>
+	<item id="UNIXDateU32ArrayFormat">— a UNIX date array as an array of 32-bit unsigned numbers {0}</item>
+	<item id="UNIXDate64ArrayFormat">— a UNIX date array as an array of 64-bit numbers {0}</item>
+	<item id="MacDate32ArrayFormat">— a Macintosh date array as an array of 32-bit numbers {0}</item>
+	<item id="MacDate64ArrayFormat">— a Macintosh date array as an array of 64-bit numbers {0}</item>
+	<item id="OLEDateArrayFormat">— an OLE Automation date array as an array of 64-bit floating-point numbers {0}</item>
+	<item id="FileTimeFormat">— a Windows file time array as an array of 64-bit numbers {0}</item>
+	<item id="BinaryArrayFormat">— an array of binary data streams {0} {1}</item>
+	<item id="CStringArrayFormat">— an array of encoded character strings {0}</item>
+	<item id="PStringArrayFormat">— a two-dimensional array of encoded characters {0} {1}</item>
+	<item id="CharArrayFormat">— an array of encoded characters {0}</item>
+	<item id="SomeCountFormat"></item>
+	<item id="CountFormat">with the previously defined array items count</item>
+	<item id="NumCountFormat">with a fixed array items count equal to {0}</item>
 </content>
