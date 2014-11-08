@@ -167,14 +167,14 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Movie Header Atom <c>'mdat'</c>
+		/// Movie Header Atom <c>'mvhd'</c>
 		/// </summary>
 		[BinBlock(GetDataSizeMethod = "ResolveVersion(Duration)")]
 		public sealed partial class MovieHeaderBox: ISOMFullBox
 		{
 			internal const string DefaultID = "mvhd";
 			/// <summary>
-			/// Initializes a new instance of the Movie Header Atom <c>'mdat'</c>.
+			/// Initializes a new instance of the Movie Header Atom <c>'mvhd'</c>.
 			/// </summary>
 			public MovieHeaderBox() : base(DefaultID) { }
 
@@ -208,13 +208,13 @@ namespace MP4
 			[BinData(BinFormat.UInt32)]
 			public long Duration;
 			/// <summary>
-			/// A 16.16 fixed-point number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate.
+			/// A fixed-point 16.16 number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 16)]
 			[BinData(BinFormat.UInt32)]
 			public Fixed<uint, x16> PreferredRate = Fixed<uint, x16>.One;
 			/// <summary>
-			/// A 8.8 fixed-point number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
+			/// A fixed-point 8.8 number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 8)]
 			[BinData(BinFormat.UInt16)]
@@ -446,7 +446,13 @@ namespace MP4
 			[XmlIgnore]
 			public AtomicInfo ReferenceMovie;
 			/// <summary>
-			/// Other atoms
+			/// The movie atom contains other types of atoms, including at least one of three possible atoms — the
+			/// <see cref="T:MP4.ISOMediaBoxes.MovieHeaderBox">movie header atom</see> (<c>'mvhd'</c>), the
+			/// compressed movie atom (<c>'cmov'</c>), or a reference movie atom (<c>'rmra'</c>). An uncompressed movie
+			/// atom can contain both a movie header atom and a reference movie atom, but it must contain at least one
+			/// of the two. It can also contain several other atoms, such as a clipping atom (<c>'clip'</c>), one or more
+			/// <see cref="T:MP4.ISOMediaBoxes.TrackBox">track atoms</see> (<c>'trak'</c>), a color table atom (<c>'ctab'</c>),
+			/// and a <see cref="T:MP4.ISOMediaBoxes.UserDataBox">user data atom</see> (<c>'udta'</c>).
 			/// </summary>
 			[BinCustom]
 			TypedBoxList boxList = TypedBoxList.Create<
@@ -851,7 +857,7 @@ namespace MP4
 			public SoundMediaHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A 8.8 fixed-point number that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
+			/// A fixed-point 8.8 number that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
 			/// between the two speakers of a computer. This field is normally set to 0.
 			/// </summary>
 			[XmlIgnore]
@@ -1646,6 +1652,9 @@ namespace MP4
 			internal const string DefaultID = "stsd";
 			public SampleDescriptionBox() : base(DefaultID) { }
 
+			/// <summary>
+			/// An array of sample descriptions.
+			/// </summary>
 			[BinCustom]
 			BoxCollection boxArray = new BoxCollection();
 		}
@@ -2169,7 +2178,7 @@ namespace MP4
 			[BinData]
 			public int Version;
 			/// <summary>
-			/// A series of unsigned 32-bit integers listing compatible file formats. The major brand must appear in
+			/// Listing compatible file formats. The major brand must appear in
 			/// the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such
 			/// entries should be ignored.
 			/// </summary>

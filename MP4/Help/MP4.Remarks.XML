@@ -213,6 +213,11 @@
 		</member>
 		<member name="F:MP4.AtomRequirements.ReqFamilialOne">
 		</member>
+		<member name="F:MP4.ISOMediaBoxes.UnknownParentBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
 		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Version">
 			<remarks>
 				<para>
@@ -225,14 +230,39 @@
 		<member name="F:MP4.ISOMediaBoxes.ISOMFullBox.Flags">
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.MovieHeaderBox">
+			<binblock_summary>
+				<img src="qt_l_095.gif" alt="The layout of a movie header atom"/>
+			</binblock_summary>
+			<remarks>
+				<para>
+					You use the movie header atom to specify the characteristics of an entire movie. The data contained
+					in this atom defines characteristics of the entire QuickTime movie, such as time scale and duration.
+				</para>
+				<para>
+					The movie header atom is a leaf atom. It has an atom type value of <c>'mvhd'</c>.
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.CreationTime">
+			<bincondition_summary>Version 1 only</bincondition_summary>
+			<remarks>
+				<para>
+					The creation date should be set using coordinated universal time (UTC).
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.ModificationTime">
+			<bincondition_summary>Version 1 only</bincondition_summary>
+			<remarks>
+				<para>
+					The modification date should be set using coordinated universal time (UTC).
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.TimeScale">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.Duration">
+			<bincondition_summary>Version 1 only</bincondition_summary>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.PreferredRate">
 		</member>
@@ -255,10 +285,30 @@
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.CurrentTime">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MovieHeaderBox.NextTrackID">
+			<remarks>
+				<para>
+					The value of NextTrackID shall be larger than the largest track-ID in use. If this value is equal to or
+					larger than all 1s (32-bit maxint), and a new media track is to be added, then a search must be made in
+					the file for a unused track identifier.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.EditBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.UserDataBox">
 		</member>
+		<member name="F:MP4.ISOMediaBoxes.UserDataBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
 		<member name="T:MP4.ISOMediaBoxes.MovieBox">
+			<binblock_summary>
+				<img src="qtff_09.jpg" alt="The layout of a movie atom"/>
+			</binblock_summary>
 			<remarks>
 				<para>
 					The metadata for a presentation is stored in the single Movie box which occurs at the top-level of a file.
@@ -273,17 +323,19 @@
 					atom contains a track atom for each track in the movie.
 				</para>
 				<para>
-					The movie atom has an atom type of <c>'moov'</c>. It contains other types of atoms, including at least one
-					of three possible atoms—the movie header atom (<c>'mvhd'</c>), the compressed movie atom (<c>'cmov'</c>), or
-					a reference movie atom (<c>'rmra'</c>). An uncompressed movie atom can contain both a movie header atom and
-					a reference movie atom, but it must contain at least one of the two. It can also contain several other atoms,
-					such as a clipping atom (<c>'clip'</c>), one or more track atoms (<c>'trak'</c>), a color table atom
-					(<c>'ctab'</c>), and a user data atom (<c>'udta'</c>).
+					The movie atom has an atom type of <c>'moov'</c>.
 				</para>
-				<img src="qtff_09.jpg" alt="The layout of a movie atom"/>
 			</remarks>
 		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
 		<member name="T:MP4.ISOMediaBoxes.MediaBox">
+			<binblock_summary>
+				<img src="qt_l_030-G.jpg" alt="The layout of a media atom"/>
+			</binblock_summary>
 			<remarks>
 				<para>
 					Media atoms describe and define a track’s media type and sample data. The media atom contains information
@@ -321,7 +373,6 @@
 					The media atom contains only <em>references</em> to media data; the media data atom contains the actual
 					media samples.
 				</note>
-				<img src="qt_l_030-G.jpg" alt="The layout of a media atom"/>
 			</remarks>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.TrackHeaderBox">
@@ -355,10 +406,16 @@
 		<member name="T:MP4.ISOMediaBoxes.TrackReferenceBox">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.TrackReferenceBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.ISOMediaBoxes.TrackReferenceTypeBox"/>[] — a series of track reference type atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.TrackBox">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.TrackBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="P:MP4.ISOMediaBoxes.TrackBox.Header">
 		</member>
@@ -401,6 +458,9 @@
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentName">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.MediaBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.VideoMediaHeaderBox">
 		</member>
@@ -421,12 +481,71 @@
 		<member name="T:MP4.ISOMediaBoxes.DataReferenceBox">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.DataReferenceBox.boxArray">
+			<bincount_summary>
+				Type: <span class="keyword">Int32</span>— a 32-bit (4 bytes) integer
+			</bincount_summary>
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms with the previously defined atoms count
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.DataInformationBox">
 		</member>
 		<member name="P:MP4.ISOMediaBoxes.DataInformationBox.DataReference">
 		</member>
+		<member name="F:MP4.ISOMediaBoxes.DataInformationBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MPEG4ExtensionDescriptorsBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MPEGSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.LASeRSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
 		<member name="P:MP4.ISOMediaBoxes.MPEGVisualSampleEntryBox.iPodExt">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MPEGVisualSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MPEGAudioSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.AC3SampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.DIMSSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MetaDataSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.SampleDescriptionBox.boxArray">
+			<bincount_summary>
+				Type: <span class="keyword">Int32</span>— a 32-bit (4 bytes) integer
+			</bincount_summary>
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms with the previously defined atoms count
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.SampleTableBox">
 		</member>
@@ -454,6 +573,16 @@
 		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleGroups">
 		</member>
 		<member name="P:MP4.ISOMediaBoxes.SampleTableBox.SampleDep">
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.SampleTableBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaInformationBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.FreeSpaceBox">
 		</member>
@@ -537,6 +666,9 @@
 			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.FileTypeBox.CompatibleBrand">
+			<bindata_summary>
+				Type: <span class="keyword">Int32[]</span> — a series of 32-bit unsigned integers
+			</bindata_summary>
 			<remarks>
 				<para>
 					If none of the compatible brands fields is set to <c>'qt  '</c>, then the file is not a QuickTime movie file.
@@ -553,6 +685,61 @@
 					Use of the QuickTime file format in this manner is subject to license from Apple, Inc.
 				</note>
 			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.SchemeInformationBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ProtectionInfoBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieExtendsBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MovieFragmentBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.TrackFragmentBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HintSampleEntryBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HintTrackInfoBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.HintInfoBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ListItemBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ItemListBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.OMADRMMutableInformationBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.TOTLBox">
 		</member>
