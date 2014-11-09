@@ -55,6 +55,9 @@
     <Xml Include="Presentation\vs2005\transforms\utilities_bin.xsl">
       <Filter>Transforms</Filter>
     </Xml>
+    <Xml Include="Presentation\vs2005\transforms\wiki.xsl">
+      <Filter>Transforms</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="Presentation\vs2005\configuration\sandcastle.config">

@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Defs2XML;Chm">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Defs2XML;Chm;Wiki">
 	<PropertyGroup>
 		<Name>MP4.Reference</Name>
 		<TopicStyle>vs2005</TopicStyle>
 		<LanguageId>1033</LanguageId>
 		<BinSerialization>true</BinSerialization>
+		<WikiMediaBase>https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/</WikiMediaBase>
+		<WikiIconBase>https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/</WikiIconBase>
 	</PropertyGroup>
 	<ItemGroup>
 		<Dlls Include="..\MP4\bin\$(Configuration)\MP4.dll" />

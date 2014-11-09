@@ -21,6 +21,7 @@
     <Xml Include="Presentation\vs2005\transforms\bin_sandcastle.xsl" />
     <Xml Include="Presentation\vs2005\transforms\main_sandcastle.xsl" />
     <Xml Include="Presentation\vs2005\transforms\utilities_bin.xsl" />
+    <Xml Include="Presentation\vs2005\transforms\wiki.xsl" />
     <Xml Include="ProductionTransforms\ApplyBinDocModel.xsl" />
     <Xml Include="ProductionTransforms\ApplyVSDocModel.xsl" />
     <Xml Include="ProductionTransforms\CreateVSToc.xsl" />
