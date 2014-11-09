@@ -1,0 +1,176 @@
+﻿#summary ISOMediaBoxes.!MovieHeaderBox Binary Block
+
+= ISOMediaBoxes.!MovieHeaderBox Binary Block =
+
+
+Movie Header Atom {{{'mvhd'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+
+ ==== The layout of a movie header atom ====
+https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_095.gif
+
+
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer
+
+
+ The version of this atom. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer
+
+
+ Future flags. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_CreationTime CreationTime]
+
+ Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)
+
+ Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 
+
+
+ Specifies when the movie atom was created. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_ModificationTime ModificationTime]
+
+ Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 
+
+ Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)
+
+
+ Specifies when the movie atom was changed. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_TimeScale TimeScale]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ A time value that indicates the time scale for this movie—that is, the number of time units that pass per second in its time coordinate system. A time coordinate system that measures time in sixtieths of a second, for example, has a time scale of 60. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_Duration Duration]
+
+ Type: *Int64* — a 64-bit (8 bytes) integer (Version 1 only)
+
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
+
+
+ A time value that indicates the duration of the movie in time scale units. Note that this property is derived from the movie’s tracks. The value of this field corresponds to the duration of the longest track in the movie. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_PreferredRate PreferredRate]
+
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
+
+
+ A fixed-point 16.16 number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_PreferredVolume PreferredVolume]
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer 
+
+
+ A fixed-point 8.8 number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_Reserved Reserved]
+
+ Type: *Byte[**10]* — a stream of binary data with a fixed length equal to 10 
+
+
+ Reserved. Set to 0. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_Matrix Matrix]
+
+ Type: *UInt32[**9]* — an array of 32-bit unsigned integers with a fixed array items count equal to 9 
+
+
+ The matrix structure associated with this movie. A matrix shows how to map points from one coordinatespace into another. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_PreviewTime PreviewTime]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The time value in the movie at which the preview begins. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_PreviewDuration PreviewDuration]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The duration of the movie preview in movie time scale units. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_PosterTime PosterTime]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The time value of the time of the movie poster. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_SelectionTime SelectionTime]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The time value for the start time of the current selection. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_SelectionDuration SelectionDuration]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The duration of the current selection in movie time scale units. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_CurrentTime CurrentTime]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The time value for current time position within the movie. 
+
+
+[Bin_F_MP4_ISOMediaBoxes_MovieHeaderBox_NextTrackID NextTrackID]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+ The track ID number of the next track added to this movie. Note that 0 is not a valid track ID value. 
+
+
+== Remarks ==
+
+You use the movie header atom to specify the characteristics of an entire movie. The data contained in this atom defines characteristics of the entire !QuickTime movie, such as time scale and duration.
+
+The movie header atom is a leaf atom. It has an atom type value of {{{'mvhd'}}}.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]
+
+  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]
+
+    *MP4.ISOMediaBoxes.!MovieHeaderBox*
+
+
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

@@ -1,0 +1,21 @@
+﻿#summary Matrix Binary Data Field
+
+= Matrix Binary Data Field =
+
+
+The matrix structure associated with this movie. A matrix shows how to map points from one coordinatespace into another. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt32[**9]* — an array of 32-bit unsigned integers with a fixed array items count equal to 9 
+
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

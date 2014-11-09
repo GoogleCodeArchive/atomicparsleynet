@@ -1,0 +1,39 @@
+﻿#summary Brand Binary Data Field
+
+= Brand Binary Data Field =
+
+
+Identifies compatible file format. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
+
+
+== Remarks ==
+
+Any incompatible change in a specification should therefore register a new ‘brand’ identifier to identify files conformant to the new specification.
+
+The type {{{'isom'}}} (ISO Base Media file) is defined in this section of this specification, as identifying files that conform to the first version of ISO Base Media File Format.
+
+More specific identifiers can be used to identify precise versions of specifications providing more detail. This brand should not be used as the major brand; this base file format should be derived into another specification to be used. There is therefore no defined normal file extension, or mime type assigned to this brand, nor definition of the minor version when {{{'isom'}}} is the major brand.
+
+Files would normally be externally identified (e.g. with a file extension or mime type) that identifies the ‘best use’ (major brand), or the brand that the author believes will provide the greatest compatibility.
+
+The brand {{{'iso2'}}} shall be used to indicate compatibility with this amended version of the ISO Base Media File Format; it may be used in addition to or instead of the {{{'isom'}}} brand and the same usage rules apply. If used without the brand {{{'isom'}}} identifying the first version of the specification, it indicates that support for some or all of the technology introduced by this amendment is required.
+
+The brand {{{'avc1'}}} shall be used to indicate that the file is conformant with the ‘AVC Extensions’ in sub-clause. If used without other brands, this implies that support for those extensions is required. The use of {{{'avc1'}}} as a major-brand may be permitted by specifications; in that case, that specification defines the file extension and required behavior.
+
+If a Meta-box with an MPEG-7 handler type is used at the file level, then the brand {{{'mp71'}}} should be a member of the compatible-brands list in the file-type box.
+
+The brand {{{'qt '}}} (note the two trailing ASCII space characters) for !QuickTime movie files. If a file is compatible with multiple brands, all such brands are listed in the [F_MP4_ISOMediaBoxes_FileTypeBox_CompatibleBrand CompatibleBrand] fields, and the ‘major brand’ identifies the preferred brand or best use.
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_FileTypeBox ISOMediaBoxes.FileTypeBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

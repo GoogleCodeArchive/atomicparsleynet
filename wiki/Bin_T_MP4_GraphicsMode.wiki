@@ -1,0 +1,32 @@
+﻿#summary !GraphicsMode Enumeration
+
+= !GraphicsMode Enumeration =
+
+
+Graphics Modes 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Members ==
+
+|| *Name* || *Value* || *Description* ||
+|| *!SourceCopy* || 0 || Copy the source image over the destination.  ||
+|| *!DitherCopy* || 64 || Dither the image (if needed), otherwise do a copy.  ||
+|| *Blend* || 32 || Replaces destination pixel with a blend of the source and destination pixel colors, with the proportion for each channel controlled by that channel in the opcolor.  ||
+|| *Transparent* || 36 || Replaces the destination pixel with the source pixel if the source pixel isn't equal to the opcolor.  ||
+|| *!StraightAlpha* || 256 || Replaces the destination pixel with a blend of the source and destination pixels, with the proportion controlled by the alpha channel.  ||
+|| *!PremulWhiteAlpha* || 257 || Premultiplied with white means that the color components of each pixel have already been blended with a white pixel, based on their alpha channel value. Effectively, this means that the image has already been combined with a white background. First, remove the white from each pixel and then blend the image with the actual background pixels.  ||
+|| *!PremulBlackAlpha* || 258 || Premultiplied with black is the same as pre-multiplied with white, except the background color that the image has been blended with is black instead of white.  ||
+|| *!StraightAlphaBlend* || 260 || Similar to straight alpha, but the alpha value used for each channel is the combination of the alpha channel and that channel in the opcolor.  ||
+|| *Composition* || 259 || (Tracks only) The track is drawn offscreen, and then composed onto the screen using dither copy.  ||
+
+== Remarks ==
+
+!QuickTime files use graphics modes to describe how one video or graphics layer should be combined with the layers beneath it. Graphics modes are also known as transfer modes. Some graphics modes require a color to be specified for certain operations, such as blending to determine the blend level. !QuickTime uses the graphics modes defined by Apple’s !QuickDraw.
+
+The most common graphics modes are and {{{ditherCopy}}}, which simply indicate that the image should not blend with the image behind it, but overwrite it. !QuickTime also defines several additional graphics modes.
+
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

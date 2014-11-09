@@ -1,0 +1,27 @@
+﻿#summary Version Binary Data Field
+
+= Version Binary Data Field =
+
+
+The file format specification version; minor version of the major brand in general. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *Int32* — a 32-bit (4 bytes) integer 
+
+
+== Remarks ==
+
+The minor version is informative only. It does not appear for compatible-brands, and must not be used to determine the conformance of a file to a standard. It may allow more precise identification of the major specification, for inspection, debugging, or improved decoding.
+
+For !QuickTime movie files, this takes the form of four binary-coded decimal values, indicating the century, year, and month of the _!QuickTime File Format Specification_, followed by a binary coded decimal zero. For example, for the June 2004 minor version, this field is set to the BCD values {{{20 04 06 00}}}.
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_FileTypeBox ISOMediaBoxes.FileTypeBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

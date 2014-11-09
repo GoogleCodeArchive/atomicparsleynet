@@ -1,0 +1,21 @@
+﻿#summary Flags Binary Data Field
+
+= Flags Binary Data Field =
+
+
+Future flags. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt24* — a 24-bit (3 bytes) unsigned integer
+
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ISOMFullBox ISOMediaBoxes.ISOMFullBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

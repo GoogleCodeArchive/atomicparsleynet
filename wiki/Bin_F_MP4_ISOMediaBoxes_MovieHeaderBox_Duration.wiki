@@ -1,0 +1,23 @@
+﻿#summary Duration Binary Data Field
+
+= Duration Binary Data Field =
+
+
+A time value that indicates the duration of the movie in time scale units. Note that this property is derived from the movie’s tracks. The value of this field corresponds to the duration of the longest track in the movie. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *Int64* — a 64-bit (8 bytes) integer (Version 1 only)
+
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
+
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

@@ -1,0 +1,21 @@
+﻿#summary !PreferredRate Binary Data Field
+
+= !PreferredRate Binary Data Field =
+
+
+A fixed-point 16.16 number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
+
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

@@ -1,0 +1,21 @@
+﻿#summary Reserved Binary Data Field
+
+= Reserved Binary Data Field =
+
+
+Reserved. Set to 0. 
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]
+
+*Assembly:* MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *Byte[**10]* — a stream of binary data with a fixed length equal to 10 
+
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

@@ -4,7 +4,7 @@
 
 An atom that contains other atoms is called a container atom. The parent atom is the container atom exactly one level above a given atom in the hierarchy. An atom that does not contain other atoms is called a leaf atom, and typically contains data as one or more fields or tables. Some leaf atoms act as flags or placeholders, however, and contain no data beyond their size and type fields.
 
-==== A sample atom ====
+ ==== A sample atom ====
 https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_027.gif
 
 Atoms within container atoms do not generally have to be in any particular order, unless such an order is specifically called out in their container. One such example is the handler description atom, which must come before the data being handled. For example, a media handler description atom must come before a media information atom, and a data handler description atom must come before a data information atom.
@@ -17,7 +17,7 @@ QT atoms are normally wrapped in an atom container, a data structure with a head
 
 https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_note.gif *Note* An *atom container* is _not_ the same as a *container atom*. An atom container is a _container_, not an atom.
 
-==== QT atom layout ====
+ ==== QT atom layout ====
 https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_200.gif
 
 Each QT atom starts with a QT atom container header, followed by the root atom. The root atom’s type is the QT atom’s type. The root atom contains any other atoms that are part of the structure.
