@@ -112,129 +112,173 @@ namespace Microsoft.Ddue.Tools
                 }
             }
 
-            string input = Environment.ExpandEnvironmentVariables(results.UnusedArguments[0]);
+            string inputPattern = Environment.ExpandEnvironmentVariables(results.UnusedArguments[0]);
 
             // prepare the reader
             XmlReaderSettings readerSettings = new XmlReaderSettings();
             readerSettings.IgnoreWhitespace = ignoreWhitespace;
 
-            // Do each transform
-            for (int i = 0; i < transforms.Length; i++)
-            {
-                ConsoleApplication.WriteMessage(LogLevel.Info, String.Format("Applying XSL transformation '{0}'.", transformFiles[i]));
+			string[] inputs;
+			if (inputPattern.IndexOfAny(new char[] { '*', '?' }) >= 0)
+			{
+				inputs = Directory.GetFiles(Path.GetDirectoryName(inputPattern), Path.GetFileName(inputPattern));
+			}
+			else
+			{
+				inputs = new string[] { inputPattern };
+			}
 
-                // get the transform
-                XslCompiledTransform transform = transforms[i];
+			foreach (string inputFile in inputs)
+			{
+				string input = inputFile;
+				ConsoleApplication.WriteMessage(LogLevel.Info, String.Format("Processing input XML '{0}'.", input));
+				// Do each transform
+				for (int i = 0; i < transforms.Length; i++)
+				{
+					ConsoleApplication.WriteMessage(LogLevel.Info, String.Format("Applying XSL transformation '{0}'.", transformFiles[i]));
 
-                // figure out where to put the output
-                string output;
-                if (i < (transforms.Length - 1))
-                {
-                    try
-                    {
-                        output = Path.GetTempFileName();
-                        File.SetAttributes(output, FileAttributes.Temporary);
-                    }
-                    catch (IOException e)
-                    {
-                        ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("An error occured while attempting to create a temporary file. The error message is: {0}", e.Message));
-                        return (1);
-                    }
-                }
-                else
-                {
-                    if (results.Options["out"].IsPresent)
-                    {
-                        output = Environment.ExpandEnvironmentVariables((string)results.Options["out"].Value);
-                    }
-                    else
-                    {
-                        output = null;
-                    }
-                }
+					// get the transform
+					XslCompiledTransform transform = transforms[i];
 
-                // create a reader
-                Stream readStream;
-                try
-                {
-                    readStream = File.Open(input, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                }
-                catch (IOException e)
-                {
-                    ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' could not be loaded. The error is: {1}", input, e.Message));
-                    return (1);
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' could not be loaded. The error is: {1}", input, e.Message));
-                    return (1);
-                }
+					// figure out where to put the output
+					string output;
+					if (i < (transforms.Length - 1))
+					{
+						try
+						{
+							output = Path.GetTempFileName();
+							File.SetAttributes(output, FileAttributes.Temporary);
+						}
+						catch (IOException e)
+						{
+							ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("An error occured while attempting to create a temporary file. The error message is: {0}", e.Message));
+							return (1);
+						}
+					}
+					else
+					{
+						if (results.Options["out"].IsPresent)
+						{
+							output = Environment.ExpandEnvironmentVariables((string)results.Options["out"].Value);
+							if (output.Contains("*."))
+								output = output.Replace("*", Path.GetFileNameWithoutExtension(input));
+							else if (inputs.Length > 1 ||
+								output.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
+								output.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+								output = Path.Combine(output, Path.GetFileName(input));
+							ConsoleApplication.WriteMessage(LogLevel.Info, String.Format("Writing output '{0}'.", output));
+						}
+						else
+						{
+							output = null;
+						}
+					}
 
-                using (XmlReader reader = XmlReader.Create(readStream, readerSettings))
-                {
-                    // create a writer
-                    Stream outputStream;
-                    if (output == null)
-                    {
-                        outputStream = Console.OpenStandardOutput();
-                    }
-                    else
-                    {
-                        try
-                        {
-                            outputStream = File.Open(output, FileMode.Create, FileAccess.Write, FileShare.Read | FileShare.Delete);
-                        }
-                        catch (IOException e)
-                        {
-                            ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The output file '{0}' could not be loaded. The error is: {1}", output, e.Message));
-                            return (1);
-                        }
-                        catch (UnauthorizedAccessException e)
-                        {
-                            ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The output file '{0}' could not be loaded. The error is: {1}", output, e.Message));
-                            return (1);
-                        }
-                    }
+					// create a reader
+					Stream readStream;
+					try
+					{
+						readStream = File.Open(input, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+					}
+					catch (IOException e)
+					{
+						ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' could not be loaded. The error is: {1}", input, e.Message));
+						return (1);
+					}
+					catch (UnauthorizedAccessException e)
+					{
+						ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' could not be loaded. The error is: {1}", input, e.Message));
+						return (1);
+					}
 
-                    using (XmlWriter writer = XmlWriter.Create(outputStream, transform.OutputSettings))
-                    {
-                        try
-                        {
-                            // do the deed
-                            transform.Transform(reader, arguments, writer);
-                        }
-                        catch (XsltException e)
-                        {
-                            ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("An error occured during the transformation. The error message is: {0}",
-                                (e.InnerException == null) ? e.Message : e.InnerException.Message));
-                            return (1);
-                        }
-                        catch (XmlException e)
-                        {
-                            ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' is not well-formed. The error is: {1}", input, e.Message));
-                            return (1);
-                        }
-                    }
-                }
+					using (XmlReader reader = XmlReader.Create(readStream, readerSettings))
+					{
+						// create a writer
+						Stream outputStream;
+						if (output == null)
+						{
+							outputStream = Console.OpenStandardOutput();
+						}
+						else
+						{
+							try
+							{
+								outputStream = File.Open(output, FileMode.Create, FileAccess.Write, FileShare.Read | FileShare.Delete);
+							}
+							catch (IOException e)
+							{
+								ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The output file '{0}' could not be loaded. The error is: {1}", output, e.Message));
+								return (1);
+							}
+							catch (UnauthorizedAccessException e)
+							{
+								ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The output file '{0}' could not be loaded. The error is: {1}", output, e.Message));
+								return (1);
+							}
+						}
 
-                // if the last input was a temp file, delete it
-                if (i > 0)
-                {
-                    // Console.WriteLine("deleting {0}", input);
-                    try
-                    {
-                        File.Delete(input);
-                    }
-                    catch (IOException e)
-                    {
-                        ConsoleApplication.WriteMessage(LogLevel.Warn, String.Format("The temporary file '{0}' could not be deleted. The error message is: {1}", input, e.Message));
-                    }
-                }
+						if (i == transforms.Length - 1)
+						{
+							try
+							{
+								// do the deed
+								transform.Transform(reader, arguments, outputStream);
+							}
+							catch (XsltException e)
+							{
+								ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("An error occured during the transformation. The error message is: {0}",
+									(e.InnerException == null) ? e.Message : e.InnerException.Message));
+								return (1);
+							}
+							catch (XmlException e)
+							{
+								ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' is not well-formed. The error is: {1}", input, e.Message));
+								return (1);
+							}
+						}
+						else
+						{
+							using (XmlWriter writer = XmlWriter.Create(outputStream, transform.OutputSettings))
+							{
+								try
+								{
+									// do the deed
+									transform.Transform(reader, arguments, writer);
+								}
+								catch (XsltException e)
+								{
+									ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("An error occured during the transformation. The error message is: {0}",
+										(e.InnerException == null) ? e.Message : e.InnerException.Message));
+									return (1);
+								}
+								catch (XmlException e)
+								{
+									ConsoleApplication.WriteMessage(LogLevel.Error, String.Format("The input file '{0}' is not well-formed. The error is: {1}", input, e.Message));
+									return (1);
+								}
+							}
+						}
+					}
 
-                // the last output file is the next input file
-                input = output;
+					// if the last input was a temp file, delete it
+					if (i > 0)
+					{
+						// Console.WriteLine("deleting {0}", input);
+						try
+						{
+							File.Delete(input);
+						}
+						catch (IOException e)
+						{
+							ConsoleApplication.WriteMessage(LogLevel.Warn, String.Format("The temporary file '{0}' could not be deleted. The error message is: {1}", input, e.Message));
+						}
+					}
 
-            }
+					// the last output file is the next input file
+					input = output;
+
+				}
+			}
 
             return (0);
         }
