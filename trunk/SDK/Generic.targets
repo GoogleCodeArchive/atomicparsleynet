@@ -83,6 +83,7 @@
     <MakeDir Directories="$(OutputDir)\media" Condition="!Exists('$(OutputDir)\media')" />
     <MakeDir Directories="$(OutputDir)\scripts" Condition="!Exists('$(OutputDir)\scripts')" />
     <MakeDir Directories="$(OutputDir)\styles" Condition="!Exists('$(OutputDir)\styles')" />
+    <MakeDir Directories="$(OutputDir)\wiki" Condition="!Exists('$(OutputDir)\wiki')" />
   </Target>
 
   <!--Creating web Directories...-->
@@ -180,4 +181,8 @@
     <Exec Command='xcopy "$(OutputDir)\styles\*" "$(TopicStyleDir)\website\styles\" /y /r'/>
     <Exec Command='xcopy "$(Presentation)\website\*" "$(TopicStyleDir)\website\" /y /r'/>
   </Target>
+
+	<Target Name="Wiki" DependsOnTargets="Html" Condition="$(TopicStyle)=='vs2005'">
+		<Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(Presentation)\Transforms\wiki.xsl" /arg:mediabase="$(WikiMediaBase)" /arg:iconbase="$(WikiIconBase)Presentation/vs2005/icons/" "$(OutputDir)\html\Bin_*.htm" /out:"$(OutputDir)\wiki\*.wiki"' />
+	</Target>
 </Project>
