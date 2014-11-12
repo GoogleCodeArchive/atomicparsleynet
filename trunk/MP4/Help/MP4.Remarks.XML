@@ -649,6 +649,9 @@
 					<see cref="F:MP4.ISOMediaBoxes.FileTypeBox.CompatibleBrand"/> fields, and the ‘major brand’ identifies
 					the preferred brand or best use.
 				</para>
+				<note type="warning">
+					In current version QuickTime movie files are not supported.
+				</note>
 			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.FileTypeBox.Version">

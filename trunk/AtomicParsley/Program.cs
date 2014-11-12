@@ -71,19 +71,42 @@ namespace AtomicParsley
 			//optID3Help,
 			optGenreList, optStikList, optLanguageList, optMacLanguageList, optRatingsList, optGenreMovieIDList,
 			optGenreTVIDList, optImageTypeList, //optID3FramesList,
+			optBrands,
 		};
 
 		static void Main(string[] args)
 		{
-			var stdout = new WindowTextWriter();
-			if (args.Length == 0)
+			TextWriter stdout;
+			if (WindowTextWriter.IsOutputRedirected)
+			{
+				Console.OutputEncoding = System.Text.Encoding.UTF8;
+				stdout = Console.Out;
+				stdout.Write('\xFEFF'); //BOM
+			}
+			else
+			{
+				Console.OutputEncoding = System.Text.Encoding.GetEncoding(
+					System.Globalization.CultureInfo.CurrentUICulture.TextInfo.OEMCodePage);
+				stdout = new WindowTextWriter();
+			}
+			Stream stdin;
+			if (WindowTextWriter.IsInputRedirected)
+			{
+				stdin = Console.OpenStandardInput();
+			}
+			else
+			{
+				stdin = null;
+			}
+			if (args.Length == 0 && stdin == null)
 			{
 				WriteShortHelp(stdout);
 				return;
 			}
 			if (!ImplementedOptions.ParseArguments(args))
 				return;
-			if (args.Length == 1) {
+			if (args.Length == 1)
+			{
 				if (optVersion) { ShowVersionInfo(stdout); return; }
 				else if (optHelp) { WriteShortHelp(stdout); return; }
 				else if (optLongHelp) { WriteLongHelp(stdout); return; }
@@ -94,7 +117,7 @@ namespace AtomicParsley
 				else if (optReverseDNSHelp) { WriteRDNSHelp(stdout); return; }
 				else if (optID3Help) { WriteID3Help(stdout); return; }
 			}
-			if (InfoOptions.Count(opt => opt.IsPresent) == args.Length)
+			if (args.Length > 0 && InfoOptions.Count(opt => opt.IsPresent) == args.Length)
 			{
 				if (optGenreList) Catalog.ListGenresValues(stdout);
 				if (optLanguageList) Catalog.ListLanguageCodes(stdout);
@@ -111,68 +134,98 @@ namespace AtomicParsley
 				log.Error("too many options");
 				return;
 			}
-			if (ImplementedOptions.UnusedArguments.Length == 0)
+			if (optBrands)
+			{
+				if (ImplementedOptions.UnusedArguments.Length != 1 || args.Length != 2)
+				{
+					log.Error("too many options");
+					return;
+				}
+				using (var fs = new FileStream(ImplementedOptions.UnusedArguments[0], FileMode.Open))
+				{
+					var mp4 = new Container();
+					mp4.ExtractBrands(fs, stdout);
+				}
 				return;
-
-			string fn = ImplementedOptions.UnusedArguments[0];
-			if (String.Compare(Path.GetExtension(fn), ".mp3", true) == 0)
-			{
-				ID3v2Tag tag;
-				using (var fs = new FileStream(fn, FileMode.Open))
-				{
-					tag = ID3v2Tag.Create(fs, new ID3v2Tag.SerializationOptions
-						{
-							//MajorVersion = AtomicParsleyID3v2TagMajorVersion,
-							//RevisionVersion = AtomicParsleyID3v2TagRevisionVersion
-						});
-				}
-
-				var writer = new XmlSerializer(typeof(ID3v2Tag));
-				using (var fs = new FileStream(Path.ChangeExtension(fn, ".xml"), FileMode.Create))
-				{
-					tag.XMLSerializerOptions = new ID3v2Tag.XMLSerializationOptions
-						{
-							DisplayHint = true
-						};
-					writer.Serialize(fs, tag, ID3v2Tag.DefaultXMLNamespaces);
-				}
-
-				using (var fs = new FileStream(Path.ChangeExtension(args[0], ".id3"), FileMode.Create))
-				{
-					int size = tag.GetTagSize();
-					Console.Out.WriteLine("Real tag size is {0} byte(s)", size);
-					//tag.TotalSize = size;
-					tag.Write(fs);
-				}
 			}
-			else
-			{
-				Container mp4;
-				using (var fs = new FileStream(fn, FileMode.Open))
-				{
-					mp4 = Container.Create(fs);
-				}
 
-				try
+			try
+			{
+				string fn = stdin != null ? "movie.mp4" :
+					ImplementedOptions.UnusedArguments[0];
+				if (String.Compare(Path.GetExtension(fn), ".mp3", true) == 0)
 				{
-					var writer = new XmlSerializer(typeof(Container));
+					ID3v2Tag tag;
+					using (var fs = stdin ?? new FileStream(fn, FileMode.Open))
+					{
+						tag = ID3v2Tag.Create(fs, new ID3v2Tag.SerializationOptions
+							{
+								//MajorVersion = AtomicParsleyID3v2TagMajorVersion,
+								//RevisionVersion = AtomicParsleyID3v2TagRevisionVersion
+							});
+					}
+
+					var writer = new XmlSerializer(typeof(ID3v2Tag));
+					using (var fs = new FileStream(Path.ChangeExtension(fn, ".xml"), FileMode.Create))
+					{
+						tag.XMLSerializerOptions = new ID3v2Tag.XMLSerializationOptions
+							{
+								DisplayHint = true
+							};
+						writer.Serialize(fs, tag, ID3v2Tag.DefaultXMLNamespaces);
+					}
+
+					using (var fs = new FileStream(Path.ChangeExtension(args[0], ".id3"), FileMode.Create))
+					{
+						int size = tag.GetTagSize();
+						Console.Out.WriteLine("Real tag size is {0} byte(s)", size);
+						//tag.TotalSize = size;
+						tag.Write(fs);
+					}
+				}
+				else
+				{
+					Container mp4;
+					using (var fs = stdin ?? new FileStream(fn, FileMode.Open))
+					{
+						mp4 = Container.Create(fs);
+					}
+
+					var unknowns = mp4.FindUnknownBoxes();
+					XmlSerializer writer;
+					if (unknowns.Count > 0)
+					{
+						var over = new XmlAttributeOverrides();
+						foreach (var type in unknowns)
+						{
+							var attrs = new XmlAttributes(type.Key.GetProperty("Boxes"));
+							foreach(var elem in type.Value)
+								attrs.XmlElements.Add(new XmlElementAttribute(elem.Name, elem));
+							over.Add(type.Key, "Boxes", attrs);
+						}
+						writer = new XmlSerializer(typeof(Container), over);
+					}
+					else
+					{
+						writer = new XmlSerializer(typeof(Container));
+					}
 					using (var fs = new FileStream(Path.ChangeExtension(fn, ".xml"), FileMode.Create))
 					{
 						writer.Serialize(fs, mp4, Container.DefaultXMLNamespaces);
 					}
 				}
-				catch (InvalidOperationException ex)
+			}
+			catch (Exception ex)
+			{
+				Exception e = ex;
+				while (e != null)
 				{
-					Exception e = ex;
-					Console.ForegroundColor = ConsoleColor.Yellow;
-					while (e != null)
-					{
-						Console.Error.WriteLine(e.Message);
-						e = e.InnerException;
-					}
-					Console.ResetColor();
-					Console.ReadKey();
+					log.Error(e.Message);
+					e = e.InnerException;
 				}
+				Environment.ExitCode = 1;
+				if (stdin == null)
+					Console.ReadKey();
 			}
 		}
 	}

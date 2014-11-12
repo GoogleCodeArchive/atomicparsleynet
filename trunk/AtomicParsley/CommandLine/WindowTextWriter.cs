@@ -165,6 +165,51 @@ namespace AtomicParsley.CommandLine
 		{
 			get { return Out.Encoding; }
 		}
+
+#if NET45
+		public static bool IsOutputRedirected
+		{
+			get { return Console.IsOutputRedirected; }
+		}
+
+		public static bool IsInputRedirected
+		{
+			get { return Console.IsInputRedirected; }
+		}
+#else
+		[System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+		private static extern IntPtr GetStdHandle(int nStdHandle);
+		[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+		private static extern int GetFileType(Microsoft.Win32.SafeHandles.SafeFileHandle handle);
+		[System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out int mode);
+
+		private static bool IsHandleRedirected(int nStdHandle)
+		{
+			var ioHandle = GetStdHandle(nStdHandle);
+			var handle = new Microsoft.Win32.SafeHandles.SafeFileHandle(ioHandle, false);
+			int fileType = GetFileType(handle);
+			if ((fileType & 2) != 2)
+			{
+				return true;
+			}
+			int num;
+			bool consoleMode = GetConsoleMode(ioHandle, out num);
+			return !consoleMode;
+		}
+
+		public static bool IsOutputRedirected
+		{
+			[System.Security.SecuritySafeCritical]
+			get { return IsHandleRedirected(-11); }
+		}
+
+		public static bool IsInputRedirected
+		{
+			[System.Security.SecuritySafeCritical]
+			get { return IsHandleRedirected(-10); }
+		}
+#endif
 	}
 
 	public static class TextWriterExtensions

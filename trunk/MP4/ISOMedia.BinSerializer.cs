@@ -77,6 +77,48 @@ namespace MP4
 			}
 		}
 		
+		public partial class InvalidBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				// Data
+				Data = ((byte[])(reader.ReadBytes(((int)(reader.Length())))));
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
+				{
+					long size = 0;
+					// Data
+					if ((Data != null))
+					{
+						size += ((byte[])(Data)).Length;
+					}
+					return size;
+				}
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				// Data
+				if ((Data != null))
+				{
+					writer.Write(((byte[])(Data)));
+				}
+			}
+		}
+		
 		public partial class UnknownBox
 		{
 			
@@ -4160,7 +4202,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				// Data
-				Data = ((byte[])(reader.ReadBytes(((int)(reader.Length())))));
+				Data = ((uint)(reader.ReadUInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -4170,12 +4212,8 @@ namespace MP4
 			{
 				get
 				{
-					long size = 0;
 					// Data
-					if ((Data != null))
-					{
-						size += ((byte[])(Data)).Length;
-					}
+					long size = 4;
 					return size;
 				}
 			}
@@ -4186,10 +4224,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				// Data
-				if ((Data != null))
-				{
-					writer.Write(((byte[])(Data)));
-				}
+				writer.Write(((uint)(Data)));
 			}
 		}
 		

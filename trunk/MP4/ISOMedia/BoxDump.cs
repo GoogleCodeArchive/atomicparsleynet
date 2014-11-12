@@ -65,7 +65,52 @@ namespace MP4
 			}
 		}
 
-		public sealed partial class UnknownBox: AtomicInfo
+		public sealed partial class InvalidBox : AtomicInfo
+		{
+			public struct ErrorXMLSerializer
+			{
+				[XmlIgnore]
+				public Exception Error;
+				[XmlAttribute]
+				public string Type { get { return Error.GetType().FullName; } set { } }
+				[XmlText]
+				public string Message { get { return Error.Message; } set { } }
+			}
+
+			public struct InvalidDataXMLSerializer
+			{
+				[XmlAttribute]
+				public string Type { get { return Data == null ? "External" : "Base64"; } set { } }
+				[XmlAttribute, DefaultValue(0L)]
+				public long Offset { get; set; }
+				[XmlAttribute, DefaultValue(0L)]
+				public long DataSize { get; set; }
+				[XmlText(DataType = "base64Binary")]
+				public byte[] Data { get; set; }
+			}
+
+			[XmlElement("Error")]
+			public ErrorXMLSerializer[] ErrorMessages
+			{
+				get
+				{
+					var list = new List<ErrorXMLSerializer>();
+					for (var ex = this.Error; ex != null; ex = ex.InnerException)
+						list.Add(new ErrorXMLSerializer { Error = ex });
+					return list.ToArray();
+				}
+				set { }
+			}
+
+			[XmlElement("Data")]
+			public InvalidDataXMLSerializer DataSerializer
+			{
+				get { return new InvalidDataXMLSerializer { Offset = this.Offset, DataSize = this.RawDataSize, Data = this.Data }; }
+				set { this.Offset = value.Offset; this.RawDataSize = value.DataSize; this.Data = value.Data; }
+			}
+		}
+
+		public sealed partial class UnknownBox : AtomicInfo
 		{
 			[XmlElement("Data")]
 			public DataXMLSerializer DataSerializer
@@ -77,9 +122,7 @@ namespace MP4
 
 		public sealed partial class UnknownParentBox: AtomicInfo, IBoxContainer
 		{
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
-			[XmlElement(typeof(FreeSpaceBox))]
+			[XmlElement(typeof(Box))]
 			[XmlElement(typeof(UUIDBox))]
 			public Collection<AtomicInfo> Boxes
 			{
@@ -135,9 +178,7 @@ namespace MP4
 		// Data Information Atom
 		public sealed partial class DataInformationBox : AtomicInfo, IBoxContainer
 		{
-			[XmlElement(typeof(DataReferenceBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
+			[XmlElement("DataReferenceBox", typeof(DataReferenceBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -153,8 +194,6 @@ namespace MP4
 			//[XmlElement(typeof(cios))]
 			[XmlElement("URLDataEntryBox", typeof(DataEntryURLBox))]
 			[XmlElement("URNDataEntryBox", typeof(DataEntryURNBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxArray; }
@@ -172,9 +211,7 @@ namespace MP4
 
 		public sealed partial class EditBox : AtomicInfo, IBoxContainer
 		{
-			[XmlElement(typeof(EditListBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
+			[XmlElement("EditListBox", typeof(EditListBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -280,12 +317,9 @@ namespace MP4
 			//[XmlElement(typeof(ipmc))]
 			//[XmlElement(typeof(ID32))]
 			//[XmlElement(typeof(ilst))]
-			[XmlElement(typeof(ISOMediaBoxes.FreeSpaceBox))]
-			[XmlElement(typeof(ISOMediaBoxes.UUIDBox))]
+			[XmlElement(typeof(UUIDBox))]
 			[XmlElement("MPEG4ESDescriptorBox", typeof(ESDBox))]
 			//[XmlElement(typeof(data))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -309,8 +343,6 @@ namespace MP4
 			[XmlElement("MaxPacketDurationBox", typeof(DMAXBox))]
 			[XmlElement("PayloadTypeBox", typeof(PAYTBox))]
 			[XmlElement("TotalMediaBytesBox", typeof(TPAYBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -322,8 +354,6 @@ namespace MP4
 			//this is the value for GF_RTPBox - same as HintSampleEntry for RTP !!!
 			[XmlElement("RTPInfoBox", typeof(RTPBox))]
 			[XmlElement(typeof(SDPBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				//WARNING: because of the HNTI at movie level, we cannot use the generic parsing scheme!
@@ -398,8 +428,6 @@ namespace MP4
 			[XmlElement(typeof(MediaHeaderBox))]
 			[XmlElement(typeof(HandlerBox))]
 			[XmlElement(typeof(MediaInformationBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -416,8 +444,6 @@ namespace MP4
 			[XmlElement(typeof(DataInformationBox))]
 			[XmlElement(typeof(SampleTableBox))]
 			[XmlElement(typeof(HandlerBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -429,8 +455,6 @@ namespace MP4
 		{
 			[XmlElement(typeof(MovieFragmentHeaderBox))]
 			[XmlElement(typeof(TrackFragmentBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -449,8 +473,6 @@ namespace MP4
 			//[XmlElement(typeof(ipmc))]
 			[XmlElement(typeof(TrackBox))]
 			[XmlElement(typeof(UserDataBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -470,8 +492,6 @@ namespace MP4
 		{
 			[XmlElement("MPEG4ESDescriptorBox", typeof(ESDBox))]
 			[XmlElement(typeof(ProtectionInfoBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get
@@ -499,8 +519,6 @@ namespace MP4
 		{
 			[XmlElement("MPEG4ESDescriptorBox", typeof(ESDBox))]
 			[XmlElement(typeof(ProtectionInfoBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -529,9 +547,6 @@ namespace MP4
 			[XmlElement(typeof(AVCConfigurationBox))]
 			[XmlElement(typeof(MPEG4BitRateBox))]
 			[XmlElement(typeof(MPEG4ExtensionDescriptorsBox))]
-			[XmlElement(typeof(UnknownUUIDBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get
@@ -547,8 +562,6 @@ namespace MP4
 		{
 			[XmlElement(typeof(TrackExtendsBox))]
 			[XmlElement(typeof(MovieExtendsHeaderBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -695,8 +708,6 @@ namespace MP4
 			[XmlElement(typeof(DegradationPriorityBox))]
 			[XmlElement(typeof(PaddingBitsBox))]
 			[XmlElement(typeof(SubSampleInformationBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -798,8 +809,6 @@ namespace MP4
 			//[XmlElement(typeof(ssmv))]
 			//[XmlElement(typeof(tmcd))]
 			//[XmlElement(typeof(mjp2))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxArray; }
@@ -941,8 +950,6 @@ namespace MP4
 			[XmlElement(typeof(SampleGroupBox))]
 			[XmlElement(typeof(SampleGroupDescriptionBox))]
 			[XmlElement("TrackFragmentBaseMediaDecodeTimeBox", typeof(TFBaseMediaDecodeTimeBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -960,8 +967,6 @@ namespace MP4
 			[XmlElement(typeof(UserDataBox))]
 			[XmlElement(typeof(MetaBox))]
 			//[XmlElement(typeof(tapt))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -980,8 +985,6 @@ namespace MP4
 			[XmlElement(typeof(ODTrackReferenceBox))]
 			[XmlElement(typeof(SyncTrackReferenceBox))]
 			[XmlElement(typeof(ChapterTrackReferenceBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public BoxCollection<TrackReferenceTypeBox> Boxes
 			{
 				get { return this.boxList; }
@@ -1060,13 +1063,10 @@ namespace MP4
 			//[XmlElement(typeof(kywd))]
 			//[XmlElement(typeof(loci))]
 			//[XmlElement(typeof(tsel))]
-			[XmlElement(typeof(FreeSpaceBox))]
 			[XmlElement(typeof(UUIDBox))]
 			[XmlElement("MPEG4ESDescriptorBox", typeof(ESDBox))]
 			//[XmlElement(typeof(data))]
 			[XmlElement(typeof(ChapterListBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -1181,8 +1181,6 @@ namespace MP4
 			[XmlElement("KMSBox", typeof(ISMAKMSBox))]
 			[XmlElement(typeof(ISMASampleFormatBox))]
 			[XmlElement("OMADRMAUFormatBox", typeof(OMADRMKMSBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -1212,8 +1210,6 @@ namespace MP4
 		public sealed partial class AC3SampleEntryBox : ISOMAudioSampleEntry, IBoxContainer
 		{
 			[XmlElement("AC3SpecificBox", typeof(AC3ConfigBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -1225,8 +1221,6 @@ namespace MP4
 			[XmlElement(typeof(LASeRConfigurationBox))]
 			[XmlElement(typeof(MPEG4BitRateBox))]
 			[XmlElement(typeof(MPEG4ExtensionDescriptorsBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }
@@ -1306,8 +1300,6 @@ namespace MP4
 			[XmlElement("RTPTimeScaleBox", typeof(TSHintEntryBox))]
 			[XmlElement("TimeStampOffsetBox", typeof(TimeOffHintEntryBox))]
 			[XmlElement("PacketSequenceOffsetBox", typeof(SeqOffHintEntryBox))]
-			[XmlElement(typeof(UnknownBox))]
-			[XmlElement(typeof(UnknownParentBox))]
 			public Collection<AtomicInfo> HintDataTable
 			{
 				get { return this.boxList; }
