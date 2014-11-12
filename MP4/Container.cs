@@ -48,6 +48,9 @@ namespace MP4
 		private static readonly ILog log = Logger.GetLogger(typeof(Container));
 		internal const string XMLNS = "urn:schemas-mp4ra-org:container";
 
+		private MetadataStyle metadataStyle;
+		private bool editable;
+
 		[XmlIgnore]
 		public ICollection<AtomicInfo> Atoms { get; private set; }
 
@@ -105,7 +108,20 @@ namespace MP4
 
 		public Container()
 		{
+			this.editable = false;
 			this.Atoms = new List<AtomicInfo>();
+		}
+
+		public Container(bool editable)
+			: this()
+		{
+			this.editable = editable;
+		}
+
+		private BinaryReader CreateReader(Stream file)
+		{
+			var bound = new BoundStream(file, 0L, -1L);
+			return new BinReader(bound, littleEndian: false);
 		}
 
 		#region Locating/Finding Atoms
@@ -134,14 +150,42 @@ namespace MP4
 			return null;
 		}
 
+		private static void FindUnknownBoxes(IDictionary<Type, Type[]> unknowns, IBoxContainer container)
+		{
+			var childs = container.Boxes.Where(box =>
+				box is ISOMediaBoxes.UnknownBox ||
+				box is ISOMediaBoxes.UnknownParentBox ||
+				box is ISOMediaBoxes.UnknownUUIDBox ||
+				box is ISOMediaBoxes.InvalidBox ||
+				box is ISOMediaBoxes.VoidBox ||
+				box is ISOMediaBoxes.FreeSpaceBox).Select(box => box.GetType());
+			if (childs.Any())
+			{
+				Type[] list;
+				var type = container.GetType();
+				if (type == typeof(ISOMediaBoxes.UserDataBox))
+					type = typeof(ISOMediaBoxes.UserDataMap);
+				if (unknowns.TryGetValue(type, out list))
+					unknowns[type] = list.Concat(childs).Distinct().ToArray();
+				else
+					unknowns.Add(type, childs.Distinct().ToArray());
+			}
+			foreach (var child in container.Boxes.Select(box => box as IBoxContainer).Where(box => box != null))
+				FindUnknownBoxes(unknowns, child);
+		}
+
+		public IDictionary<Type, Type[]> FindUnknownBoxes()
+		{
+			var unknowns = new Dictionary<Type, Type[]>();
+			foreach (var container in Atoms.Select(box => box as IBoxContainer).Where(box => box != null))
+				FindUnknownBoxes(unknowns, container);
+			return unknowns;
+		}
 		#endregion
 
 		#region File scanning & atom parsing
-		int metadata_style = ApTypes.UNDEFINED_STYLE;
-		bool psp_brand = false;
-		long gapless_void_padding ; //possibly used in the context of gapless playback support by Apple
 
-		private void IdentifyBrand(string brand)
+		private MetadataStyle IdentifyBrand(string brand)
 		{
 			switch (brand)
 			{
@@ -154,12 +198,10 @@ namespace MP4
 			//
 
 			case "3g2b" : //3GPP2 release A
-				metadata_style = ApTypes.THIRD_GEN_PARTNER_VER2_REL_A;    //3GPP2 C.S0050-A_v1.0_060403, Annex A.2 lists differences between 3GPP & 3GPP2 - assets are not listed
-				break;
+				return MetadataStyle.ThirdGenPartnerVer2RelA; //3GPP2 C.S0050-A_v1.0_060403, Annex A.2 lists differences between 3GPP & 3GPP2 - assets are not listed
 
 			case "3g2a" : //                                //3GPP2 release 0
-				metadata_style = ApTypes.THIRD_GEN_PARTNER_VER2;
-				break;
+				return MetadataStyle.ThirdGenPartnerVer2;
 
 			//
 			//3GPP specification documents brands, not all are listed at mp4ra
@@ -171,8 +213,7 @@ namespace MP4
 			case "3gr7" :
 			case "3ge7" :
 			case "3gg7" :
-				metadata_style = ApTypes.THIRD_GEN_PARTNER_VER1_REL7;
-				break;
+				return MetadataStyle.ThirdGenPartnerVer1Rel7;
 
 			case "3gp6" : //                                //3gp assets which were introducted by NTT DoCoMo to the Rel6 workgroup on January 16, 2003
 			//with S4-030005.zip from http://www.3gpp.org/ftp/tsg_sa/WG4_CODEC/TSGS4_25/Docs/ (! albm, loci)
@@ -180,33 +221,30 @@ namespace MP4
 			case "3gs6" : //streaming
 			case "3ge6" : //extended presentations (jpeg images)
 			case "3gg6" : //general (not yet suitable; superset)
-				metadata_style = ApTypes.THIRD_GEN_PARTNER_VER1_REL6;
+				return MetadataStyle.ThirdGenPartnerVer1Rel6;
 				break;
 
 			case "3gp4" : //                                //3gp assets (the full complement) are available: source clause is S5.5 of TS26.244 (Rel6.4 & later):
 			case "3gp5" : //                                //"that the file conforms to the specification; it includes everything required by,
-				metadata_style = ApTypes.THIRD_GEN_PARTNER;               //and nothing contrary to the specification (though there may be other material)"
-				break;                                                    //it stands to reason that 3gp assets aren't contrary since 'udta' is defined by iso bmffv1
+				//                                          //and nothing contrary to the specification (though there may be other material)"
+				//                                          //it stands to reason that 3gp assets aren't contrary since 'udta' is defined by iso bmffv1
+				return MetadataStyle.ThirdGenPartner;
 
 			//
 			//other brands that are have compatible brands relating to 3GPP/3GPP2
 			//
 
 			case "kddi" : //                                //3GPP2 EZmovie (optionally restricted) media; these have a 3GPP2 compatible brand
-				metadata_style = ApTypes.THIRD_GEN_PARTNER_VER2;
-				break;
+				return MetadataStyle.ThirdGenPartnerVer2;
 			case "mmp4" :
-				metadata_style = ApTypes.THIRD_GEN_PARTNER;
-				break;
+				return MetadataStyle.ThirdGenPartner;
 
 			//
 			//what IS supported for iTunes-style metadata
 			//
 
 			case "MSNV" : //(PSP) - this isn't actually listed at mp4ra, but since they are popular...
-				metadata_style = ApTypes.ITUNES_STYLE;
-				psp_brand = true;
-				break;
+				return MetadataStyle.iTunes | MetadataStyle.PSP;
 			case "M4A " : //these are all listed at http://www.mp4ra.org/filetype.html as registered brands
 			case "M4B " :
 			case "M4P " :
@@ -218,24 +256,54 @@ namespace MP4
 			case "isom" :
 			case "iso2" :
 			case "avc1" :
-
-
-				metadata_style = ApTypes.ITUNES_STYLE;
-				break;
+				return MetadataStyle.iTunes;
 
 			//
 			//other brands that are derivatives of the ISO Base Media File Format
 			//
 			case "mjp2" :
 			case "mj2s" :
-				metadata_style = ApTypes.MOTIONJPEG2000;
-				break;
+				return MetadataStyle.MotionJPEG2000;
 
 			//other lesser unsupported brands; http://www.mp4ra.org/filetype.html like dv, mp21 & ... whatever mpeg7 brand is
 			default:
 				throw new NotSupportedException(String.Format("Unsupported MPEG-4 file brand found '{0}'", brand));
 			}
-			return;
+		}
+
+		private ISOMediaBoxes.FileTypeBox ReadFileType(BinaryReader reader)
+		{
+			this.Atoms.Clear();
+			long boxStart = reader.BaseStream.Position;
+			long boxSize = reader.ReadUInt32();
+			var atomid = reader.ReadAtomicCode();
+			ISOMediaBoxes.FileTypeBox ftyp = null;
+			if (boxSize == 12L && atomid == ISOMediaBoxes.JPEG2000Atom.DefaultID)
+			{
+				var jP = AtomicInfo.ParseBox(reader, boxSize, atomid, editable) as ISOMediaBoxes.JPEG2000Atom;
+				if (jP == null || jP.Data != ISOMediaBoxes.JPEG2000Atom.Signature)
+				{
+					throw new InvalidDataException("Bad jpeg2000 file (invalid header).");
+				}
+				this.Atoms.Add(jP);
+				ftyp = AtomicInfo.ParseBox(reader) as ISOMediaBoxes.FileTypeBox;
+				if (ftyp == null)
+				{
+					throw new InvalidDataException("Expected ftyp atom missing."); //the atom right after the jpeg2000/mjpeg2000 signature is *supposed* to be 'ftyp'
+				}
+			}
+			else
+			{
+				if (atomid == ISOMediaBoxes.FileTypeBox.DefaultID)
+					ftyp = AtomicInfo.ParseBox(reader, boxSize, atomid, editable) as ISOMediaBoxes.FileTypeBox;
+				if (ftyp == null)
+				{
+					throw new InvalidDataException("Bad mpeg4 file (ftyp atom missing or alignment error).");
+				}
+			}
+			this.Atoms.Add(ftyp);
+
+			return ftyp;
 		}
 
 		/// <summary>
@@ -245,53 +313,15 @@ namespace MP4
 		/// <param name="deepscan_REQ">controls whether we go into 'stsd' or just a superficial scan</param>
 		private void ScanAtoms(Stream file)
 		{
-			bool jpeg2000signature = false;
+			var reader = CreateReader(file);
 
-			var reader = new BinReader(file, false);
+			metadataStyle = IdentifyBrand((string)ReadFileType(reader).Brand);
 
-			long boxStart = reader.BaseStream.Position;
-			long boxSize = reader.ReadUInt32();
-			var atomid = reader.ReadAtomicCode();
-			if (boxSize == 12L && atomid == ISOMediaBoxes.JPEG2000Atom.DefaultID)
+			while (true)
 			{
-				jpeg2000signature = true;
-			}
-			if (atomid != ISOMediaBoxes.FileTypeBox.DefaultID && !jpeg2000signature)
-			{
-				throw new InvalidDataException("Bad mpeg4 file (ftyp atom missing or alignment error).");
-			}
-			var atom = AtomicInfo.ParseBox(reader, boxStart, (uint)boxSize, atomid);
-			if (jpeg2000signature && ((ISOMediaBoxes.JPEG2000Atom)atom).Data.ToInt32(0, false) != ISOMediaBoxes.JPEG2000Atom.Signature)
-			{
-				throw new InvalidDataException("Bad jpeg2000 file (invalid header).");
-			}
-
-			if (!jpeg2000signature)
-			{
-				IdentifyBrand((string)((ISOMediaBoxes.FileTypeBox)atom).Brand);
-			}
-
-			this.Atoms.Add(atom);
-
-			while (reader.BaseStream.Position < reader.BaseStream.Length)
-			{
-
-				atom = AtomicInfo.ParseBox(reader);
+				var atom = AtomicInfo.ParseBox(reader, required: false, editable: editable);
+				if (atom == null) break;
 				this.Atoms.Add(atom);
-
-				if (jpeg2000signature)
-				{
-					var ftyp = atom as ISOMediaBoxes.FileTypeBox;
-					if (ftyp != null && boxSize >= 8L)
-					{
-						IdentifyBrand((string)ftyp.Brand);
-					}
-					else
-					{
-						throw new InvalidDataException("Expected ftyp atom missing."); //the atom right after the jpeg2000/mjpeg2000 signature is *supposed* to be 'ftyp'
-					}
-					jpeg2000signature = false;
-				}
 			}
 
 			//if (brand == 0x69736F6D) { //'isom' test for amc files & its (?always present?) uuid 0x63706764A88C11D48197009027087703
@@ -308,11 +338,59 @@ namespace MP4
 				throw new InvalidDataException("Bad mpeg4 file (no 'moov' atom).");
 		}
 
-		public static Container Create(Stream file)
+		public static Container Create(Stream file, bool editable = false)
 		{
-			var mp4 = new Container();
+			var mp4 = new Container(editable);
 			mp4.ScanAtoms(file);
 			return mp4;
+		}
+		#endregion
+
+		#region Extracts
+		public void ExtractBrands(Stream fs, TextWriter stdout)
+		{
+			var reader = CreateReader(fs);
+
+			var ftyp = ReadFileType(reader);
+			var metadata_style = IdentifyBrand((string)ftyp.Brand);
+
+			bool cb_V2ISOBMFF = ftyp.TestCompatibleBrand();
+
+			stdout.Write(" Major Brand: {0}", ftyp.Brand);
+
+			//if (ftyp.Brand == "isom")
+			//{
+			//	fs.Seek(save, SeekOrigin.Begin);
+			//	ScanAtoms(fs);
+			//}
+
+			stdout.WriteLine("  -  version {0:X}", ftyp.Version);
+
+			stdout.WriteLine(" Compatible Brands: {0}", String.Join(" ", ftyp.CompatibleBrand));
+
+			stdout.WriteLine(" Tagging schemes available:");
+			switch (metadata_style)
+			{
+				case MetadataStyle.iTunes:
+				case MetadataStyle.iTunes | MetadataStyle.PSP:
+					stdout.WriteLine("   iTunes-style metadata allowed.");
+					break;
+				case MetadataStyle.ThirdGenPartner:
+				case MetadataStyle.ThirdGenPartnerVer1Rel6:
+				case MetadataStyle.ThirdGenPartnerVer1Rel7:
+				case MetadataStyle.ThirdGenPartnerVer2:
+					stdout.WriteLine("   3GP-style asset metadata allowed.");
+					break;
+				case MetadataStyle.ThirdGenPartnerVer2RelA:
+					stdout.WriteLine("   3GP-style asset metadata allowed [& unimplemented GAD (Geographical Area Description) asset].");
+					break;
+			}
+			if (cb_V2ISOBMFF || metadata_style == MetadataStyle.ThirdGenPartnerVer1Rel7)
+			{
+				stdout.WriteLine("   ID3 tags on ID32 atoms @ file/movie/track level allowed.");
+			}
+			stdout.WriteLine("   ISO-copyright notices @ movie and/or track level allowed.");
+			stdout.WriteLine("   uuid private user extension tags allowed.");
 		}
 		#endregion
 	}

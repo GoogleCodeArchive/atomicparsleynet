@@ -152,16 +152,68 @@ namespace MP4
 		[XmlIgnore]
 		public AtomicCode AtomicID { get; set; }
 
-		[XmlAttribute("AtomicID")]
+		[XmlAttribute("AtomicID"), DefaultValue("")]
 		public string Name
 		{
 			get { return AtomicID.ToString(); }
 			set { this.AtomicID = new AtomicCode(value); }
 		}
 
-		//char* ReverseDNSname;
-		//char* ReverseDNSdomain;
-		public string AncillaryData;         //just contains a simple number for atoms that contains some interesting info (like stsd codec used)
+		public sealed class RawDataManager
+		{
+			public byte[] Data { get; private set; }
+			public int Offset { get; private set; }
+			public long Position { get; private set; }
+			public int Length { get; private set; }
+
+			public BinaryReader CreateReader()
+			{
+				var mem = new MemoryStream(Data);
+				var bound = new BoundStream(mem, Position, Position + Length);
+				return new BinReader(bound, Encoding.UTF8, littleEndian: false);
+			}
+
+			public RawDataManager(BinaryReader reader)
+			{
+				var mem = new MemoryStream();
+				reader.BaseStream.WriteTo(mem);
+				Data = mem.ToArray();
+				Offset = 0;
+				Position = reader.BaseStream.Position;
+				Length = Data.Length;
+			}
+
+			public RawDataManager(BinaryReader reader, int dataSize)
+			{
+				Data = new byte[dataSize];
+				Offset = 0;
+				Position = reader.BaseStream.Position;
+				Length = Data.Length;
+				reader.Read(Data, 0, Length);
+			}
+
+			public RawDataManager(RawDataManager parent, long position, int dataSize)
+			{
+				Data = parent.Data;
+				Offset = (int)(position - parent.Position) + parent.Offset;
+				Position = position;
+				Length = dataSize;
+			}
+
+			public byte[] CurrentData
+			{
+				get
+				{
+					var data = new byte[Length];
+					Array.Copy(Data, Offset, data, 0, Length);
+					return data;
+				}
+			}
+		}
+
+		[XmlIgnore]
+		public RawDataManager RawData { get; internal set; }
+
 		[XmlIgnore]
 		public AtomicInfo Parent { get; set; }
 
@@ -184,99 +236,236 @@ namespace MP4
 
 		public static bool AllowUnknownBox { get { return true; } }
 
-		public static AtomicInfo ParseBox(BinaryReader reader, AtomicInfo parent = null, bool required = true)
+		public static AtomicInfo ParseBox(BinaryReader reader, AtomicInfo parent = null, bool required = true, bool editable = false)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
-			long start = reader.BaseStream.Position;
-			uint boxSize = reader.ReadUInt32();
-			if (boxSize == 0u && !required)
-				return null;
+			if (!(reader.BaseStream is BoundStream))
+			{
+				var bound = reader.BaseStream.CanSeek ?
+					new BoundStream(reader.BaseStream) :
+					new BoundStream(reader.BaseStream, 0L, -1L);
+
+				reader = new BinReader(bound, Encoding.UTF8, littleEndian: false);
+			}
+
+			byte[] buf;
+			uint boxSize;
+			if (required)
+			{
+				boxSize = reader.ReadUInt32();
+			}
+			else
+			{
+				buf = new byte[4];
+				if (reader.Read(buf, 0, 4) < 4 || buf.IsZero())
+					return null;
+				boxSize = buf.ToUInt32(0, littleEndian: false);
+			}
 			AtomicCode atomid;
 			//fix for some boxes found in some old hinted files
-			if (boxSize == 0u)
+			if (boxSize >= 2 && boxSize <= 4)
 			{
-				uint id = boxSize;
+				return new ISOMediaBoxes.VoidBox(4);
+			}
+			else if (boxSize == 0u)
+			{
+				//now here's a bad thing: some files use size 0 for void atoms, some for "till end of file" indictaion..
+				buf = boxSize.GetBytes(littleEndian: false);
+				long start = reader.BaseStream.Position;
 				//Apple has decided to add around 2k of NULL space outside of any atom structure starting with iTunes 7.0.0
 				//its possible this is part of gapless playback - but then why would it come after the 'free' at the end of a file like gpac writes?
-				while (id == 0u)
+				while (buf.IsZero())
 				{
-					boxSize = id;
-					id = reader.ReadUInt32();
+					if (reader.Read(buf, 0, 4) < 4)
+						return new ISOMediaBoxes.VoidBox((int)(reader.BaseStream.Position - start));
 				}
-				long len = reader.BaseStream.Position - start - 8L;
+				long len = reader.BaseStream.Position - start;
 				if (len > 0)
 					log.Warn("Space {0} bytes have been skipped.", len);
-				atomid = (AtomicCode)id;
+				atomid = (AtomicCode)buf.ToUInt32(0, littleEndian: false);
 			}
 			else
 			{
 				atomid = reader.ReadAtomicCode();
 			}
-			return ParseBox(reader, start, boxSize, atomid, parent);
+			return ParseBox(reader, boxSize, atomid, editable, parent);
 		}
 
-		internal static AtomicInfo ParseBox(BinaryReader reader, long start, long boxSize, AtomicCode atomid, AtomicInfo parent = null)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="reader">Binary reader with bounded stream.</param>
+		/// <param name="boxSize"></param>
+		/// <param name="atomid"></param>
+		/// <param name="editable"></param>
+		/// <param name="parent"></param>
+		/// <returns></returns>
+		internal static AtomicInfo ParseBox(BinaryReader reader, long boxSize, AtomicCode atomid, bool editable, AtomicInfo parent = null)
 		{
-			var def = MatchToKnownAtom(atomid, parent);
-			var box = def.CreateBox(atomid, parent);
-			long dataSize;
-			var data = reader.BaseStream;
-			Stream mem = null;
-
-			if (atomid == ISOMediaBoxes.MediaDataBox.DefaultID)
+			AtomicInfo box;
+			long hdrSize = 8L;
+			//handle uuid
+			if (atomid == ISOMediaBoxes.UUIDBox.DefaultID)
 			{
-				if (boxSize == 1L)
-					dataSize = reader.ReadInt64() - 16L;
-				else if (boxSize > 8L)
-					dataSize = boxSize - 8L;
-				else
-					dataSize = reader.BaseStream.Length - start - 8L;
-				if (dataSize < 0L)
-					throw new InvalidDataException("Invalid movie sample data size");
-				boxSize = dataSize + 8L;
+				var uuid = new Guid(reader.ReadBytes(16));
+				hdrSize += 16L;
+				//TODO: KnownUUIDAtoms
+				box = new ISOMediaBoxes.UnknownUUIDBox
+				{
+					UUID = uuid
+				};
 			}
 			else
 			{
-				dataSize = boxSize - 8L;
-
-				//no size means till end of file - EXCEPT FOR some old QuickTime boxes...
-				if (boxSize == 0L && atomid == ISOMediaBoxes.TOTLBox.DefaultID)
-					dataSize = 4;
-
-				if (dataSize < 0)
-					throw new InvalidDataException("Invalid box size");
-
-				mem = new MemoryStream((int)dataSize);
-				reader.BaseStream.WriteTo(mem, (int)dataSize);
-				mem.Seek(0L, SeekOrigin.Begin);
-				reader = new BinReader(mem, Encoding.UTF8, false);
+				var def = MatchToKnownAtom(atomid, parent);
+				box = def.CreateBox(atomid, parent);
 			}
-			box.ReadBinary(reader);
-			long readSize = data.Position - start;
-			if (mem != null)
-				readSize -= mem.Length - mem.Position;
+			long dataSize, parentSize = 0L;
+			bool hasSize = true;
+
+			//handle large box
+			if (boxSize == 1L)
+			{
+				hdrSize += 8L;
+				dataSize = reader.ReadInt64() - hdrSize;
+				if (dataSize < 0L)
+					throw new InvalidDataException("Invalid box large size for " + atomid);
+			}
+			else if (boxSize > 0L)
+			{
+				dataSize = boxSize - hdrSize;
+			}
+			else
+			{
+				dataSize = 0L;
+				hasSize = false;
+			}
+
+			#region Exceptional box size
+			if (dataSize == 0L && atomid == ISOMediaBoxes.MediaDataBox.DefaultID && parent == null)
+			{
+				hasSize = false;
+			}
+			//no size means till end of file - EXCEPT FOR some old QuickTime boxes...
+			else if (boxSize == 0 && atomid == ISOMediaBoxes.TOTLBox.DefaultID)
+			{
+				dataSize = 4L;
+			}
+			#endregion
+
+			long start = reader.BaseStream.Position;
+			//try to resolve data size
+			if (!hasSize)
+			{
+				if (atomid != ISOMediaBoxes.MediaDataBox.DefaultID)
+					log.Debug("Warning Read Box type {0} size 0 reading till the end of file", atomid);
+				if (reader.BaseStream.CanSeek)
+				{
+					dataSize = reader.BaseStream.Length - start;
+				}
+			}
+
+			if (dataSize < 0L)
+				throw new InvalidDataException(String.Format("Box size {1} less than box header size {2} for {0}", atomid, boxSize, hdrSize));
+
+			//media data box - set bound only
+			if (atomid == ISOMediaBoxes.MediaDataBox.DefaultID && parent == null)
+			{
+				if (!hasSize)
+					reader.BaseStream.SetLength(-1L);
+				else
+					reader.BaseStream.SetLength(start + dataSize);
+			}
+			//box without length - read rest part to buffer
+			else if (!hasSize)
+			{
+				box.RawData = new RawDataManager(reader);
+				dataSize = box.RawData.Length;
+				reader = box.RawData.CreateReader();
+			}
+			//editable - read to buffer
+			else if (editable)
+			{
+				box.RawData = new RawDataManager(reader, (int)dataSize);
+				reader = box.RawData.CreateReader();
+			}
+			//editable parent - link to buffer
+			else if (parent != null && parent.RawData != null)
+			{
+				box.RawData = new RawDataManager(parent.RawData, start, (int)dataSize);
+				parentSize = reader.BaseStream.Length;
+				reader.BaseStream.SetLength(start + dataSize);
+			}
+			//readonly - set bound only
+			else
+			{
+				if (parent != null)
+					parentSize = reader.BaseStream.Length;
+				reader.BaseStream.SetLength(start + dataSize);
+			}
+
+			start = reader.BaseStream.Position;
+			try
+			{
+				box.ReadBinary(reader);
+			}
+			catch (EndOfStreamException ex)
+			{
+				if (atomid == ISOMediaBoxes.FileTypeBox.DefaultID ||
+					atomid == ISOMediaBoxes.JPEG2000Atom.DefaultID ||
+					atomid == ISOMediaBoxes.MediaDataBox.DefaultID)
+					throw;
+
+				log.Error(ex.Message);
+				box = new ISOMediaBoxes.InvalidBox(ex, box, reader, start);
+			}
+			catch (IOException) { throw; }
+			catch (UnauthorizedAccessException) { throw; }
+			catch (OutOfMemoryException) { throw; }
+			catch (StackOverflowException) { throw; }
+			catch (InvalidDataException) { throw; }
+			catch (Exception ex)
+			{
+				if (atomid == ISOMediaBoxes.FileTypeBox.DefaultID ||
+					atomid == ISOMediaBoxes.JPEG2000Atom.DefaultID ||
+					atomid == ISOMediaBoxes.MediaDataBox.DefaultID)
+					throw;
+
+				log.Error(ex.Message);
+				box = new ISOMediaBoxes.InvalidBox(ex, box, reader, start);
+			}
+			finally
+			{
+				if (parentSize > 0L)
+					reader.BaseStream.SetLength(parentSize);
+				else if (parent == null)
+					reader.BaseStream.SetLength(-1L);
+			}
+			long readSize = reader.BaseStream.Position - start;
 
 			//diagnose damage to 'cprt' by libmp4v2 in 1.4.1 & 1.5.0.1
 			//typically, the length of this atom (dataSize) will exceeed it parent (which is reported as 17)
 			//true length ot this data will be 9 - impossible for iTunes-style 'data' atom.
-			if (atomid == "data" && box is IBoxContainer)
+			if (atomid == "data" /*&& parent is IBoxContainer*/)
 			{
-				if (boxSize > readSize)
+				if (dataSize > readSize)
 				{
-					boxSize = readSize;
 					log.Warn("The 'data' child of the '{0}' atom seems to be corrupted.", box.Name);
+					reader.BaseStream.Skip(dataSize - readSize);
+					dataSize = readSize;
 				}
 			}
 			//end diagnosis; APar_Manually_Determine_Parent will still determine it to be a versioned atom (it tests by names), but at file write out,
 			//it will write with a length of 9 bytes
 
-			if (boxSize > readSize)
+			if (dataSize > readSize)
 			{
 				//throw new InvalidOperationException(String.Format("Unexpected end of box '{0}'", box.Name));
 				log.Warn("Unexpected end of box '{0}'", box.Name);
+				reader.BaseStream.Skip(dataSize - readSize);
 			}
-			else if (boxSize < readSize)
+			else if (hasSize && dataSize < readSize)
 			{
 				throw new InvalidDataException(String.Format("Invalid atom '{0}' size", box.Name));
 			}

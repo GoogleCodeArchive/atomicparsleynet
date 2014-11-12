@@ -95,13 +95,40 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// <c>'VOID'</c>
+		/// Void Box
 		/// </summary>
 		public sealed partial class VoidBox : AtomicInfo
 		{
-			internal const string DefaultID = "VOID";
-			public VoidBox() : base(DefaultID) { }
+			[XmlAttribute("Size"), DefaultValue(0)]
+			public int VoidSize;
 		}
+
+		[BinBlock(MethodMode = BinMethodMode.Abstract)]
+		public sealed partial class InvalidBox : AtomicInfo
+		{
+			/// <summary>
+			/// Raw data
+			/// </summary>
+			[XmlIgnore]
+			[BinData(LengthCustomMethod = "reader.Length()")]
+			public byte[] Data;
+			/// <summary>
+			/// Deserialization error
+			/// </summary>
+			[XmlIgnore]
+			public Exception Error;
+			/// <summary>
+			/// Raw data external resource offset
+			/// </summary>
+			[XmlIgnore, DefaultValue(0L)]
+			public long Offset;
+			/// <summary>
+			/// Raw data size
+			/// </summary>
+			[XmlIgnore, DefaultValue(0L)]
+			public long RawDataSize;
+		}
+
 
 		public sealed partial class FullBox: ISOMFullBox
 		{
@@ -2148,9 +2175,9 @@ namespace MP4
 			internal const string DefaultID = "jP  ";
 			internal const uint Signature = 0x0D0A870Au;
 
-			[XmlElement(DataType = "hexBinary")]
-			[BinData(LengthCustomMethod = "reader.Length()")]
-			public byte[] Data = Signature.GetBytes(false);
+			[XmlAttribute("Signature"), DefaultValue(Signature)]
+			[BinData]
+			public uint Data = Signature;
 		}
 
 		/// <summary>

@@ -17,6 +17,54 @@ using System.Globalization;
 
 namespace MP4
 {
+	/// <summary>
+	/// Metadata style
+	/// </summary>
+	[Flags]
+	public enum MetadataStyle
+	{
+		/// <summary>
+		/// Undefined style
+		/// </summary>
+		Undefined = 0,
+		/// <summary>
+		/// iTunes style
+		/// </summary>
+		iTunes = 0x100,
+		/// <summary>
+		/// 3gpp files prior to 3gp6
+		/// </summary>
+		ThirdGenPartner = 0x300,
+		/// <summary>
+		/// 3GPP Release6 the first spec to contain the complement of assets
+		/// </summary>
+		ThirdGenPartnerVer1Rel6 = 0x316,
+		/// <summary>
+		/// 3GPP Release7 introduces ID32 atoms
+		/// </summary>
+		ThirdGenPartnerVer1Rel7 = 0x317,
+		/// <summary>
+		/// 3gp2 files
+		/// </summary>
+		ThirdGenPartnerVer2 = 0x320,
+		/// <summary>
+		/// 3gp2 files, 3GPP2 C.S0050-A introduces 'gadi'
+		/// </summary>
+		ThirdGenPartnerVer2RelA = 0x321,
+		/// <summary>
+		/// Motion JPEG 2000
+		/// </summary>
+		MotionJPEG2000 = 0x400,
+		/// <summary>
+		/// PSP
+		/// </summary>
+		PSP = 0x800,
+		/// <summary>
+		/// Brand style mask
+		/// </summary>
+		Brand = 0x700
+	}
+
 	public static class ApTypes
 	{
 		/// <summary>
@@ -39,30 +87,6 @@ namespace MP4
 		/// terminated with a NULL uint16_t
 		/// </summary>
 		public const int UTF16_3GP_Style = 16;
-
-		public const int UNDEFINED_STYLE = 0;
-		public const int ITUNES_STYLE = 100;
-		/// <summary>
-		/// 3gpp files prior to 3gp6
-		/// </summary>
-		public const int THIRD_GEN_PARTNER = 300;
-		/// <summary>
-		/// 3GPP Release6 the first spec to contain the complement of assets
-		/// </summary>
-		public const int THIRD_GEN_PARTNER_VER1_REL6 = 306;
-		/// <summary>
-		/// 3GPP Release7 introduces ID32 atoms
-		/// </summary>
-		public const int THIRD_GEN_PARTNER_VER1_REL7 = 307;
-		/// <summary>
-		/// 3gp2 files
-		/// </summary>
-		public const int THIRD_GEN_PARTNER_VER2 = 320;
-		/// <summary>
-		/// 3gp2 files, 3GPP2 C.S0050-A introduces 'gadi'
-		/// </summary>
-		public const int THIRD_GEN_PARTNER_VER2_REL_A = 321;
-		public const int MOTIONJPEG2000 = 400;
 
 		private const uint MaxAtomID = 0xFFFFU;
 

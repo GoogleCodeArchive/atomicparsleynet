@@ -164,15 +164,9 @@ namespace MP4
 		{
 			internal static readonly AtomicCode[] EmptyBrands = new AtomicCode[0];
 
-			private void TestCompatibleBrand()
+			public bool TestCompatibleBrand()
 			{
-				foreach (var brand in this.CompatibleBrand)
-				{
-					if (brand == "mp42"/*0x6D703432*/ || brand == "iso2"/*0x69736F32*/)
-					{
-						base.AncillaryData = (string)brand;
-					}
-				}
+				return this.CompatibleBrand.Any(brand => brand == "mp42"/*0x6D703432*/ || brand == "iso2"/*0x69736F32*/);
 			}
 
 			private void Read_CompatibleBrand(BinaryReader reader)
@@ -258,11 +252,11 @@ namespace MP4
 		{
 			public override void ReadBinary(BinaryReader reader)
 			{
-				long length = reader.Length();
-				this.Offset = length == 0L ? 0L : reader.BaseStream.Position;
-				this.MediaDataSize = length;
+				this.Offset = reader.BaseStream.Position;
 				//then skip these bytes
-				reader.BaseStream.Seek(length, SeekOrigin.Current);
+				long length = reader.Skip();
+				if (length == 0) this.Offset = 0L;
+				this.MediaDataSize = length;
 			}
 
 			public override long DataSize
@@ -462,7 +456,7 @@ namespace MP4
 						else if (estSize == 1 || estSize == 2)
 							SampleSizeBits = (byte)(8 * estSize);
 						else
-							throw new InvalidDataException("Invalid sample size in " + AtomicID);
+							throw new NotSupportedException("Invalid sample size in " + AtomicID);
 						break;
 				}
 				switch (SampleSizeBits)
@@ -527,7 +521,7 @@ namespace MP4
 						}
 						break;
 					default:
-						throw new InvalidDataException("Invalid sample size in " + AtomicID);
+						throw new NotSupportedException("Invalid sample size in " + AtomicID);
 				}
 			}
 		}
@@ -667,19 +661,66 @@ namespace MP4
 
 		public sealed partial class VoidBox : AtomicInfo
 		{
+			public VoidBox()
+			{
+				this.VoidSize = 0;
+			}
+
+			public VoidBox(int size)
+			{
+				this.VoidSize = size;
+			}
+
 			public override void ReadBinary(BinaryReader reader)
 			{
-				if (reader.Length() > 0)
-					throw new InvalidDataException("Non empty VOID box");
+				VoidSize = (int)reader.Skip();
 			}
 
 			public override long DataSize
 			{
-				get { return 0; }
+				get { return VoidSize; }
 			}
 
 			public override void WriteBinary(BinaryWriter writer)
 			{
+				writer.Write(0, VoidSize);
+			}
+
+			public override void WriteBox(BinaryWriter writer)
+			{
+				WriteBinary(writer);
+			}
+		}
+
+		public sealed partial class InvalidBox : AtomicInfo
+		{
+			public InvalidBox() { }
+
+			public InvalidBox(Exception ex, AtomicInfo box, BinaryReader reader, long start)
+			{
+				Error = ex;
+				Parent = box.Parent;
+				AtomicID = box.AtomicID;
+				if (box.RawData != null)
+				{
+					Error = ex;
+					Data = box.RawData.CurrentData;
+					RawData = box.RawData;
+				}
+				else if (reader.BaseStream.CanSeek)
+				{
+					var data = new byte[(int)(reader.BaseStream.Length - start)];
+					reader.BaseStream.Seek(start, SeekOrigin.Begin);
+					reader.Read(data, 0, data.Length);
+					Error = ex;
+					Data = data;
+				}
+				else
+				{
+					Offset = start;
+					RawDataSize = reader.BaseStream.Length - start;
+				}
+				reader.Skip();
 			}
 		}
 

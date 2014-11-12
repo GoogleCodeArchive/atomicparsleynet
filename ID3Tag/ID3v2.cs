@@ -172,20 +172,4 @@ namespace ID3v2
 		}
 		#endregion
 	}
-
-	public static class TagStream
-	{
-		public static void WriteTo(this Stream src, Stream dst, int len)
-		{
-			var buffer = new byte[8192];
-			while (len > 0)
-			{
-				int bytesRead = src.Read(buffer, 0, Math.Min(len, 8192));
-				if (bytesRead == 0)
-					break;
-				dst.Write(buffer, 0, bytesRead);
-				len -= bytesRead;
-			}
-		}
-	}
 }
