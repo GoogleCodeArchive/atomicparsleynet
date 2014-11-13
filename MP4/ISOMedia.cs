@@ -64,23 +64,17 @@ namespace MP4
 		public abstract partial class ISOMFullBox: AtomicInfo
 		{
 			/// <summary>
-			/// This atom has a version field and flags field
-			/// </summary>
-			[XmlAttribute, DefaultValue(true)]
-			public bool Versioned = true;
-
-			/// <summary>
 			/// The version of this atom.
 			/// </summary>
 			[XmlAttribute, DefaultValue(0)]
-			[BinData(BinFormat.UInt8, Condition = "Versioned")]
+			[BinData(BinFormat.UInt8)]
 			public int Version;
 
 			/// <summary>
 			/// Future flags.
 			/// </summary>
 			[XmlIgnore]
-			[BinData(BinFormat.UInt24, Condition = "Versioned")]
+			[BinData(BinFormat.UInt24)]
 			public int Flags; //used by versioned atoms and derivatives
 		}
 
@@ -220,7 +214,7 @@ namespace MP4
 			[BinData(BinFormat.MacDate32)]
 			public DateTime ModificationTime;
 			/// <summary>
-			/// A time value that indicates the time scale for this movie—that is, the number of time units that pass per second in its time 
+			/// A time value that indicates the time scale for this movie — that is, the number of time units that pass per second in its time 
 			/// coordinate system. A time coordinate system that measures time in sixtieths of a second, for example, has a time scale of 60.
 			/// </summary>
 			[XmlAttribute, DefaultValue(0)]
@@ -235,13 +229,15 @@ namespace MP4
 			[BinData(BinFormat.UInt32)]
 			public long Duration;
 			/// <summary>
-			/// A fixed-point 16.16 number that specifies the rate at which to play this movie. A value of 1.0 indicates normal rate.
+			/// A <see cref="T:MP4.Fixed`2">fixed-point 16.16 number</see> that specifies the rate at which to play
+			/// this movie. A value of 1.0 indicates normal rate.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 16)]
 			[BinData(BinFormat.UInt32)]
 			public Fixed<uint, x16> PreferredRate = Fixed<uint, x16>.One;
 			/// <summary>
-			/// A fixed-point 8.8 number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
+			/// A <see cref="T:MP4.Fixed`2">fixed-point 8.8 number</see> that specifies how loud to play this movie’s
+			/// sound. A value of 1.0 indicates full volume.
 			/// </summary>
 			[XmlIgnore]//, DefaultValue(1 << 8)]
 			[BinData(BinFormat.UInt16)]
@@ -253,7 +249,8 @@ namespace MP4
 			[BinData(LengthCustomMethod = "10")]
 			public byte[] Reserved;//[10];
 			/// <summary>
-			/// The matrix structure associated with this movie. A matrix shows how to map points from one coordinatespace into another.
+			/// The <see cref="T:MP4.AtomicInfo.TransformMatrix">matrix structure</see> associated with this movie.
+			/// A matrix shows how to map points from one coordinatespace into another.
 			/// </summary>
 			[XmlElement]
 			[BinArray(CountCustomMethod = "9")]
@@ -755,51 +752,68 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Handler Reference Atom <c>'hdlr'</c>
+		/// Handler Atom <c>'hdlr'</c> — Handler Reference Atom or Metadata Handler Atom.
 		/// </summary>
 		public sealed partial class HandlerBox : ISOMFullBox
 		{
 			internal const string DefaultID = "hdlr";
 			/// <summary>
-			/// Initializes a new instance of the Handler Reference Atom <c>'hdlr'</c>.
+			/// Initializes a new instance of the Handler Atom <c>'hdlr'</c>.
 			/// </summary>
 			public HandlerBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// Component type
+			/// <para>
+			/// Within a <see cref="T:MP4.ISOMediaBoxes.MediaBox">media atom</see> this is
+			/// a <see cref="T:MP4.AtomicCode">four-character code</see> that identifies the type of the handler. Only
+			/// two values are valid for this field: <c>'mhlr'</c> for media handlers and <c>'dhlr'</c> for data handlers.
+			/// </para>
+			/// <para>
+			/// Within a <see cref="T:MP4.ISOMediaBoxes.MetaBox">meta box</see> this is a predefined integer that is set to 0.
+			/// </para>
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode ComponentType;
 			/// <summary>
-			/// Component subtype
+			/// <para>
+			/// Within a <see cref="T:MP4.ISOMediaBoxes.MediaBox">media atom</see> this is
+			/// a <see cref="T:MP4.AtomicCode">four-character code</see> that identifies the type of the media handler
+			/// or data handler.
+			/// </para>
+			/// <para>
+			/// Within a <see cref="T:MP4.ISOMediaBoxes.MetaBox">meta box</see> this is
+			/// a <see cref="T:MP4.AtomicCode">four-character code</see> that identifies the structure used in the
+			/// metadata atom, set to <c>‘mdta’</c>.
+			/// </para>
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode HandlerType;
 			/// <summary>
-			/// Component manufacturer
+			/// Component manufacturer. Reserved. Set to 0.
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt32)]
 			public AtomicCode Manufacturer;
 			/// <summary>
-			/// Component flags
+			/// Component flags. Reserved. Set to 0.
 			/// </summary>
 			[XmlAttribute, DefaultValue(0)]
 			[BinData]
 			public int ComponentFlags;
 			/// <summary>
-			/// Component flags mask
+			/// Component flags mask. Reserved. Set to 0.
 			/// </summary>
 			[XmlAttribute, DefaultValue(0)]
 			[BinData]
 			public int ComponentFlagsMask;
 			/// <summary>
-			/// Component name
+			/// A (counted) string that specifies the name of the component — that is, the media/metadata handler used when this
+			/// media was created. This field may contain a zero-length (empty) string.
 			/// </summary>
 			[XmlAttribute("Name"), DefaultValue("")]
-			[BinData]
+			[BinCustom]
 			public string ComponentName;
 		}
 
@@ -816,16 +830,25 @@ namespace MP4
 			public MediaBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// 
+			/// Media header atom. This atom contains the standard media information.
 			/// </summary>
 			[XmlIgnore]
 			public MediaHeaderBox MediaHeader { get { return boxList.Get<MediaHeaderBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Handler reference. This atom identifies the media handler component that is to be used to interpret the media data.
+			/// </summary>
 			[XmlIgnore]
 			public HandlerBox Handler { get { return boxList.Get<HandlerBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Media information. This atom contains data specific to the media type for use by the media handler component.
+			/// </summary>
 			[XmlIgnore]
 			public MediaInformationBox Information { get { return boxList.Get<MediaInformationBox>(); } set { boxList.Set(value); } }
 			/// <summary>
-			/// Other atoms
+			/// The media atom must contain a <see cref="T:MP4.ISOMediaBoxes.MediaHeaderBox">media header atom</see>
+			/// (<c>'mdhd'</c>), and it can contain a <see cref="T:MP4.ISOMediaBoxes.HandlerBox">handler reference</see>
+			/// (<c>'hdlr'</c>) atom, <see cref="T:MP4.ISOMediaBoxes.MediaInformationBox">media information</see>
+			/// (<c>'minf'</c>) atom, and <see cref="T:MP4.ISOMediaBoxes.UserDataBox">user data</see> (<c>'udta'</c>) atom.
 			/// </summary>
 			[BinCustom]
 			TypedBoxList boxList = TypedBoxList.Create<
@@ -884,8 +907,9 @@ namespace MP4
 			public SoundMediaHeaderBox() : base(DefaultID) { }
 
 			/// <summary>
-			/// A fixed-point 8.8 number that specifies the sound balance of this sound media. Sound balance is the setting that controls the mix of sound
-			/// between the two speakers of a computer. This field is normally set to 0.
+			/// A <see cref="T:MP4.Fixed`2">fixed-point 8.8 number</see> that specifies the sound balance of this sound
+			/// media. Sound balance is the setting that controls the mix of sound between the two speakers of
+			/// a computer. This field is normally set to 0.
 			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.UInt16)]
@@ -2643,25 +2667,75 @@ namespace MP4
 		}
 
 		/// <summary>
-		/// Metadata Atom
+		/// Metadata Atom <c>'meta'</c>
 		/// </summary>
+		[BinBlock(MethodMode = BinMethodMode.Abstract,
+			ReadMethod = "ReadFullBox(reader)", WriteMethod = "base.WriteBinary(writer)")]
 		public sealed partial class MetaBox : ISOMFullBox
 		{
+			internal const string DefaultID = "meta";
+			/// <summary>
+			/// Initializes a new instance of the Metadata Atom <c>'meta'</c>.
+			/// </summary>
+			public MetaBox() : base(DefaultID) { }
+
+			/// <summary>
+			/// Metadata handler atom.
+			/// </summary>
 			[XmlIgnore]
 			public HandlerBox Handler { get { return boxList.Get<HandlerBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Primary item box.
+			/// </summary>
 			[XmlIgnore]
 			public PrimaryItemBox PrimaryResource { get { return boxList.Get<PrimaryItemBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Data information box.
+			/// </summary>
 			[XmlIgnore]
 			public DataInformationBox FileLocations { get { return boxList.Get<DataInformationBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Item location box.
+			/// </summary>
 			[XmlIgnore]
 			public ItemLocationBox ItemLocations { get { return boxList.Get<ItemLocationBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Item protection box.
+			/// </summary>
 			[XmlIgnore]
 			public ItemProtectionBox Protections { get { return boxList.Get<ItemProtectionBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// Item information box.
+			/// </summary>
 			[XmlIgnore]
 			public ItemInfoBox ItemInfos { get { return boxList.Get<ItemInfoBox>(); } set { boxList.Set(value); } }
+			/// <summary>
+			/// IPMP control box.
+			/// </summary>
 			[XmlIgnore]
 			public IPMPControlBox IPMPControl { get { return boxList.Get<IPMPControlBox>(); } set { boxList.Set(value); } }
-			TypedBoxList boxList = new TypedBoxList(AllowUnknownBox);
+			/// <summary>
+			/// <para>
+			/// The container for metadata is an atom of type <c>‘meta’</c>. The metadata atom must contain the following
+			/// subatoms:
+			/// </para>
+			/// <para>
+			/// <see cref="T:MP4.ISOMediaBoxes.HandlerBox">metadata handler atom</see> (<c>‘hdlr’</c>), metadata item
+			/// keys atom (<c>‘keys’</c>), and metadata <see cref="T:MP4.ISOMediaBoxes.ItemListBox">item list atom</see>
+			/// (<c>‘ilst’</c>). Other optional atoms that may be contained in a metadata atom include the country list
+			/// atom (<c>‘ctry’</c>), language list atom (<c>‘lang’</c>) and
+			/// <see cref="T:MP4.ISOMediaBoxes.FreeSpaceBox">free space atom</see> (<c>‘free’</c>).
+			/// </para>
+			/// </summary>
+			[BinCustom(GetDataSizeMethod = "base.DataSize + Size_boxList()")]
+			TypedBoxList boxList = TypedBoxList.Create<
+				HandlerBox,
+				PrimaryItemBox,
+				DataInformationBox,
+				ItemLocationBox,
+				ItemProtectionBox,
+				ItemInfoBox,
+				IPMPControlBox>(AllowUnknownBox);
 		}
 
 /*V2 boxes - Movie Fragments*/

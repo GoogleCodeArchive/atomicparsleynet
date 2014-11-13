@@ -14,6 +14,7 @@ namespace MP4
 	/// <summary>
 	/// Language Code
 	/// </summary>
+	[System.Diagnostics.DebuggerDisplay("{Data2Name(code)}")]
 	public struct PackedLanguage
 	{
 		private const ushort CodeZero = 0;

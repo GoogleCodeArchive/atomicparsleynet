@@ -305,18 +305,18 @@ namespace MP4
 		// Metadata Atom
 		public sealed partial class MetaBox : ISOMFullBox, IBoxContainer
 		{
-#warning Looking forward to 'dinf', 'xml ', 'bxml', 'iloc', 'pitm', 'ipro', 'iinf', 'ipmc', 'ID32', 'ilst', 'data'
+#warning Looking forward to 'ID32', 'data'
 			[XmlElement(typeof(HandlerBox))]
 			[XmlElement(typeof(DataInformationBox))]
-			//[XmlElement(typeof(xml ))]
-			//[XmlElement(typeof(bxml))]
-			//[XmlElement(typeof(iloc))]
-			//[XmlElement(typeof(pitm))]
-			//[XmlElement(typeof(ipro))]
-			//[XmlElement(typeof(iinf))]
-			//[XmlElement(typeof(ipmc))]
+			[XmlElement(typeof(XMLBox))]
+			[XmlElement(typeof(BinaryXMLBox))]
+			[XmlElement(typeof(ItemLocationBox))]
+			[XmlElement(typeof(PrimaryItemBox))]
+			[XmlElement(typeof(ItemProtectionBox))]
+			[XmlElement(typeof(ItemInfoBox))]
+			[XmlElement(typeof(IPMPControlBox))]
 			//[XmlElement(typeof(ID32))]
-			//[XmlElement(typeof(ilst))]
+			[XmlElement(typeof(ItemListBox))]
 			[XmlElement(typeof(UUIDBox))]
 			[XmlElement("MPEG4ESDescriptorBox", typeof(ESDBox))]
 			//[XmlElement(typeof(data))]

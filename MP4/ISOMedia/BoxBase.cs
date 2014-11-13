@@ -25,9 +25,10 @@
  *
  */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Collections.Generic;
+using System.Text;
 using FRAFV.Binary.Serialization;
 
 namespace MP4
@@ -236,6 +237,47 @@ namespace MP4
 				writer.Write((int)length);
 				writer.Write(this.EntryType);
 				WriteBinary(writer);
+			}
+		}
+
+		public sealed partial class HandlerBox : ISOMFullBox
+		{
+			private void Read_ComponentName(BinaryReader reader)
+			{
+				var data = reader.ReadBytes((int)reader.Length());
+				if (data.Length > 0 && data[0] <= data.Length - 1)
+				{
+					try
+					{
+						ComponentName = Encoding.UTF8.GetString(data, 1, data.Length - 1);
+						if (data[0] == ComponentName.Length)
+							return;
+						if (data[0] < ComponentName.Length && ComponentName.Substring(data[0]).TrimEnd('\0') == "")
+						{
+							ComponentName = ComponentName.Substring(0, data[0]);
+							return;
+						}
+					}
+					catch { }
+				}
+				ComponentName = Encoding.UTF8.GetString(data).TrimEnd('\0');
+			}
+
+			private long Size_ComponentName()
+			{
+				string s = ComponentName ?? String.Empty;
+				long size = Encoding.UTF8.GetByteCount(s) + 2;
+				if (s.Length >= 256) size--;
+				return size;
+			}
+
+			private void Write_ComponentName(BinaryWriter writer)
+			{
+				string s = ComponentName ?? String.Empty;
+				if (s.Length < 256)
+					writer.Write((byte)s.Length);
+				writer.Write(Encoding.UTF8.GetBytes(s));
+				writer.Write((byte)0);
 			}
 		}
 

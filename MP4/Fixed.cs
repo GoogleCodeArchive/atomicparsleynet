@@ -36,6 +36,7 @@ namespace MP4
 		private x32() { }
 	}
 
+	[System.Diagnostics.DebuggerDisplay("{ToDouble()}")]
 	public struct Fixed<TStorage, TScale>
 		where TStorage: struct
 		where TScale : FixedScale

@@ -11,6 +11,7 @@ using System;
 
 namespace MP4
 {
+	[System.Diagnostics.DebuggerDisplay("'{AtomID2Name(code),nq}'")]
 	public struct AtomicCode
 	{
 		private uint code;
