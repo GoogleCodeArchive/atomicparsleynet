@@ -182,7 +182,7 @@
     <Exec Command='xcopy "$(Presentation)\website\*" "$(TopicStyleDir)\website\" /y /r'/>
   </Target>
 
-	<Target Name="Wiki" DependsOnTargets="Html" Condition="$(TopicStyle)=='vs2005'">
+	<Target Name="Wiki" DependsOnTargets="Html" Condition="$(TopicStyle)=='vs2005' And $(BinSerialization)=='true'">
 		<Exec Command='"$(ProductionTools)\XslTransform.exe" /xsl:"$(Presentation)\Transforms\wiki.xsl" /arg:mediabase="$(WikiMediaBase)" /arg:iconbase="$(WikiIconBase)Presentation/vs2005/icons/" "$(OutputDir)\html\Bin_*.htm" /out:"$(OutputDir)\wiki\*.wiki"' />
 	</Target>
 </Project>

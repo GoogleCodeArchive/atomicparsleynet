@@ -3,19 +3,13 @@
 = !CreationTime Binary Data Field =
 
 
-Specifies when the movie atom was created. 
+Specifies when the movie atom was created.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)
-
-Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 
-
-
+Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)<br>Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 <br>
 == Remarks ==
 
 The creation date should be set using coordinated universal time (UTC).

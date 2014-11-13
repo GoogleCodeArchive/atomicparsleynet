@@ -1,0 +1,33 @@
+﻿#summary boxList Binary Data Field
+
+= boxList Binary Data Field =
+
+
+The container for metadata is an atom of type {{{‘meta’}}}. The metadata atom must contain the following subatoms:
+
+[T_MP4_ISOMediaBoxes_HandlerBox metadata handler atom] ({{{‘hdlr’}}}), metadata item keys atom ({{{‘keys’}}}), and metadata [T_MP4_ISOMediaBoxes_ItemListBox item list atom] ({{{‘ilst’}}}). Other optional atoms that may be contained in a metadata atom include the country list atom ({{{‘ctry’}}}), language list atom ({{{‘lang’}}}) and [T_MP4_ISOMediaBoxes_FreeSpaceBox free space atom] ({{{‘free’}}}).
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+
+Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms
+
+== Remarks ==
+
+The country list and language list atoms can be used to store localized data in an efficient manner. The free space atom may be used to reserve space in a metadata atom for later additions to it, or to zero out bytes within a metadata atom after editing and removing elements from it. The free space atom may not occur within any other subatom contained in the metadata atom.
+
+The metadata is required to contain a {{{‘hdlr’}}} box indicating the structure or format of the metadata contents. That metadata is located either within a box within this box (e.g. an XML box), or is located by the item identified by a primary item box.
+
+All other contained boxes are specific to the format specified by the handler box.
+
+The other boxes defined here may be defined as optional or mandatory for a given format. If they are used, then they must take the form specified here. These optional boxes include a data-information box, which documents other files in which metadata values (e.g. pictures) are placed, and a item location box, which documents where in those files each item is located (e.g. in the common case of multiple pictures stored in the same file). At most one meta box may occur at each of the file level, movie level, or track level.
+
+If an [Bin_T_MP4_ISOMediaBoxes_ItemProtectionBox ItemProtectionBox] occurs, then some or all of the meta-data, including possibly the primary resource, may have been protected and be un-readable unless the protection system is taken into account.
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_MetaBox ISOMediaBoxes.MetaBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

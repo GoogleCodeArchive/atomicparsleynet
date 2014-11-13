@@ -301,7 +301,7 @@ namespace MP4
 		/// <param name="editable"></param>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		internal static AtomicInfo ParseBox(BinaryReader reader, long boxSize, AtomicCode atomid, bool editable, AtomicInfo parent = null)
+		internal static AtomicInfo ParseBox(BinaryReader reader, long boxSize, AtomicCode atomid, bool editable = false, AtomicInfo parent = null)
 		{
 			AtomicInfo box;
 			long hdrSize = 8L;
@@ -762,6 +762,7 @@ namespace MP4
 		/// <summary>
 		/// A transformation matrix.
 		/// </summary>
+		[System.Diagnostics.DebuggerDisplay("<[{A},{B},{U}],[{C},{D},{V}],[{Tx},{Ty},{W}]>")]
 		public sealed class TransformMatrix
 		{
 			public enum MatrixValues { A, B, U, C, D, V, Tx, Ty, W }

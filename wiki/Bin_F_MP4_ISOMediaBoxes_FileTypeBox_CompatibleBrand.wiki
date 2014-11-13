@@ -3,11 +3,9 @@
 = !CompatibleBrand Binary Data Field =
 
 
-Listing compatible file formats. The major brand must appear in the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such entries should be ignored. 
+Listing compatible file formats. The major brand must appear in the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such entries should be ignored.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
@@ -16,11 +14,12 @@ Type: *Int32[**]* — a series of 32-bit unsigned integers
 
 == Remarks ==
 
-If none of the compatible brands fields is set to {{{'qt '}}}, then the file is not a !QuickTime movie file. !QuickTime currently returns an error when attempting to open a file whose file type, file extension, or MIME type identifies it as a !QuickTime movie, but whose file type atom does not include the {{{'qt '}}}brand.
+If none of the compatible brands fields is set to {{{'qt '}}}, then the file is not a !QuickTime movie file. !QuickTime currently returns an error when attempting to open a file whose file type, file extension, or MIME type identifies it as a !QuickTime movie, but whose file type atom does not include the {{{'qt '}}} brand.
 
 https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_note.gif *Note* A common source of this error is an MPEG-4 file incorrectly named with the {{{.mov}}} file extension or with the MIME type incorrectly set to “video/quicktime”. MPEG-4 files are automatically imported by !QuickTime only when they are correctly identified as MPEG-4 files using the Mac OS file type, file extension, or MIME type.
 
 https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_caution.gif *Note* Use of the !QuickTime file format in this manner is subject to license from Apple, Inc.
+
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_FileTypeBox ISOMediaBoxes.FileTypeBox Block]

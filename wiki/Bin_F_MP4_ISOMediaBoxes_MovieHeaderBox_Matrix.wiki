@@ -3,17 +3,13 @@
 = Matrix Binary Data Field =
 
 
-The matrix structure associated with this movie. A matrix shows how to map points from one coordinatespace into another. 
+The [T_MP4_AtomicInfo_TransformMatrix matrix structure] associated with this movie. A matrix shows how to map points from one coordinatespace into another.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *UInt32[**9]* — an array of 32-bit unsigned integers with a fixed array items count equal to 9 
-
-
+Type: *UInt32[**9]* — an array of 32-bit unsigned integers with a fixed array items count equal to 9 <br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]

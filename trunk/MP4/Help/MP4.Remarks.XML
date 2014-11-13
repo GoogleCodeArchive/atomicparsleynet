@@ -175,7 +175,7 @@
 		<member name="T:MP4.AtomicInfo.TransformMatrix">
 			<remarks>
 				<para>
-					QuickTime files use matrices to describe spatial information about many objects, such as tracks
+					Movie files use matrices to describe spatial information about many objects, such as tracks
 					within a movie.
 				</para>
 				<para>
@@ -185,7 +185,7 @@
 					two-dimensional transformations is described mathematically by a 3-by-3 matrix.
 				</para>
 				<para>
-					All values in the matrix are 32-bit fixed-point numbers divided as 16.16, except for the last
+					All values in the matrix are 32-bit <see cref="T:MP4.Fixed`2">fixed-point numbers</see> divided as 16.16, except for the last
 					{u, v, w} column, which contains 32-bit fixed-point numbers divided as 2.30.
 				</para>
 				<img src="qt_l_054.gif" alt="How display matrices are used"/>
@@ -236,7 +236,7 @@
 			<remarks>
 				<para>
 					You use the movie header atom to specify the characteristics of an entire movie. The data contained
-					in this atom defines characteristics of the entire QuickTime movie, such as time scale and duration.
+					in this atom defines characteristics of the entire movie, such as time scale and duration.
 				</para>
 				<para>
 					The movie header atom is a leaf atom. It has an atom type value of <c>'mvhd'</c>.
@@ -364,9 +364,7 @@
 					</item>
 				</list>
 				<para>
-					The media atom has an atom type of <c>'mdia'</c>. It must contain a media header atom (<c>'mdhd'</c>),
-					and it can contain a handler reference (<c>'hdlr'</c>) atom, media information (<c>'minf'</c>) atom, and user
-					data (<c>'udta'</c>) atom.
+					The media atom has an atom type of <c>'mdia'</c>.
 				</para>
 				<note>
 					Do not confuse the media atom (<c>'mdia'</c>) with the media <em>data</em> atom (<c>'mdat'</c>).
@@ -374,6 +372,20 @@
 					media samples.
 				</note>
 			</remarks>
+		</member>
+		<member name="P:MP4.ISOMediaBoxes.MediaBox.Handler">
+			<remarks>
+				<para>
+					Note that the handler reference atom tells you the kind of media this media atom contains — for example,
+					video or sound. The layout of the media information atom is specific to the media handler that is to
+					interpret the media.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MediaBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.TrackHeaderBox">
 		</member>
@@ -444,10 +456,48 @@
 		<member name="F:MP4.ISOMediaBoxes.MediaHeaderBox.Quality">
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.HandlerBox">
+			<binblock_summary>
+				<img src="qt_l_031.gif" alt="The layout of a handler reference atom"/>
+			</binblock_summary>
+			<remarks>
+				<para>
+					The handler atom within a <see cref="T:MP4.ISOMediaBoxes.MediaBox">media atom</see> declares the process by which the media data in the stream may be
+					presented, and thus, the nature of the media in a stream. For example, a video handler would handle a video
+					track.
+				</para>
+				<para>
+					The handler reference atom specifies the media handler component that is to be used to interpret the media’s
+					data. The handler reference atom has an atom type value of <c>'hdlr'</c>.
+				</para>
+				<para>
+					Historically, the handler reference atom was also used for data references. However, this use is no longer current
+					and may now be safely ignored.
+				</para>
+				<para>
+					This box when present within a <see cref="T:MP4.ISOMediaBoxes.MetaBox">meta box</see>, declares the structure or format of the <c>'meta'</c> box contents. It defines the structure used for all
+					types of metadata stored within the metadata atom.
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentType">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.HandlerType">
+			<remarks>
+				<para>
+					For media handlers, this field defines the type of data — for example, <c>'vide'</c> for
+					video data, <c>'soun'</c> for sound data, <c>'hint'</c> for hint track or <c>'subt'</c> for subtitles.
+				</para>
+				<para>
+					For data handlers, this field defines the data reference type; for example, a component subtype value of
+					<c>'alis'</c> identifies a file alias.
+				</para>
+				<para>
+					A reader parsing a metadata atom should confirm the handler type in the metadata handler
+					atom is <c>‘mdta’</c> before interpreting any other structures in the metadata atom.
+					If the handler type is not <c>‘mdta’</c>, the interpretation is defined by
+					another specification.
+				</para>
+			</remarks>
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.Manufacturer">
 		</member>
@@ -456,11 +506,18 @@
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentFlagsMask">
 		</member>
 		<member name="F:MP4.ISOMediaBoxes.HandlerBox.ComponentName">
-		</member>
-		<member name="F:MP4.ISOMediaBoxes.MediaBox.boxList">
+			<binlength_summary>
+				Type: <span class="keyword">Byte</span> — an 8-bit (1 byte) integer (Optional)
+			</binlength_summary>
 			<bindata_summary>
-				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+				Type: <span class="keyword">CString</span> — a null-terminated UTF-8 encoded character string
 			</bindata_summary>
+			<remarks>
+				<para>
+					A null-terminated string in UTF-8 characters which gives a human-readable name for the track
+					type or the metadata type (for debugging and inspection purposes).
+				</para>
+			</remarks>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.VideoMediaHeaderBox">
 		</member>
@@ -747,6 +804,79 @@
 		<member name="T:MP4.ISOMediaBoxes.TOTLBox">
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.MetaBox">
+			<binblock_summary>
+				<img src="metadata_atom.jpg" alt="Sample of a metadata atom and subatoms"/>
+			</binblock_summary>
+			<remarks>
+				<para>
+					Metadata can be defined as useful information related to media. This metadata format uses a key–value pair for each type of metadata being stored.
+				</para>
+				<note>
+					The QuickTime file format also defines user data which, in some limited cases, can be used
+					to store metadata.
+				</note>
+				<para>
+					The meaning of a metadata item identifies what it represents: a copyright notice, the performer’s name, and
+					so on. It uses an extensible namespace allowing for meanings or keys to be added, and then referenced, from
+					metadata items. These keys may be four-character codes, names in reverse-address format (such as
+					“com.apple.quicktime.windowlocation”) or any other key format including native formats from external metadata
+					standards. A key is tagged with its namespace allowing for extension in the future. It is recommended that
+					reverse-address format be used in the general case: this provides an extensible syntax for vendor data or for
+					other organizations or standards bodies.
+				</para>
+				<para>
+					Metadata is stored immediately in the corresponding atom structures, by value.
+				</para>
+				<para>
+					A metadata item can be identified as specific to a country or set of countries, to a language or set of languages,
+					or to some combination of languages and countries. This identification allows for a default value (suitable for
+					any language or country not explicitly called out), a single value, or a list of values.
+				</para>
+				<para>
+					The metadata can be stored within a movie atom (<c>‘moov’</c>), a track atom (<c>‘trak’</c>) or a
+					media atom (<c>‘mdia’</c>). Only one metadata atom is allowed for each location. If there is user data and metadata
+					stored in the same location, and both declare the same information, for example, declare a copyright notice,
+					the metadata takes precedence.
+				</para>
+				<para>
+					The metadata is required to contain a <c>‘hdlr’</c> box
+					indicating the structure or format of the metadata contents. That metadata is located either within a box
+					within this box (e.g. an XML box), or is located by the item identified by a primary item box.
+				</para>
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.MetaBox.boxList">
+			<bindata_summary>
+				Type: <see cref="T:MP4.AtomicInfo"/>[] — a series of other atoms
+			</bindata_summary>
+			<remarks>
+				<para>
+					The country list and language list atoms can be
+					used to store localized data in an efficient manner. The free space atom may be used to reserve space in a
+					metadata atom for later additions to it, or to zero out bytes within a metadata atom after editing and removing
+					elements from it. The free space atom may not occur within any other subatom contained in the metadata
+					atom.
+				</para>
+				<para>
+					The metadata is required to contain a <c>‘hdlr’</c> box
+					indicating the structure or format of the metadata contents. That metadata is located either within a box
+					within this box (e.g. an XML box), or is located by the item identified by a primary item box.
+				</para>
+				<para>
+					All other contained boxes are specific to the format specified by the handler box.
+				</para>
+				<para>
+					The other boxes defined here may be defined as optional or mandatory for a given format. If they are used,
+					then they must take the form specified here. These optional boxes include a data-information box, which
+					documents other files in which metadata values (e.g. pictures) are placed, and a item location box, which
+					documents where in those files each item is located (e.g. in the common case of multiple pictures stored in the
+					same file). At most one meta box may occur at each of the file level, movie level, or track level.
+				</para>
+				<para>
+					If an <see cref="T:MP4.ISOMediaBoxes.ItemProtectionBox"/> occurs, then some or all of the meta-data, including possibly the primary resource,
+					may have been protected and be un-readable unless the protection system is taken into account.
+				</para>
+			</remarks>
 		</member>
 		<member name="T:MP4.ISOMediaBoxes.MediaDataBox">
 			<remarks>
@@ -772,12 +902,12 @@
 		<member name="T:MP4.PackedLanguage">
 			<remarks>
 				<para>
-					Some elements of a QuickTime file may be associated with a particular spoken language. To indicate
+					Some elements of a movie file may be associated with a particular spoken language. To indicate
 					the language associated with a particular object, the QuickTime file format uses either language codes
 					from the Macintosh Script Manager or ISO language codes (as specified in ISO 639-2/T).
 				</para>
 				<para>
-					QuickTime stores language codes as unsigned 16-bit fields. All Macintosh language codes have a value
+					Language codes are stored as unsigned 16-bit fields. All Macintosh language codes have a value
 					that is less than 0x400 except for the single value 0x7FFF indicating an unspecified language. ISO language
 					codes are three-character codes, and are stored inside the 16-bit language code field as packed arrays.
 					If treated as an unsigned 16-bit integer, an ISO language code always has a value of 0x400 or greater unless
@@ -794,8 +924,8 @@
 				</para>
 
 				<note>
-					ISO language codes cannot be used for all elements of a QuickTime file. Currently, ISO language codes
-					can be used only for user data text. All other elements, including text tracks, must be specified using
+					ISO language codes cannot be used for all elements of a movie file. Currently, ISO language codes
+					can be used only for user data text. All other elements in QuickTime movie, including text tracks, must be specified using
 					Macintosh language codes.
 				</note>
 				<note>

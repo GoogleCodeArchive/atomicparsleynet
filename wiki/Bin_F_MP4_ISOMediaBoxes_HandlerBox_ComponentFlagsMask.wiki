@@ -1,9 +1,9 @@
-﻿#summary !PreviewDuration Binary Data Field
+﻿#summary !ComponentFlagsMask Binary Data Field
 
-= !PreviewDuration Binary Data Field =
+= !ComponentFlagsMask Binary Data Field =
 
 
-The duration of the movie preview in movie time scale units.
+Component flags mask. Reserved. Set to 0.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
@@ -12,6 +12,6 @@ The duration of the movie preview in movie time scale units.
 Type: *Int32* — a 32-bit (4 bytes) integer <br>
 == See Also ==
 
-[Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
+[Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox Block]
 
 [Bin_N_MP4 MP4 Serialization Namespace]

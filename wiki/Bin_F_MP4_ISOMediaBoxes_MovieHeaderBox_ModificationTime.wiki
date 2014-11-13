@@ -3,19 +3,13 @@
 = !ModificationTime Binary Data Field =
 
 
-Specifies when the movie atom was changed. 
+Specifies when the movie atom was changed.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 
-
-Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)
-
-
+Type: *!MacDate32* — a Macintosh date as a 32-bit (4 bytes) number of seconds since January 1, 1904 <br>Type: *!MacDate64* — a Macintosh date as a 64-bit (8 bytes) number of seconds since January 1, 1904 (Version 1 only)<br>
 == Remarks ==
 
 The modification date should be set using coordinated universal time (UTC).

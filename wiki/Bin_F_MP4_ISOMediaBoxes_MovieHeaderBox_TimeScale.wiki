@@ -3,17 +3,13 @@
 = !TimeScale Binary Data Field =
 
 
-A time value that indicates the time scale for this movie—that is, the number of time units that pass per second in its time coordinate system. A time coordinate system that measures time in sixtieths of a second, for example, has a time scale of 60. 
+A time value that indicates the time scale for this movie — that is, the number of time units that pass per second in its time coordinate system. A time coordinate system that measures time in sixtieths of a second, for example, has a time scale of 60.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int32* — a 32-bit (4 bytes) integer 
-
-
+Type: *Int32* — a 32-bit (4 bytes) integer <br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]

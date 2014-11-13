@@ -6,7 +6,7 @@
 == Binary Blocks ==
 
 || *Block* || *Description* ||
-|| [Bin_T_MP4_AtomicInfo AtomicInfo] || The basic data unit  ||
+|| [Bin_T_MP4_AtomicInfo AtomicInfo] || The basic data unit ||
 || [Bin_T_MP4_ISOMediaBoxes_AC3ConfigBox ISOMediaBoxes.AC3ConfigBox] || {{{'dac3'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_AC3SampleEntryBox ISOMediaBoxes.AC3SampleEntryBox] || {{{'ac-3'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_AVCConfigurationBox ISOMediaBoxes.AVCConfigurationBox] ||  ||
@@ -39,25 +39,26 @@
 || [Bin_T_MP4_ISOMediaBoxes_FileTypeBox ISOMediaBoxes.FileTypeBox] || The File Type Compatibility Atom {{{'ftyp'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_FixedSampleSizeBox ISOMediaBoxes.FixedSampleSizeBox] || {{{'stsz'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_FontTableBox ISOMediaBoxes.FontTableBox] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_FreeSpaceBox ISOMediaBoxes.FreeSpaceBox] || Unused space available in file {{{'free'}}}.  ||
+|| [Bin_T_MP4_ISOMediaBoxes_FreeSpaceBox ISOMediaBoxes.FreeSpaceBox] || Unused space available in file {{{'free'}}}. ||
 || [Bin_T_MP4_ISOMediaBoxes_GenericAudioSampleEntryBox ISOMediaBoxes.GenericAudioSampleEntryBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_GenericSampleEntryBox ISOMediaBoxes.GenericSampleEntryBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_GenericVisualSampleEntryBox ISOMediaBoxes.GenericVisualSampleEntryBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_GF3GPPConfigBox ISOMediaBoxes.GF3GPPConfigBox] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox] || Handler Reference Atom {{{'hdlr'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox] || Handler Atom {{{'hdlr'}}} — Handler Reference Atom or Metadata Handler Atom. ||
 || [Bin_T_MP4_ISOMediaBoxes_HintInfoBox ISOMediaBoxes.HintInfoBox] || {{{'hinf'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_HintMediaHeaderBox ISOMediaBoxes.HintMediaHeaderBox] || {{{'hmhd'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_HintSample ISOMediaBoxes.HintSample] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_HintSampleEntryBox ISOMediaBoxes.HintSampleEntryBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_HintTrackInfoBox ISOMediaBoxes.HintTrackInfoBox] || {{{'hnti'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_ImmediateDTE ISOMediaBoxes.ImmediateDTE] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_InvalidBox ISOMediaBoxes.InvalidBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISMAKMSBox ISOMediaBoxes.ISMAKMSBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISMASampleFormatBox ISOMediaBoxes.ISMASampleFormatBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISMOBaseDTEEntry ISOMediaBoxes.ISMOBaseDTEEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMAudioSampleEntry ISOMediaBoxes.ISOMAudioSampleEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMBaseDataHandler ISOMediaBoxes.ISOMBaseDataHandler] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMBasePacket ISOMediaBoxes.ISOMBasePacket] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox ISOMediaBoxes.ISOMFullBox] || Full atom  ||
+|| [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox ISOMediaBoxes.ISOMFullBox] || Full atom ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMSampleEntryFields ISOMediaBoxes.ISOMSampleEntryFields] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMVisualSampleEntry ISOMediaBoxes.ISOMVisualSampleEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ItemExtentEntry ISOMediaBoxes.ItemExtentEntry] ||  ||
@@ -71,10 +72,10 @@
 || [Bin_T_MP4_ISOMediaBoxes_ListItemBox ISOMediaBoxes.ListItemBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_MAXRBox ISOMediaBoxes.MAXRBox] || {{{'maxr'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_MediaBox ISOMediaBoxes.MediaBox] || Media Atom {{{'mdia'}}} ||
-|| [Bin_T_MP4_ISOMediaBoxes_MediaDataBox ISOMediaBoxes.MediaDataBox] || Movie sample data {{{'mdat'}}} — usually this data can be interpreted only by using the movie resource.  ||
+|| [Bin_T_MP4_ISOMediaBoxes_MediaDataBox ISOMediaBoxes.MediaDataBox] || Movie sample data {{{'mdat'}}} — usually this data can be interpreted only by using the movie resource. ||
 || [Bin_T_MP4_ISOMediaBoxes_MediaHeaderBox ISOMediaBoxes.MediaHeaderBox] || Media Header Atom {{{'mdhd'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_MediaInformationBox ISOMediaBoxes.MediaInformationBox] || {{{'minf'}}} ||
-|| [Bin_T_MP4_ISOMediaBoxes_MetaBox ISOMediaBoxes.MetaBox] || Metadata Atom  ||
+|| [Bin_T_MP4_ISOMediaBoxes_MetaBox ISOMediaBoxes.MetaBox] || Metadata Atom {{{'meta'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_MetaDataSampleEntryBox ISOMediaBoxes.MetaDataSampleEntryBox] || {{{'metx'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_MovieBox ISOMediaBoxes.MovieBox] || The Movie Atom {{{'moov'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_MovieExtendsBox ISOMediaBoxes.MovieExtendsBox] || {{{'mvex'}}} ||
@@ -172,10 +173,10 @@
 || [Bin_T_MP4_ISOMediaBoxes_UserDataBox ISOMediaBoxes.UserDataBox] || User Data Atom {{{'udta'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_UUIDBox ISOMediaBoxes.UUIDBox] || {{{'uuid'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_VideoMediaHeaderBox ISOMediaBoxes.VideoMediaHeaderBox] || Video Media Information Header Atom {{{'vmhd'}}} ||
-|| [Bin_T_MP4_ISOMediaBoxes_VoidBox ISOMediaBoxes.VoidBox] || {{{'VOID'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_VoidBox ISOMediaBoxes.VoidBox] || Void Box ||
 || [Bin_T_MP4_ISOMediaBoxes_XMLBox ISOMediaBoxes.XMLBox] ||  ||
 
 == Enumerations ==
 
 || *Enumeration* || *Description* ||
-|| [Bin_T_MP4_GraphicsMode GraphicsMode] || Graphics Modes  ||
+|| [Bin_T_MP4_GraphicsMode GraphicsMode] || Graphics Modes ||

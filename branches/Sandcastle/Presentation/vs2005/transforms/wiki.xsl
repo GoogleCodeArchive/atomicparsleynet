@@ -45,7 +45,7 @@
 
 	<xsl:template match="p[@class='subHeading']">
 		<xsl:text>
-====   </xsl:text>
+ ==== </xsl:text>
 		<xsl:call-template name="FixText">
 			<xsl:with-param name="text" select="."/>
 		</xsl:call-template>
@@ -71,9 +71,7 @@
 	</xsl:template>
 
 	<xsl:template match="br">
-		<xsl:text>
-
-</xsl:text>
+		<xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="table">
@@ -108,7 +106,7 @@
 				<xsl:value-of select="@href"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="substring-before(@href,'.')"/>
+				<xsl:value-of select="translate(substring-before(@href,'.'),'`','_')"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text> </xsl:text>
@@ -130,7 +128,7 @@
 </xsl:text>
 	</xsl:template>
 
-	<xsl:template match="dd|dd/p|dd/div[@class='summary' and not(p)]|dd/div[@class='summary']/p">
+	<xsl:template match="dd|dd/p|dd/div[@class='summary']/p">
 		<xsl:text>
  </xsl:text>
 		<xsl:apply-templates select="node()"/>
@@ -138,13 +136,17 @@
 </xsl:text>
 	</xsl:template>
 
-	<xsl:template match="dd/br">
-		<xsl:text>
+	<xsl:template match="dd/div[@class='summary' and not(p)]">
+		<xsl:apply-templates select="node()"/>
+		<xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+	</xsl:template>
 
- </xsl:text>
+	<xsl:template match="dd/br">
+		<xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="div[@class='summary' and p]">
+		<xsl:apply-templates select="p"/>
 	</xsl:template>
 
 	<xsl:template match="td/div[@class='summary']|td/p">

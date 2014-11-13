@@ -3,17 +3,13 @@
 = Version Binary Data Field =
 
 
-The file format specification version; minor version of the major brand in general. 
+The file format specification version; minor version of the major brand in general.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int32* — a 32-bit (4 bytes) integer 
-
-
+Type: *Int32* — a 32-bit (4 bytes) integer <br>
 == Remarks ==
 
 The minor version is informative only. It does not appear for compatible-brands, and must not be used to determine the conformance of a file to a standard. It may allow more precise identification of the major specification, for inspection, debugging, or improved decoding.

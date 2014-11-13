@@ -3,17 +3,13 @@
 = !PreferredVolume Binary Data Field =
 
 
-A fixed-point 8.8 number that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume. 
+A [T_MP4_Fixed_2 fixed-point 8.8 number] that specifies how loud to play this movie’s sound. A value of 1.0 indicates full volume.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *UInt16* — a 16-bit (2 bytes) unsigned integer 
-
-
+Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]

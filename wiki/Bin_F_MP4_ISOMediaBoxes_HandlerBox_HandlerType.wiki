@@ -1,0 +1,27 @@
+﻿#summary !HandlerType Binary Data Field
+
+= !HandlerType Binary Data Field =
+
+
+Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
+
+Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
+== Remarks ==
+
+For media handlers, this field defines the type of data — for example, {{{'vide'}}} for video data, {{{'soun'}}} for sound data, {{{'hint'}}} for hint track or {{{'subt'}}} for subtitles.
+
+For data handlers, this field defines the data reference type; for example, a component subtype value of {{{'alis'}}} identifies a file alias.
+
+A reader parsing a metadata atom should confirm the handler type in the metadata handler atom is {{{‘mdta’}}} before interpreting any other structures in the metadata atom. If the handler type is not {{{‘mdta’}}}, the interpretation is defined by another specification.
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

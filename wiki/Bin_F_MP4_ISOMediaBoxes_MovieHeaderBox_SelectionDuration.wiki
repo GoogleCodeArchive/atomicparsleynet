@@ -3,17 +3,13 @@
 = !SelectionDuration Binary Data Field =
 
 
-The duration of the current selection in movie time scale units. 
+The duration of the current selection in movie time scale units.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int32* — a 32-bit (4 bytes) integer 
-
-
+Type: *Int32* — a 32-bit (4 bytes) integer <br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]

@@ -1,0 +1,52 @@
+﻿#summary ISOMediaBoxes.!MetaBox Binary Block
+
+= ISOMediaBoxes.!MetaBox Binary Block =
+
+
+Metadata Atom {{{'meta'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+
+ ==== Sample of a metadata atom and subatoms ====
+https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/metadata_atom.jpg
+
+
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version] (Optional)
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags] (Optional)
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_MetaBox_boxList boxList]
+
+ Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>
+ The container for metadata is an atom of type {{{‘meta’}}}. The metadata atom must contain the following subatoms:
+
+ [T_MP4_ISOMediaBoxes_HandlerBox metadata handler atom] ({{{‘hdlr’}}}), metadata item keys atom ({{{‘keys’}}}), and metadata [T_MP4_ISOMediaBoxes_ItemListBox item list atom] ({{{‘ilst’}}}). Other optional atoms that may be contained in a metadata atom include the country list atom ({{{‘ctry’}}}), language list atom ({{{‘lang’}}}) and [T_MP4_ISOMediaBoxes_FreeSpaceBox free space atom] ({{{‘free’}}}).
+
+
+== Remarks ==
+
+Metadata can be defined as useful information related to media. This metadata format uses a key–value pair for each type of metadata being stored.
+
+https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_note.gif *Note* The !QuickTime file format also defines user data which, in some limited cases, can be used to store metadata.
+
+The meaning of a metadata item identifies what it represents: a copyright notice, the performer’s name, and so on. It uses an extensible namespace allowing for meanings or keys to be added, and then referenced, from metadata items. These keys may be four-character codes, names in reverse-address format (such as “com.apple.quicktime.windowlocation”) or any other key format including native formats from external metadata standards. A key is tagged with its namespace allowing for extension in the future. It is recommended that reverse-address format be used in the general case: this provides an extensible syntax for vendor data or for other organizations or standards bodies.
+
+Metadata is stored immediately in the corresponding atom structures, by value.
+
+A metadata item can be identified as specific to a country or set of countries, to a language or set of languages, or to some combination of languages and countries. This identification allows for a default value (suitable for any language or country not explicitly called out), a single value, or a list of values.
+
+The metadata can be stored within a movie atom ({{{‘moov’}}}), a track atom ({{{‘trak’}}}) or a media atom ({{{‘mdia’}}}). Only one metadata atom is allowed for each location. If there is user data and metadata stored in the same location, and both declare the same information, for example, declare a copyright notice, the metadata takes precedence.
+
+The metadata is required to contain a {{{‘hdlr’}}} box indicating the structure or format of the metadata contents. That metadata is located either within a box within this box (e.g. an XML box), or is located by the item identified by a primary item box.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!MetaBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

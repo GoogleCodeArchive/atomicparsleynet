@@ -1,0 +1,27 @@
+﻿#summary !ComponentName Binary Data Field
+
+= !ComponentName Binary Data Field =
+
+
+A (counted) string that specifies the name of the component — that is, the media/metadata handler used when this media was created. This field may contain a zero-length (empty) string.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Length ===
+
+Type: *Byte* — an 8-bit (1 byte) integer (Optional)
+
+=== Field Value ===
+
+Type: *CString* — a null-terminated UTF-8 encoded character string
+
+== Remarks ==
+
+A null-terminated string in UTF-8 characters which gives a human-readable name for the track type or the metadata type (for debugging and inspection purposes).
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

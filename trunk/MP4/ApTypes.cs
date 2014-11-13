@@ -102,7 +102,6 @@ namespace MP4
 
 		public static void ReadCount(this BinaryReader reader, ICollection<AtomicInfo> list, AtomicInfo parent, bool required = true)
 		{
-			list.Clear();
 			int count = reader.ReadInt32();
 			for (int index = 0; index < count; index++)
 			{
@@ -127,7 +126,6 @@ namespace MP4
 
 		public static void ReadEnd(this BinaryReader reader, ICollection<AtomicInfo> list, AtomicInfo parent, bool required = false)
 		{
-			list.Clear();
 			while (reader.BaseStream.Position < reader.BaseStream.Length)
 			{
 				var box = AtomicInfo.ParseBox(reader, parent, required);
@@ -337,6 +335,7 @@ namespace MP4
 		}
 	}
 
+	[System.Diagnostics.DebuggerDisplay("{KnownParentAtom ?? \"*\",nq}.{KnownAtomName,nq}<{BoxClass==null ? \"unknown box\" : BoxClass.Name,nq}>")]
 	public class AtomDefinition
 	{
 		public string KnownAtomName { get; private set; }

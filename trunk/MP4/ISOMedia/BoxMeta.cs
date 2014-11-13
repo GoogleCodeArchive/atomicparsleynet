@@ -34,35 +34,23 @@ namespace MP4
 		// Metadata Atom
 		public sealed partial class MetaBox: ISOMFullBox, IBoxContainer
 		{
-			public override void ReadBinary(BinaryReader reader)
+			private void ReadFullBox(BinaryReader reader)
 			{
-				//long pos = reader.BaseStream.Position;
-				//var next = reader.ReadUInt32();
-				//reader.BaseStream.Seek(pos, SeekOrigin.Begin);
-				///*try to hack around QT files which don't use a full box for meta*/
-				//if ((long)next < reader.Length()) //TODO: like error
-				//{
-					base.ReadBinary(reader);
-				//}
-				//else
-				//{
-				//	this.Versioned = false;
-				//}
-				reader.ReadEnd(boxList, this);
-			}
-
-			public override long DataSize
-			{
-				get
+				long size = reader.Length();
+				//try to hack around QT files which don't use a full box for meta
+				if (size < 4L) return; //no full box and no atoms
+				uint boxSize = reader.ReadUInt32();
+				var atomid = size >= 8L ? reader.ReadAtomicCode() : (AtomicCode)0u;
+				if ((uint)atomid <= size)
 				{
-					return boxList.SizeEnd() + base.DataSize;
+					base.Version = (byte)(boxSize >> 24);
+					base.Flags = (int)(boxSize & 0xFFFFFFu);
+					if (size < 8L) return; //full box without atoms
+					boxSize = (uint)atomid;
+					atomid = reader.ReadAtomicCode();
 				}
-			}
-
-			public override void WriteBinary(BinaryWriter writer)
-			{
-				base.WriteBinary(writer);
-				writer.WriteEnd(boxList);
+				var box = AtomicInfo.ParseBox(reader, boxSize, atomid, parent: this);
+				boxList.Add(box);
 			}
 		}
 	}

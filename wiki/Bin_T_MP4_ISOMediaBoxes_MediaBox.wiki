@@ -1,0 +1,32 @@
+﻿#summary ISOMediaBoxes.!MediaBox Binary Block
+
+= ISOMediaBoxes.!MediaBox Binary Block =
+
+
+Media Atom {{{'mdia'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+
+ ==== The layout of a media atom ====
+https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_030-G.jpg
+
+
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_MediaBox_boxList boxList]
+
+ Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>The media atom must contain a [T_MP4_ISOMediaBoxes_MediaHeaderBox media header atom] ({{{'mdhd'}}}), and it can contain a [T_MP4_ISOMediaBoxes_HandlerBox handler reference] ({{{'hdlr'}}}) atom, [T_MP4_ISOMediaBoxes_MediaInformationBox media information] ({{{'minf'}}}) atom, and [T_MP4_ISOMediaBoxes_UserDataBox user data] ({{{'udta'}}}) atom.<br>
+
+== Remarks ==
+
+Media atoms describe and define a track’s media type and sample data. The media atom contains information that specifies:
+The media type, such as sound or videoThe media handler component used to interpret the sample dataThe media timescale and track durationMedia-and-track-specific information, such as sound volume or graphics modeThe media data references, which typically specify the file where the sample data is storedThe sample table atoms, which, for each media sample, specify the sample description, duration, and byte offset from the data reference
+The media atom has an atom type of {{{'mdia'}}}.
+
+https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_note.gif *Note* Do not confuse the media atom ({{{'mdia'}}}) with the media _data_ atom ({{{'mdat'}}}). The media atom contains only _references_ to media data; the media data atom contains the actual media samples.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  *MP4.ISOMediaBoxes.!MediaBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

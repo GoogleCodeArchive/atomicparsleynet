@@ -1,0 +1,17 @@
+﻿#summary Manufacturer Binary Data Field
+
+= Manufacturer Binary Data Field =
+
+
+Component manufacturer. Reserved. Set to 0.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_HandlerBox ISOMediaBoxes.HandlerBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

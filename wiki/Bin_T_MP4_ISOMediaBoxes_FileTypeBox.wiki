@@ -5,34 +5,20 @@
 
 The File Type Compatibility Atom {{{'ftyp'}}}
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Fields ==
 
 [Bin_F_MP4_ISOMediaBoxes_FileTypeBox_Brand Brand]
 
- Type: *UInt32* — a 32-bit (4 bytes) unsigned integer 
-
-
- Identifies compatible file format. 
-
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>Identifies compatible file format.<br>
 
 [Bin_F_MP4_ISOMediaBoxes_FileTypeBox_Version Version]
 
- Type: *Int32* — a 32-bit (4 bytes) integer 
-
-
- The file format specification version; minor version of the major brand in general. 
-
+ Type: *Int32* — a 32-bit (4 bytes) integer <br>The file format specification version; minor version of the major brand in general.<br>
 
 [Bin_F_MP4_ISOMediaBoxes_FileTypeBox_CompatibleBrand CompatibleBrand]
 
-
- Type: *Int32[**]* — a series of 32-bit unsigned integers
-
- Listing compatible file formats. The major brand must appear in the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such entries should be ignored. 
-
+ Type: *Int32[**]* — a series of 32-bit unsigned integers<br>Listing compatible file formats. The major brand must appear in the list of compatible brands. One or more “placeholder” entries with value zero are permitted; such entries should be ignored.<br>
 
 == Remarks ==
 
@@ -41,11 +27,7 @@ The file type compatibility atom, also called the file type atom, allows the rea
 The file type atom is optional, but strongly recommended. If present, it must be the first significant atom in the file, preceding the movie atom (and any free space atoms, preview atom, or movie data atoms).
 
 == Inheritance Hierarchy ==
-[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]
-
-  *MP4.ISOMediaBoxes.!FileTypeBox*
-
-
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  *MP4.ISOMediaBoxes.!FileTypeBox*<br>
 == See Also ==
 
 [Bin_N_MP4 MP4 Serialization Namespace]

@@ -3,17 +3,13 @@
 = Version Binary Data Field =
 
 
-The version of this atom. 
+The version of this atom.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Byte* — an 8-bit (1 byte) unsigned integer
-
-
+Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>
 == Remarks ==
 
 In a number of boxes there are two variant forms: version 0 using 32-bit fields, and version 1 using 64-bit sizes for those same fields. In general, if a version 0 box (32-bit field sizes) can be used, it should be; version 1 boxes should be used only when the 64-bit field sizes they permit, are required.

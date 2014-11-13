@@ -3,11 +3,9 @@
 = !AtomicInfo Binary Block =
 
 
-The basic data unit 
+The basic data unit
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Remarks ==
 
 An object in this terminology is a box.
@@ -121,157 +119,7 @@ The following table shows all known boxes were implemented.
 || [Bin_T_MP4_ISOMediaBoxes_ChapterListBox ISOMediaBoxes.ChapterListBox] || {{{'chpl'}}} || {{{'udta'}}} ||  ||
 
 == Inheritance Hierarchy ==
-*MP4.!AtomicInfo*
-
-  [Bin_T_MP4_ISOMediaBoxes_AC3ConfigBox MP4.ISOMediaBoxes.AC3ConfigBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_AVCConfigurationBox MP4.ISOMediaBoxes.AVCConfigurationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_Box MP4.ISOMediaBoxes.Box]
-
-  [Bin_T_MP4_ISOMediaBoxes_DataInformationBox MP4.ISOMediaBoxes.DataInformationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_DIMMBox MP4.ISOMediaBoxes.DIMMBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_DIMSScriptTypesBox MP4.ISOMediaBoxes.DIMSScriptTypesBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_DMAXBox MP4.ISOMediaBoxes.DMAXBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_DMEDBox MP4.ISOMediaBoxes.DMEDBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_DREPBox MP4.ISOMediaBoxes.DREPBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_EditBox MP4.ISOMediaBoxes.EditBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_FileTypeBox MP4.ISOMediaBoxes.FileTypeBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_FontTableBox MP4.ISOMediaBoxes.FontTableBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_FreeSpaceBox MP4.ISOMediaBoxes.FreeSpaceBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_GF3GPPConfigBox MP4.ISOMediaBoxes.GF3GPPConfigBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_HintInfoBox MP4.ISOMediaBoxes.HintInfoBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_HintTrackInfoBox MP4.ISOMediaBoxes.HintTrackInfoBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_ItemListBox MP4.ISOMediaBoxes.ItemListBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_JPEG2000Atom MP4.ISOMediaBoxes.JPEG2000Atom]
-
-  [Bin_T_MP4_ISOMediaBoxes_LASeRConfigurationBox MP4.ISOMediaBoxes.LASeRConfigurationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_ListItemBox MP4.ISOMediaBoxes.ListItemBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MAXRBox MP4.ISOMediaBoxes.MAXRBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MediaBox MP4.ISOMediaBoxes.MediaBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MediaDataBox MP4.ISOMediaBoxes.MediaDataBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MediaInformationBox MP4.ISOMediaBoxes.MediaInformationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MovieBox MP4.ISOMediaBoxes.MovieBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MovieExtendsBox MP4.ISOMediaBoxes.MovieExtendsBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MovieFragmentBox MP4.ISOMediaBoxes.MovieFragmentBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MPEG4BitRateBox MP4.ISOMediaBoxes.MPEG4BitRateBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_MPEG4ExtensionDescriptorsBox MP4.ISOMediaBoxes.MPEG4ExtensionDescriptorsBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_NameBox MP4.ISOMediaBoxes.NameBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_NPCKBox MP4.ISOMediaBoxes.NPCKBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_NTYLBox MP4.ISOMediaBoxes.NTYLBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_NUMPBox MP4.ISOMediaBoxes.NUMPBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_OMADRMMutableInformationBox MP4.ISOMediaBoxes.OMADRMMutableInformationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_OriginalFormatBox MP4.ISOMediaBoxes.OriginalFormatBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_PAYTBox MP4.ISOMediaBoxes.PAYTBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_PcrInfoBox MP4.ISOMediaBoxes.PcrInfoBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_PixelAspectRatioBox MP4.ISOMediaBoxes.PixelAspectRatioBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_PMAXBox MP4.ISOMediaBoxes.PMAXBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_ProtectionInfoBox MP4.ISOMediaBoxes.ProtectionInfoBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_RelyHintBox MP4.ISOMediaBoxes.RelyHintBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_RTPBox MP4.ISOMediaBoxes.RTPBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_RTPOBox MP4.ISOMediaBoxes.RTPOBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_RVCConfigurationBox MP4.ISOMediaBoxes.RVCConfigurationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_SampleTableBox MP4.ISOMediaBoxes.SampleTableBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_SchemeInformationBox MP4.ISOMediaBoxes.SchemeInformationBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_SDPBox MP4.ISOMediaBoxes.SDPBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_SegmentTypeBox MP4.ISOMediaBoxes.SegmentTypeBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_SeqOffHintEntryBox MP4.ISOMediaBoxes.SeqOffHintEntryBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextBlinkBox MP4.ISOMediaBoxes.TextBlinkBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextBoxBox MP4.ISOMediaBoxes.TextBoxBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextHighlightBox MP4.ISOMediaBoxes.TextHighlightBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextHighlightColorBox MP4.ISOMediaBoxes.TextHighlightColorBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextHyperTextBox MP4.ISOMediaBoxes.TextHyperTextBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextKaraokeBox MP4.ISOMediaBoxes.TextKaraokeBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextScrollDelayBox MP4.ISOMediaBoxes.TextScrollDelayBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextStyleBox MP4.ISOMediaBoxes.TextStyleBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TextWrapBox MP4.ISOMediaBoxes.TextWrapBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TimeOffHintEntryBox MP4.ISOMediaBoxes.TimeOffHintEntryBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TMAXBox MP4.ISOMediaBoxes.TMAXBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TMINBox MP4.ISOMediaBoxes.TMINBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TOTLBox MP4.ISOMediaBoxes.TOTLBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TPAYBox MP4.ISOMediaBoxes.TPAYBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TrackBox MP4.ISOMediaBoxes.TrackBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TrackFragmentBox MP4.ISOMediaBoxes.TrackFragmentBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TrackReferenceBox MP4.ISOMediaBoxes.TrackReferenceBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TrackReferenceTypeBox MP4.ISOMediaBoxes.TrackReferenceTypeBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TRPYBox MP4.ISOMediaBoxes.TRPYBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_TSHintEntryBox MP4.ISOMediaBoxes.TSHintEntryBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_UnknownBox MP4.ISOMediaBoxes.UnknownBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_UnknownParentBox MP4.ISOMediaBoxes.UnknownParentBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_UserDataBox MP4.ISOMediaBoxes.UserDataBox]
-
-  [Bin_T_MP4_ISOMediaBoxes_VoidBox MP4.ISOMediaBoxes.VoidBox]
-
-
+*MP4.!AtomicInfo*<br>  [Bin_T_MP4_ISOMediaBoxes_AC3ConfigBox MP4.ISOMediaBoxes.AC3ConfigBox]<br>  [Bin_T_MP4_ISOMediaBoxes_AVCConfigurationBox MP4.ISOMediaBoxes.AVCConfigurationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_Box MP4.ISOMediaBoxes.Box]<br>  [Bin_T_MP4_ISOMediaBoxes_DataInformationBox MP4.ISOMediaBoxes.DataInformationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_DIMMBox MP4.ISOMediaBoxes.DIMMBox]<br>  [Bin_T_MP4_ISOMediaBoxes_DIMSScriptTypesBox MP4.ISOMediaBoxes.DIMSScriptTypesBox]<br>  [Bin_T_MP4_ISOMediaBoxes_DMAXBox MP4.ISOMediaBoxes.DMAXBox]<br>  [Bin_T_MP4_ISOMediaBoxes_DMEDBox MP4.ISOMediaBoxes.DMEDBox]<br>  [Bin_T_MP4_ISOMediaBoxes_DREPBox MP4.ISOMediaBoxes.DREPBox]<br>  [Bin_T_MP4_ISOMediaBoxes_EditBox MP4.ISOMediaBoxes.EditBox]<br>  [Bin_T_MP4_ISOMediaBoxes_FileTypeBox MP4.ISOMediaBoxes.FileTypeBox]<br>  [Bin_T_MP4_ISOMediaBoxes_FontTableBox MP4.ISOMediaBoxes.FontTableBox]<br>  [Bin_T_MP4_ISOMediaBoxes_FreeSpaceBox MP4.ISOMediaBoxes.FreeSpaceBox]<br>  [Bin_T_MP4_ISOMediaBoxes_GF3GPPConfigBox MP4.ISOMediaBoxes.GF3GPPConfigBox]<br>  [Bin_T_MP4_ISOMediaBoxes_HintInfoBox MP4.ISOMediaBoxes.HintInfoBox]<br>  [Bin_T_MP4_ISOMediaBoxes_HintTrackInfoBox MP4.ISOMediaBoxes.HintTrackInfoBox]<br>  [Bin_T_MP4_ISOMediaBoxes_InvalidBox MP4.ISOMediaBoxes.InvalidBox]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>  [Bin_T_MP4_ISOMediaBoxes_ItemListBox MP4.ISOMediaBoxes.ItemListBox]<br>  [Bin_T_MP4_ISOMediaBoxes_JPEG2000Atom MP4.ISOMediaBoxes.JPEG2000Atom]<br>  [Bin_T_MP4_ISOMediaBoxes_LASeRConfigurationBox MP4.ISOMediaBoxes.LASeRConfigurationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_ListItemBox MP4.ISOMediaBoxes.ListItemBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MAXRBox MP4.ISOMediaBoxes.MAXRBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MediaBox MP4.ISOMediaBoxes.MediaBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MediaDataBox MP4.ISOMediaBoxes.MediaDataBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MediaInformationBox MP4.ISOMediaBoxes.MediaInformationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MovieBox MP4.ISOMediaBoxes.MovieBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MovieExtendsBox MP4.ISOMediaBoxes.MovieExtendsBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MovieFragmentBox MP4.ISOMediaBoxes.MovieFragmentBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MPEG4BitRateBox MP4.ISOMediaBoxes.MPEG4BitRateBox]<br>  [Bin_T_MP4_ISOMediaBoxes_MPEG4ExtensionDescriptorsBox MP4.ISOMediaBoxes.MPEG4ExtensionDescriptorsBox]<br>  [Bin_T_MP4_ISOMediaBoxes_NameBox MP4.ISOMediaBoxes.NameBox]<br>  [Bin_T_MP4_ISOMediaBoxes_NPCKBox MP4.ISOMediaBoxes.NPCKBox]<br>  [Bin_T_MP4_ISOMediaBoxes_NTYLBox MP4.ISOMediaBoxes.NTYLBox]<br>  [Bin_T_MP4_ISOMediaBoxes_NUMPBox MP4.ISOMediaBoxes.NUMPBox]<br>  [Bin_T_MP4_ISOMediaBoxes_OMADRMMutableInformationBox MP4.ISOMediaBoxes.OMADRMMutableInformationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_OriginalFormatBox MP4.ISOMediaBoxes.OriginalFormatBox]<br>  [Bin_T_MP4_ISOMediaBoxes_PAYTBox MP4.ISOMediaBoxes.PAYTBox]<br>  [Bin_T_MP4_ISOMediaBoxes_PcrInfoBox MP4.ISOMediaBoxes.PcrInfoBox]<br>  [Bin_T_MP4_ISOMediaBoxes_PixelAspectRatioBox MP4.ISOMediaBoxes.PixelAspectRatioBox]<br>  [Bin_T_MP4_ISOMediaBoxes_PMAXBox MP4.ISOMediaBoxes.PMAXBox]<br>  [Bin_T_MP4_ISOMediaBoxes_ProtectionInfoBox MP4.ISOMediaBoxes.ProtectionInfoBox]<br>  [Bin_T_MP4_ISOMediaBoxes_RelyHintBox MP4.ISOMediaBoxes.RelyHintBox]<br>  [Bin_T_MP4_ISOMediaBoxes_RTPBox MP4.ISOMediaBoxes.RTPBox]<br>  [Bin_T_MP4_ISOMediaBoxes_RTPOBox MP4.ISOMediaBoxes.RTPOBox]<br>  [Bin_T_MP4_ISOMediaBoxes_RVCConfigurationBox MP4.ISOMediaBoxes.RVCConfigurationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_SampleTableBox MP4.ISOMediaBoxes.SampleTableBox]<br>  [Bin_T_MP4_ISOMediaBoxes_SchemeInformationBox MP4.ISOMediaBoxes.SchemeInformationBox]<br>  [Bin_T_MP4_ISOMediaBoxes_SDPBox MP4.ISOMediaBoxes.SDPBox]<br>  [Bin_T_MP4_ISOMediaBoxes_SegmentTypeBox MP4.ISOMediaBoxes.SegmentTypeBox]<br>  [Bin_T_MP4_ISOMediaBoxes_SeqOffHintEntryBox MP4.ISOMediaBoxes.SeqOffHintEntryBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextBlinkBox MP4.ISOMediaBoxes.TextBlinkBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextBoxBox MP4.ISOMediaBoxes.TextBoxBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextHighlightBox MP4.ISOMediaBoxes.TextHighlightBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextHighlightColorBox MP4.ISOMediaBoxes.TextHighlightColorBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextHyperTextBox MP4.ISOMediaBoxes.TextHyperTextBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextKaraokeBox MP4.ISOMediaBoxes.TextKaraokeBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextScrollDelayBox MP4.ISOMediaBoxes.TextScrollDelayBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextStyleBox MP4.ISOMediaBoxes.TextStyleBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TextWrapBox MP4.ISOMediaBoxes.TextWrapBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TimeOffHintEntryBox MP4.ISOMediaBoxes.TimeOffHintEntryBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TMAXBox MP4.ISOMediaBoxes.TMAXBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TMINBox MP4.ISOMediaBoxes.TMINBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TOTLBox MP4.ISOMediaBoxes.TOTLBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TPAYBox MP4.ISOMediaBoxes.TPAYBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TrackBox MP4.ISOMediaBoxes.TrackBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TrackFragmentBox MP4.ISOMediaBoxes.TrackFragmentBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TrackReferenceBox MP4.ISOMediaBoxes.TrackReferenceBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TrackReferenceTypeBox MP4.ISOMediaBoxes.TrackReferenceTypeBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TRPYBox MP4.ISOMediaBoxes.TRPYBox]<br>  [Bin_T_MP4_ISOMediaBoxes_TSHintEntryBox MP4.ISOMediaBoxes.TSHintEntryBox]<br>  [Bin_T_MP4_ISOMediaBoxes_UnknownBox MP4.ISOMediaBoxes.UnknownBox]<br>  [Bin_T_MP4_ISOMediaBoxes_UnknownParentBox MP4.ISOMediaBoxes.UnknownParentBox]<br>  [Bin_T_MP4_ISOMediaBoxes_UserDataBox MP4.ISOMediaBoxes.UserDataBox]<br>  [Bin_T_MP4_ISOMediaBoxes_VoidBox MP4.ISOMediaBoxes.VoidBox]<br>
 == See Also ==
 
 [Bin_N_MP4 MP4 Serialization Namespace]

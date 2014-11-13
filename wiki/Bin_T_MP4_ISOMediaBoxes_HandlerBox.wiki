@@ -1,0 +1,74 @@
+﻿#summary ISOMediaBoxes.!HandlerBox Binary Block
+
+= ISOMediaBoxes.!HandlerBox Binary Block =
+
+
+Handler Atom {{{'hdlr'}}} — Handler Reference Atom or Metadata Handler Atom.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+
+ ==== The layout of a handler reference atom ====
+https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_031.gif
+
+
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_ComponentType ComponentType]
+
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
+ Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the handler. Only two values are valid for this field: {{{'mhlr'}}} for media handlers and {{{'dhlr'}}} for data handlers.
+
+ Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a predefined integer that is set to 0.
+
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_HandlerType HandlerType]
+
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
+ Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
+
+ Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
+
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_Manufacturer Manufacturer]
+
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>Component manufacturer. Reserved. Set to 0.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_ComponentFlags ComponentFlags]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer <br>Component flags. Reserved. Set to 0.<br>
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_ComponentFlagsMask ComponentFlagsMask]
+
+ Type: *Int32* — a 32-bit (4 bytes) integer <br>Component flags mask. Reserved. Set to 0.<br>
+
+_!ComponentName length_
+
+ Type: *Byte* — an 8-bit (1 byte) integer (Optional)<br>
+
+[Bin_F_MP4_ISOMediaBoxes_HandlerBox_ComponentName ComponentName]
+
+ Type: *CString* — a null-terminated UTF-8 encoded character string<br>A (counted) string that specifies the name of the component — that is, the media/metadata handler used when this media was created. This field may contain a zero-length (empty) string.<br>
+
+== Remarks ==
+
+The handler atom within a [T_MP4_ISOMediaBoxes_MediaBox media atom] declares the process by which the media data in the stream may be presented, and thus, the nature of the media in a stream. For example, a video handler would handle a video track.
+
+The handler reference atom specifies the media handler component that is to be used to interpret the media’s data. The handler reference atom has an atom type value of {{{'hdlr'}}}.
+
+Historically, the handler reference atom was also used for data references. However, this use is no longer current and may now be safely ignored.
+
+This box when present within a [T_MP4_ISOMediaBoxes_MetaBox meta box], declares the structure or format of the {{{'meta'}}} box contents. It defines the structure used for all types of metadata stored within the metadata atom.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!HandlerBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

@@ -3,17 +3,13 @@
 = !PreviewTime Binary Data Field =
 
 
-The time value in the movie at which the preview begins. 
+The time value in the movie at which the preview begins.
 
-*Serialization Namespace:*  [Bin_N_MP4 MP4]
-
-*Assembly:* MP4 (in MP4.dll)
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int32* — a 32-bit (4 bytes) integer 
-
-
+Type: *Int32* — a 32-bit (4 bytes) integer <br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox ISOMediaBoxes.MovieHeaderBox Block]
