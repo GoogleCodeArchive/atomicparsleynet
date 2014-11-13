@@ -533,6 +533,7 @@
 						</xsl:with-param>
 						<xsl:with-param name="content">
 							<xsl:apply-templates select="$binData" mode="field"/>
+							<xsl:apply-templates select="$binArray[not($binData)]" mode="item"/>
 							<xsl:apply-templates select="bindata_summary"/>
 							<xsl:call-template name="getElementDescription" />
 						</xsl:with-param>
@@ -567,6 +568,7 @@
 
 	<xsl:template match="reference" mode="data">
 		<xsl:variable name="binData" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinDataAttribute']" />
+		<xsl:variable name="binArray" select="attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayAttribute']" />
 
 		<xsl:call-template name="subSection">
 			<xsl:with-param name="title">
@@ -576,6 +578,7 @@
 				<xsl:apply-templates select="$binData" mode="field">
 					<xsl:with-param name="comments" select="/document/comments"/>
 				</xsl:apply-templates>
+				<xsl:apply-templates select="$binArray[not($binData)]" mode="item"/>
 				<xsl:apply-templates select="/document/comments/bindata_summary"/>
 				<xsl:apply-templates select="/document/comments/value"/>
 				<xsl:apply-templates select="/document/comments/returns"/>
@@ -614,9 +617,7 @@
 				<include item="fieldCountTitle"/>
 			</xsl:with-param>
 			<xsl:with-param name="content">
-				<xsl:apply-templates select="$binArray" mode="count">
-					<xsl:with-param name="comments" select="/document/comments"/>
-				</xsl:apply-templates>
+				<xsl:apply-templates select="$binArray" mode="count"/>
 				<xsl:apply-templates select="/document/comments/bincount_summary"/>
 			</xsl:with-param>
 		</xsl:call-template>
@@ -719,13 +720,17 @@
 	<xsl:template match="attribute" mode="conditioninfo">
 		<xsl:param name="comments" select="parent::attributes/parent::*"/>
 		<xsl:variable name="conditionArg" select="assignment[@name = 'Condition' and value != '']"/>
+		<xsl:variable name="format">
+			<xsl:call-template name="ResolveFormat"/>
+		</xsl:variable>
+		<xsl:variable name="summary" select="$comments/bincondition_summary[not(@format) or @format = $format]"/>
 
 		<xsl:if test="$conditionArg">
 			<xsl:choose>
-				<xsl:when test="$comments/bincondition_summary">
+				<xsl:when test="$summary">
 					<include item="conditionSummary">
 						<parameter>
-							<xsl:apply-templates select="$comments/bincondition_summary/node()"/>
+							<xsl:apply-templates select="$summary/node()"/>
 						</parameter>
 					</include>
 				</xsl:when>
@@ -804,6 +809,20 @@
 		<xsl:if test="$countCustomMethodArg and translate($countCustomMethodArg/value, '0123456789', '')=''">
 			<xsl:value-of select="$countCustomMethodArg/value"/>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="ResolveItemType">
+		<xsl:variable name="context" select="parent::attributes/parent::*"/>
+		<xsl:variable name="binArrayItem" select="$context/attributes/attribute[type/@api = 'T:FRAFV.Binary.Serialization.BinArrayItemAttribute']" />
+		<xsl:variable name="typeArg" select="assignment[@name = 'ItemType' and value != '']"/>
+		<xsl:choose>
+			<xsl:when test="$typeArg">
+				<xsl:value-of select="$typeArg/value"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$context/returns/type/specialization/type[1]/@api|$context/returns/arrayOf/type/@api"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="HasEncoding">
