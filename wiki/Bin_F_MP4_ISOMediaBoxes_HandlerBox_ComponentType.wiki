@@ -3,9 +3,9 @@
 = !ComponentType Binary Data Field =
 
 
-Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the handler. Only two values are valid for this field: {{{'mhlr'}}} for media handlers and {{{'dhlr'}}} for data handlers.
+Within a [Bin_T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the handler. Only two values are valid for this field: {{{'mhlr'}}} for media handlers and {{{'dhlr'}}} for data handlers.
 
-Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a predefined integer that is set to 0.
+Within a [Bin_T_MP4_ISOMediaBoxes_MetaBox meta box] this is a predefined integer that is set to 0.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==

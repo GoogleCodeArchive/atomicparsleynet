@@ -3,9 +3,9 @@
 = !HandlerType Binary Data Field =
 
 
-Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
+Within a [Bin_T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
 
-Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
+Within a [Bin_T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==

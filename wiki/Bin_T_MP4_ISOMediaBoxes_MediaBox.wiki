@@ -15,7 +15,7 @@ https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_030-G.jpg
 
 [Bin_F_MP4_ISOMediaBoxes_MediaBox_boxList boxList]
 
- Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>The media atom must contain a [T_MP4_ISOMediaBoxes_MediaHeaderBox media header atom] ({{{'mdhd'}}}), and it can contain a [T_MP4_ISOMediaBoxes_HandlerBox handler reference] ({{{'hdlr'}}}) atom, [T_MP4_ISOMediaBoxes_MediaInformationBox media information] ({{{'minf'}}}) atom, and [T_MP4_ISOMediaBoxes_UserDataBox user data] ({{{'udta'}}}) atom.<br>
+ Type: [Bin_T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>The media atom must contain a [Bin_T_MP4_ISOMediaBoxes_MediaHeaderBox media header atom] ({{{'mdhd'}}}), and it can contain a [Bin_T_MP4_ISOMediaBoxes_HandlerBox handler reference] ({{{'hdlr'}}}) atom, [Bin_T_MP4_ISOMediaBoxes_MediaInformationBox media information] ({{{'minf'}}}) atom, and [Bin_T_MP4_ISOMediaBoxes_UserDataBox user data] ({{{'udta'}}}) atom.<br>
 
 == Remarks ==
 

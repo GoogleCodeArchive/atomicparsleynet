@@ -26,7 +26,7 @@ The brand {{{'avc1'}}} shall be used to indicate that the file is conformant wit
 
 If a Meta-box with an MPEG-7 handler type is used at the file level, then the brand {{{'mp71'}}} should be a member of the compatible-brands list in the file-type box.
 
-The brand {{{'qt '}}} (note the two trailing ASCII space characters) for !QuickTime movie files. If a file is compatible with multiple brands, all such brands are listed in the [F_MP4_ISOMediaBoxes_FileTypeBox_CompatibleBrand CompatibleBrand] fields, and the ‘major brand’ identifies the preferred brand or best use.
+The brand {{{'qt '}}} (note the two trailing ASCII space characters) for !QuickTime movie files. If a file is compatible with multiple brands, all such brands are listed in the [Bin_F_MP4_ISOMediaBoxes_FileTypeBox_CompatibleBrand CompatibleBrand] fields, and the ‘major brand’ identifies the preferred brand or best use.
 
 https://atomicparsleynet.googlecode.com/svn/branches/Sandcastle/Presentation/vs2005/icons/alert_note.gif *Note* In current version !QuickTime movie files are not supported.
 

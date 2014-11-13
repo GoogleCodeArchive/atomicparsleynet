@@ -3,14 +3,14 @@
 = boxList Binary Data Field =
 
 
-The media atom must contain a [T_MP4_ISOMediaBoxes_MediaHeaderBox media header atom] ({{{'mdhd'}}}), and it can contain a [T_MP4_ISOMediaBoxes_HandlerBox handler reference] ({{{'hdlr'}}}) atom, [T_MP4_ISOMediaBoxes_MediaInformationBox media information] ({{{'minf'}}}) atom, and [T_MP4_ISOMediaBoxes_UserDataBox user data] ({{{'udta'}}}) atom.
+The media atom must contain a [Bin_T_MP4_ISOMediaBoxes_MediaHeaderBox media header atom] ({{{'mdhd'}}}), and it can contain a [Bin_T_MP4_ISOMediaBoxes_HandlerBox handler reference] ({{{'hdlr'}}}) atom, [Bin_T_MP4_ISOMediaBoxes_MediaInformationBox media information] ({{{'minf'}}}) atom, and [Bin_T_MP4_ISOMediaBoxes_UserDataBox user data] ({{{'udta'}}}) atom.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
 
-Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms
+Type: [Bin_T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms
 
 == See Also ==
 

@@ -23,10 +23,10 @@ https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/metadata_atom.jpg
 
 [Bin_F_MP4_ISOMediaBoxes_MetaBox_boxList boxList]
 
- Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>
+ Type: [Bin_T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>
  The container for metadata is an atom of type {{{‘meta’}}}. The metadata atom must contain the following subatoms:
 
- [T_MP4_ISOMediaBoxes_HandlerBox metadata handler atom] ({{{‘hdlr’}}}), metadata item keys atom ({{{‘keys’}}}), and metadata [T_MP4_ISOMediaBoxes_ItemListBox item list atom] ({{{‘ilst’}}}). Other optional atoms that may be contained in a metadata atom include the country list atom ({{{‘ctry’}}}), language list atom ({{{‘lang’}}}) and [T_MP4_ISOMediaBoxes_FreeSpaceBox free space atom] ({{{‘free’}}}).
+ [Bin_T_MP4_ISOMediaBoxes_HandlerBox metadata handler atom] ({{{‘hdlr’}}}), metadata item keys atom ({{{‘keys’}}}), and metadata [Bin_T_MP4_ISOMediaBoxes_ItemListBox item list atom] ({{{‘ilst’}}}). Other optional atoms that may be contained in a metadata atom include the country list atom ({{{‘ctry’}}}), language list atom ({{{‘lang’}}}) and [Bin_T_MP4_ISOMediaBoxes_FreeSpaceBox free space atom] ({{{‘free’}}}).
 
 
 == Remarks ==

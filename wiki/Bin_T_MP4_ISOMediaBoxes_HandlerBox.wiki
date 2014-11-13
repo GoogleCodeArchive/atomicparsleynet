@@ -24,17 +24,17 @@ https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qt_l_031.gif
 [Bin_F_MP4_ISOMediaBoxes_HandlerBox_ComponentType ComponentType]
 
  Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
- Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the handler. Only two values are valid for this field: {{{'mhlr'}}} for media handlers and {{{'dhlr'}}} for data handlers.
+ Within a [Bin_T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the handler. Only two values are valid for this field: {{{'mhlr'}}} for media handlers and {{{'dhlr'}}} for data handlers.
 
- Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a predefined integer that is set to 0.
+ Within a [Bin_T_MP4_ISOMediaBoxes_MetaBox meta box] this is a predefined integer that is set to 0.
 
 
 [Bin_F_MP4_ISOMediaBoxes_HandlerBox_HandlerType HandlerType]
 
  Type: *UInt32* — a 32-bit (4 bytes) unsigned integer <br>
- Within a [T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
+ Within a [Bin_T_MP4_ISOMediaBoxes_MediaBox media atom] this is a [T_MP4_AtomicCode four-character code] that identifies the type of the media handler or data handler.
 
- Within a [T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
+ Within a [Bin_T_MP4_ISOMediaBoxes_MetaBox meta box] this is a [T_MP4_AtomicCode four-character code] that identifies the structure used in the metadata atom, set to {{{‘mdta’}}}.
 
 
 [Bin_F_MP4_ISOMediaBoxes_HandlerBox_Manufacturer Manufacturer]
@@ -59,13 +59,13 @@ _!ComponentName length_
 
 == Remarks ==
 
-The handler atom within a [T_MP4_ISOMediaBoxes_MediaBox media atom] declares the process by which the media data in the stream may be presented, and thus, the nature of the media in a stream. For example, a video handler would handle a video track.
+The handler atom within a [Bin_T_MP4_ISOMediaBoxes_MediaBox media atom] declares the process by which the media data in the stream may be presented, and thus, the nature of the media in a stream. For example, a video handler would handle a video track.
 
 The handler reference atom specifies the media handler component that is to be used to interpret the media’s data. The handler reference atom has an atom type value of {{{'hdlr'}}}.
 
 Historically, the handler reference atom was also used for data references. However, this use is no longer current and may now be safely ignored.
 
-This box when present within a [T_MP4_ISOMediaBoxes_MetaBox meta box], declares the structure or format of the {{{'meta'}}} box contents. It defines the structure used for all types of metadata stored within the metadata atom.
+This box when present within a [Bin_T_MP4_ISOMediaBoxes_MetaBox meta box], declares the structure or format of the {{{'meta'}}} box contents. It defines the structure used for all types of metadata stored within the metadata atom.
 
 == Inheritance Hierarchy ==
 [Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!HandlerBox*<br>

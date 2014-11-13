@@ -15,7 +15,7 @@ https://atomicparsleynet.googlecode.com/svn/trunk/MP4/Help/qtff_09.jpg
 
 [Bin_F_MP4_ISOMediaBoxes_MovieBox_boxList boxList]
 
- Type: [T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>The movie atom contains other types of atoms, including at least one of three possible atoms — the [T_MP4_ISOMediaBoxes_MovieHeaderBox movie header atom] ({{{'mvhd'}}}), the compressed movie atom ({{{'cmov'}}}), or a reference movie atom ({{{'rmra'}}}). An uncompressed movie atom can contain both a movie header atom and a reference movie atom, but it must contain at least one of the two. It can also contain several other atoms, such as a clipping atom ({{{'clip'}}}), one or more [T_MP4_ISOMediaBoxes_TrackBox track atoms] ({{{'trak'}}}), a color table atom ({{{'ctab'}}}), and a [T_MP4_ISOMediaBoxes_UserDataBox user data atom] ({{{'udta'}}}).<br>
+ Type: [Bin_T_MP4_AtomicInfo AtomicInfo][**] — a series of other atoms<br>The movie atom contains other types of atoms, including at least one of three possible atoms — the [Bin_T_MP4_ISOMediaBoxes_MovieHeaderBox movie header atom] ({{{'mvhd'}}}), the compressed movie atom ({{{'cmov'}}}), or a reference movie atom ({{{'rmra'}}}). An uncompressed movie atom can contain both a movie header atom and a reference movie atom, but it must contain at least one of the two. It can also contain several other atoms, such as a clipping atom ({{{'clip'}}}), one or more [Bin_T_MP4_ISOMediaBoxes_TrackBox track atoms] ({{{'trak'}}}), a color table atom ({{{'ctab'}}}), and a [Bin_T_MP4_ISOMediaBoxes_UserDataBox user data atom] ({{{'udta'}}}).<br>
 
 == Remarks ==
 
