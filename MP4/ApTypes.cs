@@ -252,17 +252,19 @@ namespace MP4
 			return (value >> shift) & mask;
 		}
 
-		public static bool Bit(this uint value, int shift)
-		{
-			if (shift < 0 || shift > 32)
-				throw new ArgumentOutOfRangeException("shift");
-			uint mask = 1u << shift;
-			return (value & mask) == mask;
-		}
-
 		public static int Bits(this int value, int length, int shift)
 		{
 			return (int)Bits((uint)value, length, shift);
+		}
+
+		public static int Bits(this ushort value, int length, int shift)
+		{
+			if (length < 0 || length > 16)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 16)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = ushort.MaxValue >> (16 - length);
+			return (value >> shift) & mask;
 		}
 
 		public static int Bits(this byte value, int length, int shift)
@@ -275,9 +277,25 @@ namespace MP4
 			return (value >> shift) & mask;
 		}
 
+		public static bool Bit(this uint value, int shift)
+		{
+			if (shift < 0 || shift > 32)
+				throw new ArgumentOutOfRangeException("shift");
+			uint mask = 1u << shift;
+			return (value & mask) == mask;
+		}
+
 		public static bool Bit(this int value, int shift)
 		{
 			return Bit((uint)value, shift);
+		}
+
+		public static bool Bit(this ushort value, int shift)
+		{
+			if (shift < 0 || shift > 16)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = 1 << shift;
+			return (value & mask) == mask;
 		}
 
 		public static bool Bit(this byte value, int shift)
@@ -303,6 +321,16 @@ namespace MP4
 			return (int)Bits((uint)value, length, shift, (uint)bits);
 		}
 
+		public static ushort Bits(this ushort value, int length, int shift, int bits)
+		{
+			if (length < 0 || length > 16)
+				throw new ArgumentOutOfRangeException("length");
+			if (shift < 0 || shift > 16)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = ushort.MaxValue >> (16 - length) << shift;
+			return (ushort)(value & ~mask | (bits << shift) & mask);
+		}
+
 		public static byte Bits(this byte value, int length, int shift, int bits)
 		{
 			if (length < 0 || length > 8)
@@ -324,6 +352,14 @@ namespace MP4
 		public static int Bit(this int value, int shift, bool bit)
 		{
 			return (int)Bit((uint)value, shift, bit);
+		}
+
+		public static ushort Bit(this ushort value, int shift, bool bit)
+		{
+			if (shift < 0 || shift > 16)
+				throw new ArgumentOutOfRangeException("shift");
+			int mask = 1 << shift;
+			return (ushort)(bit ? value | mask : value & ~mask);
 		}
 
 		public static byte Bit(this byte value, int shift, bool bit)

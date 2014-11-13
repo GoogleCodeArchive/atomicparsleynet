@@ -2468,70 +2468,154 @@ namespace MP4
 		/*
 			MPEG-21 extensions
 		*/
+		/// <summary>
+		/// XML Box <c>'xml '</c>
+		/// </summary>
 		public sealed partial class XMLBox : ISOMFullBox
 		{
-			[XmlIgnore]
-			[BinData]
-			public string XML;
+			internal const string DefaultID = "xml ";
+			/// <summary>
+			/// Initializes a new instance of the XML Box <c>'xml '</c>.
+			/// </summary>
+			public XMLBox() : base(DefaultID) { }
 
-			public XmlCDataSection XMLAsCData
-			{
-				get
-				{
-					XmlDocument doc = new XmlDocument();
-					return doc.CreateCDataSection(XML);
-				}
-				set
-				{
-					XML = value.Value;
-				}
-			}
+			[XmlIgnore]
+			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")]
+			public string XML;
 		}
 
+		/// <summary>
+		/// Binary XML Box <c>'bxml'</c>
+		/// </summary>
 		public sealed partial class BinaryXMLBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			[BinData]
-			public string Data;
+			internal const string DefaultID = "bxml";
+			/// <summary>
+			/// Initializes a new instance of the Binary XML Box <c>'bxml'</c>.
+			/// </summary>
+			public BinaryXMLBox() : base(DefaultID) { }
+
+			[XmlIgnore]
+			[BinData(LengthCustomMethod = "reader.Length()")]
+			public byte[] Data;
 		}
 
-		public sealed partial class ItemExtentEntry
+		/// <summary>
+		/// Item Location Box resource extent
+		/// </summary>
+		[BinBlock(MethodMode = BinMethodMode.Final)]
+		public sealed partial class ItemExtentEntry : IEntry<ItemLocationBox>
 		{
+			/// <summary>
+			/// Item Location Box
+			/// </summary>
+			[XmlIgnore]
+			public ItemLocationBox Owner { get; set; }
+
+			/// <summary>
+			/// Provides the absolute offset in bytes from the beginning of the containing file, of this item. If
+			/// <see cref="P:MP4.ISOMediaBoxes.ItemLocationBox.OffsetSize"/> is 0,
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Offset"/> takes the value 0.
+			/// </summary>
 			[XmlAttribute]
-			[BinData]
-			public long ExtentOffset;
+			[BinData(BinFormat.UInt32, Condition = "Owner.OffsetSize == 4")]
+			[BinData(BinFormat.Int64, Condition = "Owner.OffsetSize == 8")]
+			public long Offset;
+			/// <summary>
+			/// Provides the absolute length in bytes of this metadata item. If
+			/// <see cref="P:MP4.ISOMediaBoxes.ItemLocationBox.LengthSize"/> is 0,
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length"/> takes the value 0.
+			/// If the value is 0, then length of the item is the length of the entire referenced file.
+			/// </summary>
 			[XmlAttribute]
-			[BinData]
-			public long ExtentLength;
+			[BinData(BinFormat.UInt32, Condition = "Owner.LengthSize == 4")]
+			[BinData(BinFormat.Int64, Condition = "Owner.LengthSize == 8")]
+			public long Length;
 		}
 
+		/// <summary>
+		/// Item Location Box resource
+		/// </summary>
 		public sealed partial class ItemLocationEntry
 		{
+			/// <summary>
+			/// An arbitrary integer ‘name’ for this resource which can be used to refer to it (e.g. in a URL).
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public ushort ItemID;
+			/// <summary>
+			/// Either zero (‘this file’) or a 1-based index into the data references in the data information box.
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public ushort DataReferenceIndex;
-			[XmlAttribute]
+			/// <summary>
+			/// Provides a base value for offset calculations within the referenced data. If
+			/// <see cref="P:MP4.ISOMediaBoxes.ItemLocationBox.BaseOffsetSize"/> is 0,
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemLocationEntry.BaseOffset"/> takes the value 0,
+			/// i.e. it is unused.
+			/// </summary>
+			[XmlAttribute, DefaultValue(0L)]
+			[BinData(BinFormat.UInt32, Condition = "Owner.BaseOffsetSize == 4")]
+			[BinData(BinFormat.Int64, Condition = "Owner.BaseOffsetSize == 8")]
 			public long BaseOffset;
-			[XmlElement("ItemExtentEntry")]
-			public List<ItemExtentEntry> ExtentEntries = new List<ItemExtentEntry>();
+			/// <summary>
+			/// Extents into which the resource is fragmented.
+			/// </summary>
+			[BinArray(CountFormat = BinFormat.UInt16)]
+			Collection<ItemExtentEntry> extentEntries;
 		}
 
+		/// <summary>
+		/// Item Location Box <c>'iloc'</c>
+		/// </summary>
 		public sealed partial class ItemLocationBox : ISOMFullBox
 		{
-			[XmlAttribute]
+			internal const string DefaultID = "iloc";
+			/// <summary>
+			/// Initializes a new instance of the Item Location Box <c>'iloc'</c>.
+			/// </summary>
+			public ItemLocationBox() : base(DefaultID) { CreateEntryCollection(out locationEntries, this); }
+
+			/// <summary>
+			/// Specifies the size in bytes of the
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Offset"/> field,
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length"/> field, and
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemLocationEntry.BaseOffset"/> field, respectively.
+			/// These values must be from the set {0, 4, 8}.
+			/// </summary>
+			[XmlIgnore]
 			[BinData]
-			public byte OffsetSize;
+			ushort sizeData;
+			/// <summary>
+			/// Taken from the set {0, 4, 8} and indicates the length in bytes of the
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Offset"/> field.
+			/// </summary>
 			[XmlAttribute]
-			[BinData]
-			public byte LengthSize;
+			public int OffsetSize { get { return sizeData.Bits(4, 12); } set { sizeData = sizeData.Bits(4, 12, value); } }
+			/// <summary>
+			/// Taken from the set {0, 4, 8} and indicates the length in bytes of the
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length"/> field.
+			/// </summary>
 			[XmlAttribute]
-			[BinData]
-			public byte BaseOffsetSize;
-			[XmlElement("ItemLocationEntry")]
-			public List<ItemLocationEntry> LocationEntries = new List<ItemLocationEntry>();
+			public int LengthSize { get { return sizeData.Bits(4, 8); } set { sizeData = sizeData.Bits(4, 8, value); } }
+			/// <summary>
+			/// Taken from the set {0, 4, 8} and indicates the length in bytes of the
+			/// <see cref="F:MP4.ISOMediaBoxes.ItemLocationEntry.BaseOffset"/> field.
+			/// </summary>
+			[XmlAttribute]
+			public int BaseOffsetSize { get { return sizeData.Bits(4, 4); } set { sizeData = sizeData.Bits(4, 4, value); } }
+			/// <summary>
+			/// Reserved. Set to 0.
+			/// </summary>
+			[XmlAttribute, DefaultValue(0)]
+			public int Reserved { get { return sizeData.Bits(4, 0); } set { sizeData = sizeData.Bits(4, 0, value); } }
+			/// <summary>
+			/// Resources in the following array.
+			/// </summary>
+			[BinArray(CountFormat = BinFormat.UInt16)]
+			Collection<ItemLocationEntry> locationEntries;
 		}
 
 		public sealed partial class PrimaryItemBox : ISOMFullBox

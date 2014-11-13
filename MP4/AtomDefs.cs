@@ -136,9 +136,9 @@ namespace MP4
 			new AtomDefinition<ISOMediaBoxes.SubSampleInformationBox>("subs",  "stbl",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition<ISOMediaBoxes.SubSampleInformationBox>("subs",  "traf",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 
-			new AtomDefinition                                       ("xml ",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("bxml",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("iloc",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.XMLBox                 >("xml ",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.BinaryXMLBox           >("bxml",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.ItemLocationBox        >("iloc",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition                                       ("pitm",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition                                       ("ipro",  "meta",           AtomState.ParentAtom,      AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition                                       ("iinf",  "meta",           AtomState.DualStateAtom,   AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),

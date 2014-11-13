@@ -306,6 +306,19 @@ namespace MP4
 		public sealed partial class MetaBox : ISOMFullBox, IBoxContainer
 		{
 #warning Looking forward to 'ID32', 'data'
+			/// <summary>
+			/// <para>
+			/// The container for metadata is an atom of type <c>‘meta’</c>. The metadata atom must contain the following
+			/// subatoms:
+			/// </para>
+			/// <para>
+			/// <see cref="T:MP4.ISOMediaBoxes.HandlerBox">metadata handler atom</see> (<c>‘hdlr’</c>), metadata item
+			/// keys atom (<c>‘keys’</c>), and metadata <see cref="T:MP4.ISOMediaBoxes.ItemListBox">item list atom</see>
+			/// (<c>‘ilst’</c>). Other optional atoms that may be contained in a metadata atom include the country list
+			/// atom (<c>‘ctry’</c>), language list atom (<c>‘lang’</c>) and
+			/// <see cref="T:MP4.ISOMediaBoxes.FreeSpaceBox">free space atom</see> (<c>‘free’</c>).
+			/// </para>
+			/// </summary>
 			[XmlElement(typeof(HandlerBox))]
 			[XmlElement(typeof(DataInformationBox))]
 			[XmlElement(typeof(XMLBox))]
@@ -323,6 +336,57 @@ namespace MP4
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
+			}
+		}
+
+		public sealed partial class XMLBox : ISOMFullBox
+		{
+			[XmlElement("Data")]
+			public XmlNode XMLAsCData
+			{
+				get
+				{
+					XmlDocument doc = new XmlDocument();
+					return doc.CreateCDataSection(XML);
+				}
+				set
+				{
+					XML = value.Value;
+				}
+			}
+		}
+
+		public sealed partial class BinaryXMLBox : ISOMFullBox
+		{
+			[XmlElement("Data")]
+			public DataXMLSerializer DataSerializer
+			{
+				get { return new DataXMLSerializer(this.Data); }
+				set { this.Data = value.Data; }
+			}
+		}
+
+		public sealed partial class ItemLocationEntry
+		{
+			/// <summary>
+			/// Extents into which the resource is fragmented.
+			/// </summary>
+			[XmlElement("ItemExtentEntry")]
+			Collection<ItemExtentEntry> ExtentEntries
+			{
+				get { return extentEntries; }
+			}
+		}
+
+		public sealed partial class ItemLocationBox : ISOMFullBox
+		{
+			/// <summary>
+			/// Resources in the following array.
+			/// </summary>
+			[XmlElement("ItemLocationEntry")]
+			public Collection<ItemLocationEntry> LocationEntries
+			{
+				get { return locationEntries; }
 			}
 		}
 
@@ -425,6 +489,12 @@ namespace MP4
 
 		public sealed partial class MediaBox : AtomicInfo, IBoxContainer
 		{
+			/// <summary>
+			/// The media atom must contain a <see cref="T:MP4.ISOMediaBoxes.MediaHeaderBox">media header atom</see>
+			/// (<c>'mdhd'</c>), and it can contain a <see cref="T:MP4.ISOMediaBoxes.HandlerBox">handler reference</see>
+			/// (<c>'hdlr'</c>) atom, <see cref="T:MP4.ISOMediaBoxes.MediaInformationBox">media information</see>
+			/// (<c>'minf'</c>) atom, and <see cref="T:MP4.ISOMediaBoxes.UserDataBox">user data</see> (<c>'udta'</c>) atom.
+			/// </summary>
 			[XmlElement(typeof(MediaHeaderBox))]
 			[XmlElement(typeof(HandlerBox))]
 			[XmlElement(typeof(MediaInformationBox))]
@@ -465,6 +535,15 @@ namespace MP4
 		public sealed partial class MovieBox : AtomicInfo, IBoxContainer
 		{
 #warning Looking forward to 'drm', 'ipmc'
+			/// <summary>
+			/// The movie atom contains other types of atoms, including at least one of three possible atoms — the
+			/// <see cref="T:MP4.ISOMediaBoxes.MovieHeaderBox">movie header atom</see> (<c>'mvhd'</c>), the
+			/// compressed movie atom (<c>'cmov'</c>), or a reference movie atom (<c>'rmra'</c>). An uncompressed movie
+			/// atom can contain both a movie header atom and a reference movie atom, but it must contain at least one
+			/// of the two. It can also contain several other atoms, such as a clipping atom (<c>'clip'</c>), one or more
+			/// <see cref="T:MP4.ISOMediaBoxes.TrackBox">track atoms</see> (<c>'trak'</c>), a color table atom (<c>'ctab'</c>),
+			/// and a <see cref="T:MP4.ISOMediaBoxes.UserDataBox">user data atom</see> (<c>'udta'</c>).
+			/// </summary>
 			[XmlElement(typeof(MovieHeaderBox))]
 			[XmlElement(typeof(ObjectDescriptorBox))]
 			//[XmlElement(typeof(drm ))]
