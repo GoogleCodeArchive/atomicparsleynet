@@ -1,0 +1,23 @@
+﻿#summary !DataReferenceIndex Binary Data Field
+
+= !DataReferenceIndex Binary Data Field =
+
+
+Either zero (‘this file’) or a 1-based index into the data references in the data information box.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
+== Remarks ==
+
+The data-reference index may take the value 0, indicating a reference into the same file as this metadata, or an index into the data-reference table.
+
+Some referenced data may itself use offset/length techniques to address resources within it (e.g. an MP4 file might be ‘included’ in this way). Normally such offsets are relative to the beginning of the containing file. The field ‘base offset’ provides an additional offset for offset calculations within that contained data. For example, if an MP4 file is included within a file formatted to this specification, then normally data-offsets within that MP4 section are relative to the beginning of file; base_offset adds to those offsets.
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

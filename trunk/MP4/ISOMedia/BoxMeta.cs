@@ -25,6 +25,8 @@
  *
  */
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using FRAFV.Binary.Serialization;
 
 namespace MP4
@@ -51,6 +53,56 @@ namespace MP4
 				}
 				var box = AtomicInfo.ParseBox(reader, boxSize, atomid, parent: this);
 				boxList.Add(box);
+			}
+		}
+
+		public sealed partial class XMLBox : ISOMFullBox
+		{
+			[XmlIgnore]
+			public XmlDocument XMLDocument
+			{
+				get
+				{
+					var doc = new XmlDocument();
+					doc.LoadXml(XML);
+					return doc;
+				}
+				set
+				{
+					XML = value.OuterXml;
+				}
+			}
+		}
+
+		public sealed partial class BinaryXMLBox : ISOMFullBox
+		{
+			[XmlIgnore]
+			public XmlDocument XMLDocument
+			{
+				get
+				{
+					var doc = new XmlDocument();
+					doc.Load(new MemoryStream(Data));
+					return doc;
+				}
+				set
+				{
+					Data = System.Text.Encoding.UTF8.GetBytes(value.OuterXml);
+				}
+			}
+		}
+
+		public sealed partial class ItemLocationEntry : IEntry<ItemLocationBox>
+		{
+			private ItemLocationBox owner;
+
+			/// <summary>
+			/// Item Location Box
+			/// </summary>
+			public ItemLocationBox Owner
+			{
+				get { return owner; }
+				set { AtomicInfo.CreateEntryCollection(out extentEntries, owner = value); }
 			}
 		}
 	}

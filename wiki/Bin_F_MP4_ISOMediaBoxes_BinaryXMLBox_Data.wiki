@@ -1,0 +1,15 @@
+﻿#summary Data Binary Data Field
+
+= Data Binary Data Field =
+
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *Byte[**]* — a stream of binary data with a length <br>
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_BinaryXMLBox ISOMediaBoxes.BinaryXMLBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

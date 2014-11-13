@@ -1,0 +1,47 @@
+﻿#summary ISOMediaBoxes.!ItemLocationBox Binary Block
+
+= ISOMediaBoxes.!ItemLocationBox Binary Block =
+
+
+Item Location Box {{{'iloc'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_sizeData sizeData]
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
+ The box starts with three values, specifying the size in bytes:
+ 
+  * _!OffsetSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Offset Offset] field.
+  * _!LengthSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Length Length] field.
+  * _!BaseOffsetSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] field.
+  * _Reserved_<br> Type: *Int4* — an 4-bit integer<br> Reserved. Set to 0.
+ 
+ Specifies the size in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Offset Offset] field, [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Length Length] field, and [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] field, respectively. These values must be from the set {0, 4, 8}.<br>
+ 
+_locationEntries items count_
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_locationEntries locationEntries]
+
+ Type: [Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry][**] — a series of items <br>Resources in the following array.<br>
+ 
+== Remarks ==
+
+The item location box provides a directory of resources in this or other files, by locating their containing file, their offset within that file, and their length. Placing this in binary format enables common handling of this data, even by systems which do not understand the particular metadata system (handler) used. For example, a system might integrate all the externally referenced metadata resources into one file, re-adjusting file offsets and file references accordingly.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!ItemLocationBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

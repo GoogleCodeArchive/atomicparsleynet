@@ -1,0 +1,19 @@
+﻿#summary locationEntries Binary Data Field
+
+= locationEntries Binary Data Field =
+
+
+Resources in the following array.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Items Count ===
+Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
+=== Field Value ===
+Type: [Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry][**] — a series of items <br>
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ItemLocationBox ISOMediaBoxes.ItemLocationBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]
