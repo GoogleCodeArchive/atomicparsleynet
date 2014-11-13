@@ -119,7 +119,6 @@
 	</xsl:template>
 
 	<xsl:template match="attribute" mode="count">
-		<xsl:param name="comments" select="parent::attributes/parent::*"/>
 		<xsl:variable name="countFormat">
 			<xsl:call-template name="ResolveCountFormat"/>
 		</xsl:variable>
@@ -138,6 +137,26 @@
 			</include>
 			<br />
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="attribute" mode="item">
+		<xsl:variable name="itemType">
+			<xsl:call-template name="ResolveItemType"/>
+		</xsl:variable>
+
+		<include item="typeLink">
+			<parameter>
+				<!--xsl:apply-templates select="value" mode="link">
+					<xsl:with-param name="qualified" select="true()" />
+				</xsl:apply-templates-->
+				<referenceLink target="{$itemType}" show-templates="true" show-container="false"/>[]
+			</parameter>
+			<parameter>
+				<include item="arrayFormat"/>
+			</parameter>
+			<parameter/>
+		</include>
+		<br />
 	</xsl:template>
 
 	<xsl:template match="attribute" mode="serializer">
@@ -164,7 +183,7 @@
 						<!--xsl:apply-templates select="value" mode="link">
 							<xsl:with-param name="qualified" select="true()" />
 						</xsl:apply-templates-->
-						<referenceLink target="{value}" prefer-overload="false" show-templates="true" show-container="true"/>
+						<referenceLink target="{value}" show-templates="true" show-container="true"/>
 					</parameter>
 					<parameter/>
 					<parameter/>
@@ -263,7 +282,7 @@
 				</referenceLink>
 			</xsl:when>
 			<xsl:otherwise>
-				<referenceLink target="{@cref}"/>
+				<referenceLink target="{@cref}" />
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -323,6 +342,18 @@
 
 	<xsl:template match="c">
 		<span class="code"><xsl:apply-templates/></span>
+	</xsl:template>
+
+	<xsl:template match="paramref">
+		<span class="parameter">
+			<xsl:value-of select="@name" />
+		</span>
+	</xsl:template>
+
+	<xsl:template match="typeparamref">
+		<span class="typeparameter">
+			<xsl:value-of select="@name" />
+		</span>
 	</xsl:template>
 
 	<xsl:template name="runningHeader">

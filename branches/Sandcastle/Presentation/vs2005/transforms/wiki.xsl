@@ -120,7 +120,7 @@
 		<xsl:text>}}}</xsl:text>
 	</xsl:template>
 
-	<xsl:template match="div[@class='summary' and not(p)]|div[@class='seeAlsoStyle']|p|dt">
+	<xsl:template match="div[@class='summary' and not(p|ol|ul)]|div[@class='seeAlsoStyle']|p|dt|ol|ul">
 		<xsl:text>
 </xsl:text>
 		<xsl:apply-templates select="node()"/>
@@ -128,25 +128,54 @@
 </xsl:text>
 	</xsl:template>
 
-	<xsl:template match="dd|dd/p|dd/div[@class='summary']/p">
+	<xsl:template match="dd|dd/p|dd/ol|dd/ul|dd/div[@class='summary' and (p|ol|ul)]/*">
 		<xsl:text>
  </xsl:text>
 		<xsl:apply-templates select="node()"/>
 		<xsl:text>
-</xsl:text>
+ </xsl:text>
 	</xsl:template>
 
-	<xsl:template match="dd/div[@class='summary' and not(p)]">
+	<xsl:template match="dd/div[@class='summary' and not(p|ol|ul)]">
 		<xsl:apply-templates select="node()"/>
 		<xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
 	</xsl:template>
 
-	<xsl:template match="dd/br">
+	<xsl:template match="ul/li">
+		<xsl:text> * </xsl:text>
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>
+</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="ol/li">
+		<xsl:text> # </xsl:text>
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>
+</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="dd/ul/li|dd/div[@class='summary']/ul/li">
+		<xsl:text> * </xsl:text>
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>
+ </xsl:text>
+	</xsl:template>
+
+	<xsl:template match="dd/ol/li|dd/div[@class='summary']/ol/li">
+		<xsl:text> # </xsl:text>
+		<xsl:apply-templates select="node()"/>
+		<xsl:text>
+ </xsl:text>
+	</xsl:template>
+
+	<xsl:template match="li/p|li/div[@class='summary' and not(p)]|li/div[@class='summary']/p">
+		<xsl:apply-templates select="node()"/>
 		<xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
 	</xsl:template>
 
-	<xsl:template match="div[@class='summary' and p]">
-		<xsl:apply-templates select="p"/>
+	<xsl:template match="div[@class='summary' and (p|ol|ul)]">
+		<xsl:apply-templates select="*"/>
 	</xsl:template>
 
 	<xsl:template match="td/div[@class='summary']|td/p">
@@ -251,6 +280,24 @@
 				<xsl:text>]</xsl:text>
 				<xsl:call-template name="FixText">
 					<xsl:with-param name="text" select="substring-after($text,']')"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="contains($text,'(')">
+				<xsl:call-template name="FixText">
+					<xsl:with-param name="text" select="substring-before($text,'(')"/>
+				</xsl:call-template>
+				<xsl:text>(</xsl:text>
+				<xsl:call-template name="FixText">
+					<xsl:with-param name="text" select="substring-after($text,'(')"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="contains($text,')')">
+				<xsl:call-template name="FixText">
+					<xsl:with-param name="text" select="substring-before($text,')')"/>
+				</xsl:call-template>
+				<xsl:text>)</xsl:text>
+				<xsl:call-template name="FixText">
+					<xsl:with-param name="text" select="substring-after($text,')')"/>
 				</xsl:call-template>
 			</xsl:when>
 			<xsl:otherwise>

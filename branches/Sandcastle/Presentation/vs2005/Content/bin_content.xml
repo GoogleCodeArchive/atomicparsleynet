@@ -244,4 +244,5 @@
 	<item id="SomeCountFormat"></item>
 	<item id="CountFormat">with the previously defined array items count</item>
 	<item id="NumCountFormat">with a fixed array items count equal to {0}</item>
+	<item id="arrayFormat">— a series of items</item>
 </content>
