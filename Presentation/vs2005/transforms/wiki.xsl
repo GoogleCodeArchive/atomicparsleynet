@@ -8,9 +8,7 @@
 
 	<xsl:template match="/">
 		<xsl:text>#summary </xsl:text>
-		<xsl:call-template name="FixText">
-			<xsl:with-param name="text" select="html/head/title"/>
-		</xsl:call-template>
+		<xsl:value-of select="html/head/title"/>
 		<xsl:text>
 
 = </xsl:text>
