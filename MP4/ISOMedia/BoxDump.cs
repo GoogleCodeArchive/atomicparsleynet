@@ -366,6 +366,24 @@ namespace MP4
 			}
 		}
 
+		public sealed partial class ItemProtectionBox : ISOMFullBox, IBoxContainer
+		{
+			[XmlElement("ProtectionInfoBox", typeof(ProtectionInfoBox))]
+			public Collection<AtomicInfo> Boxes
+			{
+				get { return this.entryArray; }
+			}
+		}
+
+		public sealed partial class ItemInfoBox : ISOMFullBox, IBoxContainer
+		{
+			[XmlElement("ItemInfoEntryBox", typeof(ItemInfoEntryBox))]
+			public Collection<AtomicInfo> Boxes
+			{
+				get { return this.entryArray; }
+			}
+		}
+
 		public sealed partial class ItemLocationEntry
 		{
 			/// <summary>

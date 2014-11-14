@@ -488,7 +488,12 @@ namespace MP4
 
 		internal void Read_boxArray(BinaryReader reader)
 		{
-			reader.ReadCount(((IBoxContainer)this).Boxes, this);
+			reader.ReadCount32(((IBoxContainer)this).Boxes, this);
+		}
+
+		internal void Read_entryArray(BinaryReader reader)
+		{
+			reader.ReadCount16(((IBoxContainer)this).Boxes, this);
 		}
 
 		internal void Read_boxList(BinaryReader reader)
@@ -498,7 +503,12 @@ namespace MP4
 
 		internal long Size_boxArray()
 		{
-			return ((IBoxContainer)this).Boxes.SizeCount();
+			return ((IBoxContainer)this).Boxes.SizeCount32();
+		}
+
+		internal long Size_entryArray()
+		{
+			return ((IBoxContainer)this).Boxes.SizeCount16();
 		}
 
 		internal long Size_boxList()
@@ -508,7 +518,12 @@ namespace MP4
 
 		internal void Write_boxArray(BinaryWriter writer)
 		{
-			writer.WriteCount(((IBoxContainer)this).Boxes);
+			writer.WriteCount32(((IBoxContainer)this).Boxes);
+		}
+
+		internal void Write_entryArray(BinaryWriter writer)
+		{
+			writer.WriteCount16(((IBoxContainer)this).Boxes);
 		}
 
 		internal void Write_boxList(BinaryWriter writer)
