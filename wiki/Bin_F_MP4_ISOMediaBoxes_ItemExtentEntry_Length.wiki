@@ -3,13 +3,13 @@
 = Length Binary Data Field =
 
 
-Provides the absolute length in bytes of this metadata item. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_LengthSize LengthSize] is 0, *Length* takes the value 0. If the value is 0, then length of the item is the length of the entire referenced file.
+Provides the absolute length in bytes of this metadata item. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_sizeData LengthSize] is 0, *Length* takes the value 0. If the value is 0, then length of the item is the length of the entire referenced file.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!LengthSize equal to 4 only)<br>Type: *Int64* — a 64-bit (8 bytes) integer (!LengthSize equal to 8 only)<br>
+Type: *Int64* — a 64-bit (8 bytes) integer (!LengthSize equal to 8 only)<br>Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!LengthSize equal to 4 only)<br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_ItemExtentEntry ISOMediaBoxes.ItemExtentEntry Block]

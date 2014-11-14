@@ -2479,6 +2479,9 @@ namespace MP4
 			/// </summary>
 			public XMLBox() : base(DefaultID) { }
 
+			/// <summary>
+			/// XML data
+			/// </summary>
 			[XmlIgnore]
 			[BinData(BinFormat.PString, LengthCustomMethod = "reader.Length()")]
 			public string XML;
@@ -2495,6 +2498,9 @@ namespace MP4
 			/// </summary>
 			public BinaryXMLBox() : base(DefaultID) { }
 
+			/// <summary>
+			/// Binary XML data
+			/// </summary>
 			[XmlIgnore]
 			[BinData(LengthCustomMethod = "reader.Length()")]
 			public byte[] Data;
@@ -2517,7 +2523,7 @@ namespace MP4
 			/// <see cref="P:MP4.ISOMediaBoxes.ItemLocationBox.OffsetSize"/> is 0,
 			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Offset"/> takes the value 0.
 			/// </summary>
-			[XmlAttribute]
+			[XmlAttribute, DefaultValue(0L)]
 			[BinData(BinFormat.UInt32, Condition = "Owner.OffsetSize == 4")]
 			[BinData(BinFormat.Int64, Condition = "Owner.OffsetSize == 8")]
 			public long Offset;
@@ -2527,7 +2533,7 @@ namespace MP4
 			/// <see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length"/> takes the value 0.
 			/// If the value is 0, then length of the item is the length of the entire referenced file.
 			/// </summary>
-			[XmlAttribute]
+			[XmlAttribute, DefaultValue(0L)]
 			[BinData(BinFormat.UInt32, Condition = "Owner.LengthSize == 4")]
 			[BinData(BinFormat.Int64, Condition = "Owner.LengthSize == 8")]
 			public long Length;
@@ -2618,50 +2624,119 @@ namespace MP4
 			Collection<ItemLocationEntry> locationEntries;
 		}
 
+		/// <summary>
+		/// Primary Item Box <c>'pitm'</c>
+		/// </summary>
 		public sealed partial class PrimaryItemBox : ISOMFullBox
 		{
+			internal const string DefaultID = "pitm";
+			/// <summary>
+			/// Initializes a new instance of the Primary Item Box <c>'pitm'</c>.
+			/// </summary>
+			public PrimaryItemBox() : base(DefaultID) { }
+
+			/// <summary>
+			/// The identifier of the primary item
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public ushort ItemID;
 		}
 
+		/// <summary>
+		/// Item Protection Box <c>'ipro'</c>
+		/// </summary>
 		public sealed partial class ItemProtectionBox : ISOMFullBox
 		{
+			internal const string DefaultID = "ipro";
+			/// <summary>
+			/// Initializes a new instance of the Item Protection Box <c>'ipro'</c>.
+			/// </summary>
+			public ItemProtectionBox() : base(DefaultID) { }
+
+			/// <summary>
+			/// Protection Scheme Informations
+			/// </summary>
 			[XmlIgnore]
-			public List<AtomicInfo> ProtectionInformation = new List<AtomicInfo>();
+			public ProtectionInfoBox ProtectionInformation { get { return entryArray.Get<ProtectionInfoBox>(); } set { entryArray.Set(value); } }
+			/// <summary>
+			/// Protection Scheme Informations
+			/// </summary>
+			[BinCustom]
+			TypedBoxList entryArray = TypedBoxList.Create<
+				ProtectionInfoBox>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// Item Information entry Box <c>'infe'</c>
+		/// </summary>
 		public sealed partial class ItemInfoEntryBox : ISOMFullBox
 		{
+			internal const string DefaultID = "infe";
+			/// <summary>
+			/// Initializes a new instance of the Item Information entry Box <c>'infe'</c>.
+			/// </summary>
+			public ItemInfoEntryBox() : base(DefaultID) { }
+
+			/// <summary>
+			/// Contains either 0 for the primary resource (e.g. the XML contained in an <c>'xml '</c> box) or the ID
+			/// of the item for which the following information is defined.
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public ushort ItemID;
+			/// <summary>
+			/// Contains either 0 for an unprotected item, or the one-based index into the item protection box defining
+			/// the protection applied to this item (the first box in the item protection box has the index 1).
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public ushort ItemProtectionIndex;
 			/*zero-terminated strings*/
+			/// <summary>
+			/// A null-terminated string in UTF-8 characters containing a symbolic name of the item.
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public string ItemName;
+			/// <summary>
+			/// The MIME type for the item.
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public string ContentType;
+			/// <summary>
+			/// An optional null-terminated string in UTF-8 characters used to indicate that the binary file is encoded
+			/// and needs to be decoded before interpreted. The values are as defined for Content-Encoding for HTTP /1.1.
+			/// Some possible values are “gzip”, “compress” and “deflate”. An empty string indicates no content encoding.
+			/// </summary>
 			[XmlAttribute]
 			[BinData]
 			public string ContentEncoding;
-			// needed to actually read the resource file, but not written in the MP21 file.
-			[XmlAttribute]
-			[BinData]
-			public string FullPath;
-			// if not 0, full_path is actually the data to write.
-			[XmlAttribute]
-			[BinData]
-			public int DataLen;
 		}
 
+		/// <summary>
+		/// Item Information Box <c>'iinf'</c>
+		/// </summary>
 		public sealed partial class ItemInfoBox : ISOMFullBox
 		{
-			public List<AtomicInfo> ItemInfos = new List<AtomicInfo>();
+			internal const string DefaultID = "iinf";
+			/// <summary>
+			/// Initializes a new instance of the Item Information Box <c>'iinf'</c>.
+			/// </summary>
+			public ItemInfoBox() : base(DefaultID) { }
+
+			/// <summary>
+			/// An array of entries
+			/// </summary>
+			[XmlIgnore]
+			public ItemInfoEntryBox[] ItemInfos { get { return entryArray.ArrayOfType<ItemInfoEntryBox>(); } }
+			/// <summary>
+			/// An array of entries
+			/// </summary>
+			[BinCustom]
+			TypedBoxList entryArray = TypedBoxList.Create<
+				ItemInfoEntryBox>(AllowUnknownBox);
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]

@@ -139,10 +139,10 @@ namespace MP4
 			new AtomDefinition<ISOMediaBoxes.XMLBox                 >("xml ",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition<ISOMediaBoxes.BinaryXMLBox           >("bxml",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 			new AtomDefinition<ISOMediaBoxes.ItemLocationBox        >("iloc",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("pitm",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("ipro",  "meta",           AtomState.ParentAtom,      AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("iinf",  "meta",           AtomState.DualStateAtom,   AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("infe",  "iinf",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.PrimaryItemBox         >("pitm",  "meta",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.ItemProtectionBox      >("ipro",  "meta",           AtomState.ParentAtom,      AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.ItemInfoBox            >("iinf",  "meta",           AtomState.DualStateAtom,   AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.ItemInfoEntryBox       >("infe",  "iinf",           AtomState.ChildAtom,       AtomRequirements.OptionalOne,         BoxType.VersionedAtom ),
 
 			new AtomDefinition                                       ("sinf",  "ipro",           AtomState.ParentAtom,      AtomRequirements.RequiredOne,        BoxType.SimpleAtom ),        //parent atom is also "Protected Sample Entry"
 			new AtomDefinition                                       ("sinf",  "drms",           AtomState.ParentAtom,      AtomRequirements.RequiredOne,        BoxType.SimpleAtom ),        //parent atom is also "Protected Sample Entry"

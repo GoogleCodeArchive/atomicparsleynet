@@ -1,0 +1,27 @@
+﻿#summary ContentEncoding Binary Data Field
+
+= !ContentEncoding Binary Data Field =
+
+
+An optional null-terminated string in UTF-8 characters used to indicate that the binary file is encoded and needs to be decoded before interpreted. The values are as defined for !Content-Encoding for HTTP /1.1. Some possible values are “gzip”, “compress” and “deflate”. An empty string indicates no content encoding.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Encoded Data Serializer ===
+
+_Binary Reader_
+
+ Type: *[**!BinStringReader]*<br>
+ 
+_Binary Writer_
+
+ Type: *[**!BinStringWriter]*<br>
+ 
+=== Field Value ===
+Type: *CString* — an encoded character string <br>
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

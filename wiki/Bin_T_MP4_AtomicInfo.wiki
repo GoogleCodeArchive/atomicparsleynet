@@ -1,4 +1,4 @@
-﻿#summary !AtomicInfo Binary Block
+﻿#summary AtomicInfo Binary Block
 
 = !AtomicInfo Binary Block =
 
@@ -75,6 +75,13 @@ The following table shows all known boxes were implemented.
 || [Bin_T_MP4_ISOMediaBoxes_MovieExtendsHeaderBox ISOMediaBoxes.MovieExtendsHeaderBox] || {{{'mehd'}}} || {{{'mvex'}}} ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_TrackExtendsBox ISOMediaBoxes.TrackExtendsBox] || {{{'trex'}}} || {{{'mvex'}}} ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_SubSampleInformationBox ISOMediaBoxes.SubSampleInformationBox] || {{{'subs'}}} || {{{'stbl'}}}, {{{'traf'}}} ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_XMLBox ISOMediaBoxes.XMLBox] || {{{'xml '}}} || {{{'meta'}}} ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_BinaryXMLBox ISOMediaBoxes.BinaryXMLBox] || {{{'bxml'}}} || {{{'meta'}}} ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemLocationBox ISOMediaBoxes.ItemLocationBox] || {{{'iloc'}}} || {{{'meta'}}} ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_PrimaryItemBox ISOMediaBoxes.PrimaryItemBox] || {{{'pitm'}}} || {{{'meta'}}} ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemProtectionBox ISOMediaBoxes.ItemProtectionBox] || {{{'ipro'}}} || {{{'meta'}}} || _Yes_ ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemInfoBox ISOMediaBoxes.ItemInfoBox] || {{{'iinf'}}} || {{{'meta'}}} || _Yes_ ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox] || {{{'infe'}}} || {{{'iinf'}}} ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_NameBox ISOMediaBoxes.NameBox] || {{{'name'}}} || {{{'schi'}}}, {{{'udta'}}} ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_TrackReferenceTypeBox ISOMediaBoxes.TrackReferenceTypeBox] || {{{'IKEY'}}} || {{{'tref'}}} ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_HintTrackReferenceBox ISOMediaBoxes.HintTrackReferenceBox] || {{{'hint'}}} || {{{'tref'}}} ||  ||

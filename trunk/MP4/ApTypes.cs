@@ -100,7 +100,7 @@ namespace MP4
 			writer.Write((uint)code);
 		}
 
-		public static void ReadCount(this BinaryReader reader, ICollection<AtomicInfo> list, AtomicInfo parent, bool required = true)
+		public static void ReadCount32(this BinaryReader reader, ICollection<AtomicInfo> list, AtomicInfo parent, bool required = true)
 		{
 			int count = reader.ReadInt32();
 			for (int index = 0; index < count; index++)
@@ -110,14 +110,38 @@ namespace MP4
 			}
 		}
 
-		public static long SizeCount(this ICollection<AtomicInfo> list)
+		public static long SizeCount32(this ICollection<AtomicInfo> list)
 		{
 			return 4L + list.Sum(box => box.GetBoxSize());
 		}
 
-		public static void WriteCount(this BinaryWriter writer, ICollection<AtomicInfo> list)
+		public static void WriteCount32(this BinaryWriter writer, ICollection<AtomicInfo> list)
 		{
 			writer.Write((int)list.Count);
+			foreach (var box in list)
+			{
+				box.WriteBox(writer);
+			}
+		}
+
+		public static void ReadCount16(this BinaryReader reader, ICollection<AtomicInfo> list, AtomicInfo parent, bool required = true)
+		{
+			int count = reader.ReadInt16();
+			for (int index = 0; index < count; index++)
+			{
+				var box = AtomicInfo.ParseBox(reader, parent, required);
+				list.Add(box);
+			}
+		}
+
+		public static long SizeCount16(this ICollection<AtomicInfo> list)
+		{
+			return 2L + list.Sum(box => box.GetBoxSize());
+		}
+
+		public static void WriteCount16(this BinaryWriter writer, ICollection<AtomicInfo> list)
+		{
+			writer.Write((ushort)list.Count);
 			foreach (var box in list)
 			{
 				box.WriteBox(writer);

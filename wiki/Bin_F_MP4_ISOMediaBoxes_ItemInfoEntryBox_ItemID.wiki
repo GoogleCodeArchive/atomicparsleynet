@@ -1,0 +1,17 @@
+﻿#summary ItemID Binary Data Field
+
+= ItemID Binary Data Field =
+
+
+Contains either 0 for the primary resource (e.g. the XML contained in an {{{'xml '}}} box) or the ID of the item for which the following information is defined.
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Value ===
+Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

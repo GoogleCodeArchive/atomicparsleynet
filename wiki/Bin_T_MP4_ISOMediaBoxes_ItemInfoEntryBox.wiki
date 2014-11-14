@@ -1,0 +1,43 @@
+﻿#summary ISOMediaBoxes.ItemInfoEntryBox Binary Block
+
+= ISOMediaBoxes.!ItemInfoEntryBox Binary Block =
+
+
+Item Information entry Box {{{'infe'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoEntryBox_ItemID ItemID]
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>Contains either 0 for the primary resource (e.g. the XML contained in an {{{'xml '}}} box) or the ID of the item for which the following information is defined.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoEntryBox_ItemProtectionIndex ItemProtectionIndex]
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>Contains either 0 for an unprotected item, or the one-based index into the item protection box defining the protection applied to this item (the first box in the item protection box has the index 1).<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoEntryBox_ItemName ItemName]
+
+ Type: *CString* — an encoded character string <br>A null-terminated string in UTF-8 characters containing a symbolic name of the item.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoEntryBox_ContentType ContentType]
+
+ Type: *CString* — an encoded character string <br>The MIME type for the item.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoEntryBox_ContentEncoding ContentEncoding]
+
+ Type: *CString* — an encoded character string <br>An optional null-terminated string in UTF-8 characters used to indicate that the binary file is encoded and needs to be decoded before interpreted. The values are as defined for !Content-Encoding for HTTP /1.1. Some possible values are “gzip”, “compress” and “deflate”. An empty string indicates no content encoding.<br>
+ 
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!ItemInfoEntryBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

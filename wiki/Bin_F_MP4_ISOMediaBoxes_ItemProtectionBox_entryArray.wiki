@@ -1,0 +1,23 @@
+﻿#summary entryArray Binary Data Field
+
+= entryArray Binary Data Field =
+
+
+Protection Scheme Informations
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Serialization ==
+
+=== Field Items Count ===
+
+Type: *UInt16* — a 16-bit (2 bytes) unsigned integer<br>
+
+=== Field Value ===
+
+Type: [Bin_T_MP4_ISOMediaBoxes_ProtectionInfoBox ISOMediaBoxes.ProtectionInfoBox][**] — a series of protection informations
+
+== See Also ==
+
+[Bin_T_MP4_ISOMediaBoxes_ItemProtectionBox ISOMediaBoxes.ItemProtectionBox Block]
+
+[Bin_N_MP4 MP4 Serialization Namespace]

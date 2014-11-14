@@ -5328,6 +5328,44 @@ namespace MP4
 			}
 		}
 		
+		public partial class ItemProtectionBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				base.ReadBinary(reader);
+				// entryArray
+				Read_entryArray(reader);
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
+				{
+					long size = base.DataSize;
+					// entryArray
+					size += Size_entryArray();
+					return size;
+				}
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				base.WriteBinary(writer);
+				// entryArray
+				Write_entryArray(writer);
+			}
+		}
+		
 		public partial class ItemInfoEntryBox
 		{
 			
@@ -5348,10 +5386,6 @@ namespace MP4
 				ContentType = ((string)(encoder.ReadString()));
 				// ContentEncoding
 				ContentEncoding = ((string)(encoder.ReadString()));
-				// FullPath
-				FullPath = ((string)(encoder.ReadString()));
-				// DataLen
-				DataLen = ((int)(reader.ReadInt32()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -5363,10 +5397,9 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
-					// ItemID+ItemProtectionIndex+DataLen
+					// ItemID+ItemProtectionIndex
 					long size = (base.DataSize 
-								+ ((2 + 2) 
-								+ 4));
+								+ (2 + 2));
 					// ItemName
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(ItemName)) ?? "");
@@ -5378,10 +5411,6 @@ namespace MP4
 					// ContentEncoding
 					size -= encoder.BaseStream.Position;
 					encoder.Write(((string)(ContentEncoding)) ?? "");
-					size += encoder.BaseStream.Position;
-					// FullPath
-					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(FullPath)) ?? "");
 					size += encoder.BaseStream.Position;
 					return size;
 				}
@@ -5405,10 +5434,44 @@ namespace MP4
 				encoder.Write(((string)(ContentType)) ?? "");
 				// ContentEncoding
 				encoder.Write(((string)(ContentEncoding)) ?? "");
-				// FullPath
-				encoder.Write(((string)(FullPath)) ?? "");
-				// DataLen
-				writer.Write(((int)(DataLen)));
+			}
+		}
+		
+		public partial class ItemInfoBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				base.ReadBinary(reader);
+				// entryArray
+				Read_entryArray(reader);
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
+				{
+					long size = base.DataSize;
+					// entryArray
+					size += Size_entryArray();
+					return size;
+				}
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				base.WriteBinary(writer);
+				// entryArray
+				Write_entryArray(writer);
 			}
 		}
 		

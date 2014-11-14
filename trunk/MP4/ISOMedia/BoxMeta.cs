@@ -58,6 +58,9 @@ namespace MP4
 
 		public sealed partial class XMLBox : ISOMFullBox
 		{
+			/// <summary>
+			/// XML document
+			/// </summary>
 			[XmlIgnore]
 			public XmlDocument XMLDocument
 			{
@@ -76,6 +79,9 @@ namespace MP4
 
 		public sealed partial class BinaryXMLBox : ISOMFullBox
 		{
+			/// <summary>
+			/// XML document
+			/// </summary>
 			[XmlIgnore]
 			public XmlDocument XMLDocument
 			{
@@ -87,7 +93,9 @@ namespace MP4
 				}
 				set
 				{
-					Data = System.Text.Encoding.UTF8.GetBytes(value.OuterXml);
+					var mem = new MemoryStream();
+					value.Save(mem);
+					Data = mem.ToArray();
 				}
 			}
 		}

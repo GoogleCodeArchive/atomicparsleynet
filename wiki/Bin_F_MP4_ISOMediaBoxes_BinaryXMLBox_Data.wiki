@@ -3,6 +3,8 @@
 = Data Binary Data Field =
 
 
+Binary XML data
+
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 

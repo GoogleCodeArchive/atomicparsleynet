@@ -18,11 +18,11 @@ Binary XML Box {{{'bxml'}}}
  
 [Bin_F_MP4_ISOMediaBoxes_BinaryXMLBox_Data Data]
 
- Type: *Byte[**]* — a stream of binary data with a length <br>
+ Type: *Byte[**]* — a stream of binary data with a length <br>Binary XML data<br>
  
 == Remarks ==
 
-When the primary data is in XML format and it is desired that the XML be stored directly in the meta-box, one of these forms may be used. The BinaryXML Box may only be used when there is a single well-defined binarization of the XML for that defined format as identified by the handler.
+When the primary data is in XML format and it is desired that the XML be stored directly in the meta-box, one of these forms may be used. The Binary XML Box may only be used when there is a single well-defined binarization of the XML for that defined format as identified by the handler.
 
 == Inheritance Hierarchy ==
 [Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.BinaryXMLBox*<br>

@@ -1109,7 +1109,7 @@
 			<remarks>
 				<para>
 					When the primary data is in XML format and it is desired that the XML be stored directly in the meta-box, one
-					of these forms may be used. The BinaryXML Box may only be used when there is a single well-defined
+					of these forms may be used. The Binary XML Box may only be used when there is a single well-defined
 					binarization of the XML for that defined format as identified by the handler.
 				</para>
 			</remarks>
@@ -1136,7 +1136,7 @@
 							<paramref name="OffsetSize"/><br/>
 						</term>
 						<description>
-							Type: <span class="keyword">Int4</span> — an 4-bit integer<br/>
+							Type: <span class="keyword">UInt4</span> — an 4-bit unsigned integer<br/>
 							Taken from the set {0, 4, 8} and indicates the length in bytes of the
 							<see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Offset"/> field.
 						</description>
@@ -1146,7 +1146,7 @@
 							<paramref name="LengthSize"/><br/>
 						</term>
 						<description>
-							Type: <span class="keyword">Int4</span> — an 4-bit integer<br/>
+							Type: <span class="keyword">UInt4</span> — an 4-bit unsigned integer<br/>
 							Taken from the set {0, 4, 8} and indicates the length in bytes of the
 							<see cref="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length"/> field.
 						</description>
@@ -1156,7 +1156,7 @@
 							<paramref name="BaseOffsetSize"/><br/>
 						</term>
 						<description>
-							Type: <span class="keyword">Int4</span> — an 4-bit integer<br/>
+							Type: <span class="keyword">UInt4</span> — an 4-bit unsigned integer<br/>
 							Taken from the set {0, 4, 8} and indicates the length in bytes of the
 							<see cref="F:MP4.ISOMediaBoxes.ItemLocationEntry.BaseOffset"/> field.
 						</description>
@@ -1166,7 +1166,7 @@
 							<paramref name="Reserved"/><br/>
 						</term>
 						<description>
-							Type: <span class="keyword">Int4</span> — an 4-bit integer<br/>
+							Type: <span class="keyword">UInt4</span> — an 4-bit unsigned integer<br/>
 							Reserved. Set to 0.
 						</description>
 					</item>
@@ -1233,6 +1233,44 @@
 		<member name="F:MP4.ISOMediaBoxes.ItemExtentEntry.Length">
 			<bincondition_summary format="UInt32">LengthSize equal to 4 only</bincondition_summary>
 			<bincondition_summary format="Int64">LengthSize equal to 8 only</bincondition_summary>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.PrimaryItemBox">
+			<remarks>
+				For a given handler, the primary data may be one of the referenced items when it is desired that it be stored
+				elsewhere, or divided into extents; or the primary metadata may be contained in the meta-box (e.g. in an XML
+				box). Either this box must occur, or there must be a box within the meta-box (e.g. an XML box) containing the
+				primary information in the format required by the identified handler.
+			</remarks>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.ItemProtectionBox">
+			<remarks>
+				The item protection box provides an array of item protection information, for use by the Item Information Box.
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ItemProtectionBox.entryArray">
+			<bincount_summary>
+				Type: <span class="keyword">UInt16</span> — a 16-bit (2 bytes) unsigned integer<br/>
+			</bincount_summary>
+			<bindata_summary>
+				Type: <see cref="T:MP4.ISOMediaBoxes.ProtectionInfoBox"/>[] — a series of protection informations
+			</bindata_summary>
+		</member>
+		<member name="T:MP4.ISOMediaBoxes.ItemInfoBox">
+			<remarks>
+				The Item information box provides extra information about selected items, including symbolic (‘file’) names. It
+				may optionally occur, but if it does, it must be interpreted, as item protection or content encoding may have
+				changed the format of the data in the item. If both content encoding and protection are indicated for an item, a
+				reader should first un-protect the item, and then decode the item’s content encoding. If more control is needed,
+				an IPMP sequence code may be used.
+			</remarks>
+		</member>
+		<member name="F:MP4.ISOMediaBoxes.ItemInfoBox.entryArray">
+			<bincount_summary>
+				Type: <span class="keyword">UInt16</span> — a 16-bit (2 bytes) unsigned integer<br/>
+			</bincount_summary>
+			<bindata_summary>
+				Type: <see cref="T:MP4.ISOMediaBoxes.ItemInfoEntryBox"/>[] — a series of entries
+			</bindata_summary>
 		</member>
 	</members>
 </doc>

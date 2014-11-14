@@ -1,4 +1,4 @@
-﻿#summary ISOMediaBoxes.!ItemLocationBox Binary Block
+﻿#summary ISOMediaBoxes.ItemLocationBox Binary Block
 
 = ISOMediaBoxes.!ItemLocationBox Binary Block =
 
@@ -21,10 +21,10 @@ Item Location Box {{{'iloc'}}}
  Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>
  The box starts with three values, specifying the size in bytes:
  
-  * _!OffsetSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Offset Offset] field.
-  * _!LengthSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Length Length] field.
-  * _!BaseOffsetSize_<br> Type: *Int4* — an 4-bit integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] field.
-  * _Reserved_<br> Type: *Int4* — an 4-bit integer<br> Reserved. Set to 0.
+  * _!OffsetSize_<br> Type: *UInt4* — an 4-bit unsigned integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [F_MP4_ISOMediaBoxes_ItemExtentEntry_Offset Offset] field.
+  * _!LengthSize_<br> Type: *UInt4* — an 4-bit unsigned integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [F_MP4_ISOMediaBoxes_ItemExtentEntry_Length Length] field.
+  * _!BaseOffsetSize_<br> Type: *UInt4* — an 4-bit unsigned integer<br> Taken from the set {0, 4, 8} and indicates the length in bytes of the [F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] field.
+  * _Reserved_<br> Type: *UInt4* — an 4-bit unsigned integer<br> Reserved. Set to 0.
  
  Specifies the size in bytes of the [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Offset Offset] field, [Bin_F_MP4_ISOMediaBoxes_ItemExtentEntry_Length Length] field, and [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] field, respectively. These values must be from the set {0, 4, 8}.<br>
  

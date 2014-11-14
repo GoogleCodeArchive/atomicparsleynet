@@ -1,0 +1,29 @@
+﻿#summary ISOMediaBoxes.PrimaryItemBox Binary Block
+
+= ISOMediaBoxes.!PrimaryItemBox Binary Block =
+
+
+Primary Item Box {{{'pitm'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_PrimaryItemBox_ItemID ItemID]
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer <br>The identifier of the primary item<br>
+ 
+== Remarks ==
+For a given handler, the primary data may be one of the referenced items when it is desired that it be stored elsewhere, or divided into extents; or the primary metadata may be contained in the meta-box (e.g. in an XML box). Either this box must occur, or there must be a box within the meta-box (e.g. an XML box) containing the primary information in the format required by the identified handler.
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!PrimaryItemBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

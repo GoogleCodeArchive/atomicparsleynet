@@ -3,13 +3,13 @@
 = Offset Binary Data Field =
 
 
-Provides the absolute offset in bytes from the beginning of the containing file, of this item. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_OffsetSize OffsetSize] is 0, *Offset* takes the value 0.
+Provides the absolute offset in bytes from the beginning of the containing file, of this item. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_sizeData OffsetSize] is 0, *Offset* takes the value 0.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int64* — a 64-bit (8 bytes) integer (!OffsetSize equal to 8 only)<br>Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!OffsetSize equal to 4 only)<br>
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!OffsetSize equal to 4 only)<br>Type: *Int64* — a 64-bit (8 bytes) integer (!OffsetSize equal to 8 only)<br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_ItemExtentEntry ISOMediaBoxes.ItemExtentEntry Block]

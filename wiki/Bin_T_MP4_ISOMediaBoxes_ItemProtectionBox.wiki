@@ -1,0 +1,33 @@
+﻿#summary ISOMediaBoxes.ItemProtectionBox Binary Block
+
+= ISOMediaBoxes.!ItemProtectionBox Binary Block =
+
+
+Item Protection Box {{{'ipro'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+_entryArray items count_
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer<br><br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemProtectionBox_entryArray entryArray]
+
+ Type: [Bin_T_MP4_ISOMediaBoxes_ProtectionInfoBox ISOMediaBoxes.ProtectionInfoBox][**] — a series of protection informations<br>Protection Scheme Informations<br>
+ 
+== Remarks ==
+The item protection box provides an array of item protection information, for use by the Item Information Box.
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!ItemProtectionBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

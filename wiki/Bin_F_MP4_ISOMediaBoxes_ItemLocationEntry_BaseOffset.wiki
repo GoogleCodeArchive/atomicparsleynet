@@ -1,15 +1,15 @@
-﻿#summary !BaseOffset Binary Data Field
+﻿#summary BaseOffset Binary Data Field
 
 = !BaseOffset Binary Data Field =
 
 
-Provides a base value for offset calculations within the referenced data. If [Bin_P_MP4_ISOMediaBoxes_ItemLocationBox_BaseOffsetSize BaseOffsetSize] is 0, *!BaseOffset* takes the value 0, i.e. it is unused.
+Provides a base value for offset calculations within the referenced data. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_sizeData BaseOffsetSize] is 0, *!BaseOffset* takes the value 0, i.e. it is unused.
 
 *Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
 == Data Serialization ==
 
 === Field Value ===
-Type: *Int64* — a 64-bit (8 bytes) integer (!BaseOffsetSize equal to 8 only)<br>Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!BaseOffsetSize equal to 4 only)<br>
+Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!BaseOffsetSize equal to 4 only)<br>Type: *Int64* — a 64-bit (8 bytes) integer (!BaseOffsetSize equal to 8 only)<br>
 == See Also ==
 
 [Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry Block]

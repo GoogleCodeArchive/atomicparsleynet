@@ -1,4 +1,4 @@
-﻿#summary ISOMediaBoxes.!ItemLocationEntry Binary Block
+﻿#summary ISOMediaBoxes.ItemLocationEntry Binary Block
 
 = ISOMediaBoxes.!ItemLocationEntry Binary Block =
 
@@ -18,7 +18,7 @@ Item Location Box resource
  
 [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] (Optional)
 
- Type: *Int64* — a 64-bit (8 bytes) integer (!BaseOffsetSize equal to 8 only)<br>Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!BaseOffsetSize equal to 4 only)<br>Provides a base value for offset calculations within the referenced data. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_BaseOffsetSize BaseOffsetSize] is 0, [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] takes the value 0, i.e. it is unused.<br>
+ Type: *UInt32* — a 32-bit (4 bytes) unsigned integer (!BaseOffsetSize equal to 4 only)<br>Type: *Int64* — a 64-bit (8 bytes) integer (!BaseOffsetSize equal to 8 only)<br>Provides a base value for offset calculations within the referenced data. If [Bin_F_MP4_ISOMediaBoxes_ItemLocationBox_sizeData BaseOffsetSize] is 0, [Bin_F_MP4_ISOMediaBoxes_ItemLocationEntry_BaseOffset BaseOffset] takes the value 0, i.e. it is unused.<br>
  
 _extentEntries items count_
 

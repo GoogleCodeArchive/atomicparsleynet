@@ -1,0 +1,33 @@
+﻿#summary ISOMediaBoxes.XMLBox Binary Block
+
+= ISOMediaBoxes.XMLBox Binary Block =
+
+
+XML Box {{{'xml '}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_XMLBox_XML XML]
+
+ Type: *Char[**]* — an encoded character array with a length <br>XML data<br>
+ 
+== Remarks ==
+
+When the primary data is in XML format and it is desired that the XML be stored directly in the meta-box, one of these forms may be used.
+
+Within an XML box the data is in UTF-8 format unless the data starts with a byte-order-mark (BOM), which indicates that the data is in UTF-16 format.
+
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.XMLBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

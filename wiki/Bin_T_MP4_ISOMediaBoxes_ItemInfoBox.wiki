@@ -1,0 +1,33 @@
+﻿#summary ISOMediaBoxes.ItemInfoBox Binary Block
+
+= ISOMediaBoxes.!ItemInfoBox Binary Block =
+
+
+Item Information Box {{{'iinf'}}}
+
+*Serialization Namespace:*  [Bin_N_MP4 MP4]<br>*Assembly:*  MP4 (in MP4.dll)
+== Data Fields ==
+
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Version Version]
+
+ Type: *Byte* — an 8-bit (1 byte) unsigned integer <br>The version of this atom.<br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ISOMFullBox_Flags Flags]
+
+ Type: *UInt24* — a 24-bit (3 bytes) unsigned integer <br>Future flags.<br>
+ 
+_entryArray items count_
+
+ Type: *UInt16* — a 16-bit (2 bytes) unsigned integer<br><br>
+ 
+[Bin_F_MP4_ISOMediaBoxes_ItemInfoBox_entryArray entryArray]
+
+ Type: [Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox][**] — a series of entries<br>An array of entries<br>
+ 
+== Remarks ==
+The Item information box provides extra information about selected items, including symbolic (‘file’) names. It may optionally occur, but if it does, it must be interpreted, as item protection or content encoding may have changed the format of the data in the item. If both content encoding and protection are indicated for an item, a reader should first un-protect the item, and then decode the item’s content encoding. If more control is needed, an IPMP sequence code may be used.
+== Inheritance Hierarchy ==
+[Bin_T_MP4_AtomicInfo MP4.AtomicInfo]<br>  [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox MP4.ISOMediaBoxes.ISOMFullBox]<br>    *MP4.ISOMediaBoxes.!ItemInfoBox*<br>
+== See Also ==
+
+[Bin_N_MP4 MP4 Serialization Namespace]

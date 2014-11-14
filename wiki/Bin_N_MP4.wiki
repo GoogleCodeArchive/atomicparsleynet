@@ -10,7 +10,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_AC3ConfigBox ISOMediaBoxes.AC3ConfigBox] || {{{'dac3'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_AC3SampleEntryBox ISOMediaBoxes.AC3SampleEntryBox] || {{{'ac-3'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_AVCConfigurationBox ISOMediaBoxes.AVCConfigurationBox] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_BinaryXMLBox ISOMediaBoxes.BinaryXMLBox] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_BinaryXMLBox ISOMediaBoxes.BinaryXMLBox] || Binary XML Box {{{'bxml'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_Box ISOMediaBoxes.Box] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ChapterEntry ISOMediaBoxes.ChapterEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ChapterListBox ISOMediaBoxes.ChapterListBox] || {{{'chpl'}}} ||
@@ -34,6 +34,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_DttsEntry ISOMediaBoxes.DttsEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_EditBox ISOMediaBoxes.EditBox] || {{{'edts'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_EditListBox ISOMediaBoxes.EditListBox] || {{{'elst'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_EdtsEntry ISOMediaBoxes.EdtsEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ESDBox ISOMediaBoxes.ESDBox] || {{{'esds'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_FileMappingDataMap ISOMediaBoxes.FileMappingDataMap] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_FileTypeBox ISOMediaBoxes.FileTypeBox] || The File Type Compatibility Atom {{{'ftyp'}}} ||
@@ -61,11 +62,13 @@
 || [Bin_T_MP4_ISOMediaBoxes_ISOMFullBox ISOMediaBoxes.ISOMFullBox] || Full atom ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMSampleEntryFields ISOMediaBoxes.ISOMSampleEntryFields] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_ISOMVisualSampleEntry ISOMediaBoxes.ISOMVisualSampleEntry] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_ItemExtentEntry ISOMediaBoxes.ItemExtentEntry] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemExtentEntry ISOMediaBoxes.ItemExtentEntry] || Item Location Box resource extent ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemInfoBox ISOMediaBoxes.ItemInfoBox] || Item Information Box {{{'iinf'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemInfoEntryBox ISOMediaBoxes.ItemInfoEntryBox] || Item Information entry Box {{{'infe'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_ItemListBox ISOMediaBoxes.ItemListBox] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_ItemLocationBox ISOMediaBoxes.ItemLocationBox] ||  ||
-|| [Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemLocationBox ISOMediaBoxes.ItemLocationBox] || Item Location Box {{{'iloc'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemLocationEntry ISOMediaBoxes.ItemLocationEntry] || Item Location Box resource ||
+|| [Bin_T_MP4_ISOMediaBoxes_ItemProtectionBox ISOMediaBoxes.ItemProtectionBox] || Item Protection Box {{{'ipro'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_JPEG2000Atom ISOMediaBoxes.JPEG2000Atom] || {{{'jP '}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_KaraokeRecord ISOMediaBoxes.KaraokeRecord] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_LASeRConfigurationBox ISOMediaBoxes.LASeRConfigurationBox] || {{{'lsrC'}}} ||
@@ -104,7 +107,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_PcrInfoBox ISOMediaBoxes.PcrInfoBox] || {{{'pcrb'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_PixelAspectRatioBox ISOMediaBoxes.PixelAspectRatioBox] || {{{'pasp'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_PMAXBox ISOMediaBoxes.PMAXBox] || {{{'pmax'}}} ||
-|| [Bin_T_MP4_ISOMediaBoxes_PrimaryItemBox ISOMediaBoxes.PrimaryItemBox] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_PrimaryItemBox ISOMediaBoxes.PrimaryItemBox] || Primary Item Box {{{'pitm'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_ProgressiveDownloadBox ISOMediaBoxes.ProgressiveDownloadBox] || {{{'pdin'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_ProtectionInfoBox ISOMediaBoxes.ProtectionInfoBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_RelyHintBox ISOMediaBoxes.RelyHintBox] || {{{'rely'}}} ||
@@ -136,6 +139,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_StsfEntry ISOMediaBoxes.StsfEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_StshEntry ISOMediaBoxes.StshEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_SttsEntry ISOMediaBoxes.SttsEntry] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_SubSampleEntry ISOMediaBoxes.SubSampleEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_SubSampleInformationBox ISOMediaBoxes.SubSampleInformationBox] || {{{'subs'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_SyncSampleBox ISOMediaBoxes.SyncSampleBox] || {{{'stss'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_TextBlinkBox ISOMediaBoxes.TextBlinkBox] ||  ||
@@ -165,6 +169,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_TrackReferenceTypeBox ISOMediaBoxes.TrackReferenceTypeBox] || Track reference type atom {{{'REFT'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_TrackSelectionBox ISOMediaBoxes.TrackSelectionBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_TRPYBox ISOMediaBoxes.TRPYBox] || {{{'trpy'}}} ||
+|| [Bin_T_MP4_ISOMediaBoxes_TrunEntry ISOMediaBoxes.TrunEntry] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_TSHintEntryBox ISOMediaBoxes.TSHintEntryBox] || {{{'tims'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_Tx3gSampleEntryBox ISOMediaBoxes.Tx3gSampleEntryBox] ||  ||
 || [Bin_T_MP4_ISOMediaBoxes_UnknownBox ISOMediaBoxes.UnknownBox] ||  ||
@@ -174,7 +179,7 @@
 || [Bin_T_MP4_ISOMediaBoxes_UUIDBox ISOMediaBoxes.UUIDBox] || {{{'uuid'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_VideoMediaHeaderBox ISOMediaBoxes.VideoMediaHeaderBox] || Video Media Information Header Atom {{{'vmhd'}}} ||
 || [Bin_T_MP4_ISOMediaBoxes_VoidBox ISOMediaBoxes.VoidBox] || Void Box ||
-|| [Bin_T_MP4_ISOMediaBoxes_XMLBox ISOMediaBoxes.XMLBox] ||  ||
+|| [Bin_T_MP4_ISOMediaBoxes_XMLBox ISOMediaBoxes.XMLBox] || XML Box {{{'xml '}}} ||
 
 == Enumerations ==
 
