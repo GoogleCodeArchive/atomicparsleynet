@@ -20,35 +20,115 @@ using FRAFV.Binary.Serialization;
 
 namespace MP4
 {
-	public enum AtomFlags
+	public enum DataFlags
 	{
 		/// <summary>
-		/// Atom version 1byte/ Atom flags 3 bytes; 0x00 00 00 00
+		/// Reserved for use where no type needs to be indicated
 		/// </summary>
 		Binary = 0,
-
 		/// <summary>
-		/// UTF-8, no termination
+		/// UTF-8 — without any count or NULL terminator
 		/// </summary>
-		Text = 1,
-
+		UTF8 = 1,
 		/// <summary>
-		/// \x0D
+		/// UTF-16 — also known as UTF-16BE
 		/// </summary>
-		JPEGBinary = 13,
-
+		UTF16 = 2,
 		/// <summary>
-		/// \x0E
+		/// S/JIS — deprecated unless it is needed for special Japanese characters
 		/// </summary>
-		PNGBinary = 14,
-
+		SJIS = 3,
 		/// <summary>
-		/// \x15 for cpil, tmpo, rtng; iTMS atoms: cnID, atID, plID, geID, sfID, akID
+		/// UTF-8 sort — variant storage of a string for sorting only
 		/// </summary>
-		UInt = 21,
-
+		UTF8Sort = 4,
 		/// <summary>
-		/// 0x58 for uuid atoms that contain files
+		/// UTF-16 sort — variant storage of a string for sorting only
+		/// </summary>
+		UTF16Sort = 5,
+		/// <summary>
+		/// HTML — the HTML file header specifies which HTML version
+		/// </summary>
+		HTML = 6,
+		/// <summary>
+		/// XML — the XML header must identify the DTD or schemas
+		/// </summary>
+		XML = 7,
+		/// <summary>
+		/// UUID — also known as GUID; stored as 16 bytes in binary (valid as an ID)
+		/// </summary>
+		UUID = 8,
+		/// <summary>
+		/// ISRC — stored as UTF-8 text (valid as an ID)
+		/// </summary>
+		ISRC = 9,
+		/// <summary>
+		/// MI3P — stored as UTF-8 text (valid as an ID)
+		/// </summary>
+		MI3P = 10,
+		/// <summary>
+		/// GIF — (deprecated) a GIF image
+		/// </summary>
+		GIF = 12,
+		/// <summary>
+		/// JPEG — in a JFIF wrapper
+		/// </summary>
+		JPEG = 13,
+		/// <summary>
+		/// PNG — in a PNG wrapper
+		/// </summary>
+		PNG = 14,
+		/// <summary>
+		/// URL — absolute, in UTF-8 characters
+		/// </summary>
+		URL = 15,
+		/// <summary>
+		/// Duration — in milliseconds, 32-bit integer
+		/// </summary>
+		Duration = 16,
+		/// <summary>
+		/// Date/Time — in UTC, counting seconds since midnight, January 1, 1904; 32 or 64-bits
+		/// </summary>
+		DateTime = 17,
+		/// <summary>
+		/// Genres — a list of enumerated values
+		/// </summary>
+		Genres = 18,
+		//for cpil, tmpo, rtng; iTMS atoms: cnID, atID, plID, geID, sfID, akID
+		/// <summary>
+		/// BE Signed Integer — a big-endian signed integer in 1,2,3 or 4 bytes 
+		/// </summary>
+		Int = 21,
+		/// <summary>
+		/// BE Unsigned Integer — a big-endian unsigned integer in 1,2,3 or 4 bytes; size of value determines integer size
+		/// </summary>
+		UInt = 22,
+		/// <summary>
+		/// BE Float32 — a big-endian 32-bit floating point value (IEEE754)
+		/// </summary>
+		Single = 23,
+		/// <summary>
+		/// BE Float64 — a big-endian 64-bit floating point value (IEEE754)
+		/// </summary>
+		Double = 24,
+		/// <summary>
+		/// RIAA parental advisory — { -1=no, 1=yes, 0=unspecified }, 8-bit ingteger
+		/// </summary>
+		RIAAPA = 24,
+		/// <summary>
+		/// Universal Product Code — in text UTF-8 format (valid as an ID)
+		/// </summary>
+		UPC = 25,
+		/// <summary>
+		/// BMP — windows bitmap format graphics
+		/// </summary>
+		BMP = 27,
+		/// <summary>
+		/// QuickTimeMetadata atom — a block of data having the structure of the Metadata atom defined in this specification
+		/// </summary>
+		QTMeta = 28,
+		/// <summary>
+		/// For uuid atoms that contain files
 		/// </summary>
 		UUIDBinary = 88
 	}
@@ -135,6 +215,22 @@ namespace MP4
 	public interface IEntry<TOwner>
 	{
 		TOwner Owner { get; set; }
+	}
+
+	public sealed class BOMReader: BinStringReader
+	{
+		public BOMReader(Stream input, Encoding encoding)
+			: base(input, encoding, littleEndian: false)
+		{
+			AllowDetectBOM = true;
+			AllowUnterminatedString = true;
+		}
+	}
+
+	public sealed class BOMWriter : BinStringWriter
+	{
+		public BOMWriter(Stream output, Encoding encoding)
+			: base(output, encoding, littleEndian: false) { }
 	}
 
 	/// <summary>
@@ -447,9 +543,9 @@ namespace MP4
 			//diagnose damage to 'cprt' by libmp4v2 in 1.4.1 & 1.5.0.1
 			//typically, the length of this atom (dataSize) will exceeed it parent (which is reported as 17)
 			//true length ot this data will be 9 - impossible for iTunes-style 'data' atom.
-			if (atomid == "data" /*&& parent is IBoxContainer*/)
+			if (atomid == "data" && parent is IBoxContainer)
 			{
-				if (dataSize > readSize)
+				if (dataSize > readSize + 8L)
 				{
 					log.Warn("The 'data' child of the '{0}' atom seems to be corrupted.", box.Name);
 					reader.BaseStream.Skip(dataSize - readSize);
@@ -665,7 +761,9 @@ namespace MP4
 			private const string TypeBase64XMLEnum = "Base64";
 			private const string TypeHexXMLEnum = "Hex";
 			private const string TypeGuidXMLEnum = "GUID";
-			private const string TypeUnicodeXMLEnum = "Unicode";
+			private const string TypeUTF16LEXMLEnum = "UTF16LE";
+			private const string TypeUTF16BEXMLEnum = "UTF16BE";
+			private const string TypeUTF8XMLEnum = "UTF8";
 			private const string TypeEmptyEnum = "Empty";
 			private const string DataSizeXMLAttr = "DataSize";
 
@@ -699,9 +797,17 @@ namespace MP4
 					string guid = reader.ReadContentAsString();
 					this.Data = XmlConvert.ToGuid(guid).ToByteArray();
 					return;
-				case TypeUnicodeXMLEnum:
+				case TypeUTF16BEXMLEnum:
+					string strbe = reader.ReadContentAsString();
+					this.Data = Encoding.BigEndianUnicode.GetBytes(strbe);
+					return;
+				case TypeUTF16LEXMLEnum:
+					string strle = reader.ReadContentAsString();
+					this.Data = Encoding.Unicode.GetBytes(strle);
+					return;
+				case TypeUTF8XMLEnum:
 					string str = reader.ReadContentAsString();
-					this.Data = Encoding.Unicode.GetBytes(str);
+					this.Data = Encoding.UTF8.GetBytes(str);
 					return;
 				case TypeEmptyEnum:
 					int size = XmlConvert.ToInt32(reader.GetAttribute(DataSizeXMLAttr));
@@ -739,10 +845,20 @@ namespace MP4
 					writer.WriteAttributeString(TypeXMLAttr, TypeGuidXMLEnum);
 					writer.WriteString(XmlConvert.ToString(guid));
 				}
-				else if (IsUnicode(this.Data))
+				else if (IsUTF16BE(this.Data))
 				{
-					writer.WriteAttributeString(TypeXMLAttr, TypeUnicodeXMLEnum);
-					writer.WriteString(Encoding.Unicode.GetString(this.Data, 0, this.Data.Length - 2));
+					writer.WriteAttributeString(TypeXMLAttr, TypeUTF16BEXMLEnum);
+					writer.WriteString(Encoding.BigEndianUnicode.GetString(this.Data, 2, this.Data.Length - 2));
+				}
+				else if (IsUTF16LE(this.Data))
+				{
+					writer.WriteAttributeString(TypeXMLAttr, TypeUTF16LEXMLEnum);
+					writer.WriteString(Encoding.Unicode.GetString(this.Data, 2, this.Data.Length - 2));
+				}
+				else if (IsUTF8(this.Data))
+				{
+					writer.WriteAttributeString(TypeXMLAttr, TypeUTF8XMLEnum);
+					writer.WriteString(Encoding.UTF8.GetString(this.Data, 0, this.Data.Length));
 				}
 				else if (this.Data.Length > 256)
 				{
@@ -756,16 +872,63 @@ namespace MP4
 				}
 			}
 
-			private static bool IsUnicode(byte[] data)
+			private static bool IsUTF16BE(byte[] data)
 			{
-				if (data.Length < 2 || (data.Length % 2) != 0 || data[data.Length - 1] != 0 || data[data.Length - 2] != 0)
-					return false;
-				for (int k = 0; k < data.Length - 2; k += 2)
+				if (data.Length <= 2 || data.Length % 2 != 0) return false;
+				var bom = Encoding.BigEndianUnicode.GetPreamble();
+				string str;
+				if (data[0] != bom[0] || data[1] != bom[1]) return false;
 				{
-					if (data[k] < 32 && data[k + 1] == 0)
+					try
+					{
+						str = Encoding.BigEndianUnicode.GetString(data, 2, data.Length - 2);
+					}
+					catch
+					{
 						return false;
+					}
 				}
-				return true;
+				return !str.Any(c => (int)c < 32 && c != '\t' && c != '\r' && c != '\n');
+			}
+
+			private static bool IsUTF8(byte[] data)
+			{
+				if (data.Length <= 2) return false;
+				var bom = Encoding.BigEndianUnicode.GetPreamble();
+				string str;
+				if (data[0] == bom[0] && data[1] == bom[1])
+					return false;
+				bom = Encoding.Unicode.GetPreamble();
+				if (data[0] == bom[0] && data[1] == bom[1])
+					return false;
+				try
+				{
+					str = Encoding.UTF8.GetString(data);
+				}
+				catch
+				{
+					return false;
+				}
+				return !str.Any(c => (int)c < 32 && c != '\t' && c != '\r' && c != '\n');
+			}
+
+			private static bool IsUTF16LE(byte[] data)
+			{
+				if (data.Length <= 2 || data.Length % 2 != 0) return false;
+				var bom = Encoding.Unicode.GetPreamble();
+				string str;
+				if (data[0] != bom[0] || data[1] != bom[1]) return false;
+				{
+					try
+					{
+						str = Encoding.Unicode.GetString(data, 2, data.Length - 2);
+					}
+					catch
+					{
+						return false;
+					}
+				}
+				return !str.Any(c => (int)c < 32 && c != '\t' && c != '\r' && c != '\n');
 			}
 
 			private static bool IsEmpty(byte[] data)

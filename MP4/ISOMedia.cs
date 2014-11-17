@@ -54,7 +54,7 @@ namespace MP4
 		public byte Reserved;
 	}
 
-	[BinBlock(BinaryReaderType = "BinStringReader", BinaryWriterType = "BinStringWriter")]
+	[BinBlock(BinaryReaderType = typeof(BOMReader), BinaryWriterType = typeof(BOMWriter))]
 	public sealed partial class ISOMediaBoxes
 	{
 		/// <summary>
@@ -2244,7 +2244,7 @@ namespace MP4
 		public sealed partial class ProgressiveDownloadBox : ISOMFullBox
 		{
 			internal const string DefaultID = "pdin";
-			public ProgressiveDownloadBox() : base(DefaultID) { AtomFlags = AtomFlags.Text; /* 1 */ }
+			public ProgressiveDownloadBox() : base(DefaultID) { Flags = 1; }
 
 			public struct DownloadInfo
 			{
