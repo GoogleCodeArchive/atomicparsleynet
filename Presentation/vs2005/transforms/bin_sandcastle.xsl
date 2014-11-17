@@ -146,10 +146,9 @@
 
 		<include item="typeLink">
 			<parameter>
-				<!--xsl:apply-templates select="value" mode="link">
+				<xsl:apply-templates select="typeValue/type" mode="link">
 					<xsl:with-param name="qualified" select="true()" />
-				</xsl:apply-templates-->
-				<referenceLink target="{$itemType}" show-templates="true" show-container="false"/>[]
+				</xsl:apply-templates>
 			</parameter>
 			<parameter>
 				<include item="arrayFormat"/>
@@ -180,10 +179,9 @@
 			<dd>
 				<include item="typeLink">
 					<parameter>
-						<!--xsl:apply-templates select="value" mode="link">
+						<xsl:apply-templates select="typeValue/type" mode="link">
 							<xsl:with-param name="qualified" select="true()" />
-						</xsl:apply-templates-->
-						<referenceLink target="{value}" show-templates="true" show-container="true"/>
+						</xsl:apply-templates>
 					</parameter>
 					<parameter/>
 					<parameter/>
