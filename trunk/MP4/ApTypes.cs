@@ -234,7 +234,7 @@ namespace MP4
 		public static int UnknownEnum<TEnum>(this int value)
 			where TEnum : struct
 		{
-			if (!Enum.IsDefined(typeof(TEnum), value))
+			if (Enum.IsDefined(typeof(TEnum), value))
 				return 0;
 			else
 				return value;

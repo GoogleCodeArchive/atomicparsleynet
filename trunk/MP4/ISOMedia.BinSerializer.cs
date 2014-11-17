@@ -1458,7 +1458,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Location
 				Location = new string(encoder.ReadChars(((int)(reader.Length()))));
 			}
@@ -1488,7 +1488,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// Location
 				if ((Location != null))
 				{
@@ -1506,7 +1506,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// NameURN
 				NameURN = ((string)(encoder.ReadString()));
 				// Location
@@ -1521,7 +1521,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					long size = base.DataSize;
 					// NameURN
 					size -= encoder.BaseStream.Position;
@@ -1543,7 +1543,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// NameURN
 				encoder.Write(((string)(NameURN)) ?? "");
 				// Location
@@ -2795,7 +2795,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Profile
 				Profile = ((byte)(reader.ReadByte()));
 				// Level
@@ -2822,7 +2822,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// Profile+Level+PathComponents+FullRequestHost+StreamType+ContainsRedundant
 					long size = (base.DataSize 
 								+ (((((1 + 1) 
@@ -2849,7 +2849,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// Profile
 				writer.Write(((byte)(Profile)));
 				// Level
@@ -2877,7 +2877,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// ContentScriptTypes
 				ContentScriptTypes = ((string)(encoder.ReadString()));
 			}
@@ -2890,7 +2890,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					long size = 0;
 					// ContentScriptTypes
 					size -= encoder.BaseStream.Position;
@@ -2906,7 +2906,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// ContentScriptTypes
 				encoder.Write(((string)(ContentScriptTypes)) ?? "");
 			}
@@ -2921,7 +2921,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// ContentEncoding
 				ContentEncoding = ((string)(encoder.ReadString()));
 				// MIMETypeOrNamespace
@@ -2943,7 +2943,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					long size = base.DataSize;
 					// ContentEncoding
 					size -= encoder.BaseStream.Position;
@@ -2973,7 +2973,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// ContentEncoding
 				encoder.Write(((string)(ContentEncoding)) ?? "");
 				// MIMETypeOrNamespace
@@ -3949,7 +3949,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Language
 				Language = ((PackedLanguage)(reader.ReadUInt16()));
 				// Notice
@@ -3964,7 +3964,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// Language
 					long size = (base.DataSize + 2);
 					// Notice
@@ -3982,7 +3982,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// Language
 				writer.Write(((ushort)(Language)));
 				// Notice
@@ -3998,7 +3998,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// StartTime
 				StartTime = ((long)(reader.ReadInt64()));
 				// Name
@@ -4031,7 +4031,7 @@ namespace MP4
 			public void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// StartTime
 				writer.Write(((long)(StartTime)));
 				// Name
@@ -4348,7 +4348,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// DisplayFlags
 				DisplayFlags = ((int)(reader.ReadInt32()));
 				// TextJustification
@@ -4379,7 +4379,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// DisplayFlags+TextJustification+FontNumber+FontFace+Reserved2+Reserved3
 					long size = (base.DataSize 
 								+ (((((4 + 4) 
@@ -4416,7 +4416,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// DisplayFlags
 				writer.Write(((int)(DisplayFlags)));
 				// TextJustification
@@ -4690,7 +4690,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// StartCharOffset
 				StartCharOffset = ((ushort)(reader.ReadUInt16()));
 				// EndCharOffset
@@ -4709,7 +4709,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// StartCharOffset+EndCharOffset
 					long size = (2 + 2);
 					// URL
@@ -4730,7 +4730,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// StartCharOffset
 				writer.Write(((ushort)(StartCharOffset)));
 				// EndCharOffset
@@ -4937,7 +4937,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// XML
 				XML = new string(encoder.ReadChars(((int)(reader.Length()))));
 			}
@@ -4967,7 +4967,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// XML
 				if ((XML != null))
 				{
@@ -5375,7 +5375,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// ItemID
 				ItemID = ((ushort)(reader.ReadUInt16()));
 				// ItemProtectionIndex
@@ -5396,7 +5396,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// ItemID+ItemProtectionIndex
 					long size = (base.DataSize 
 								+ (2 + 2));
@@ -5423,7 +5423,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// ItemID
 				writer.Write(((ushort)(ItemID)));
 				// ItemProtectionIndex
@@ -5519,7 +5519,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// SchemeType
 				SchemeType = ((AtomicCode)(reader.ReadUInt32()));
 				// SchemeVersion
@@ -5536,7 +5536,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// SchemeType+SchemeVersion
 					long size = (base.DataSize 
 								+ (4 + 4));
@@ -5555,7 +5555,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// SchemeType
 				writer.Write(((uint)(SchemeType)));
 				// SchemeVersion
@@ -5574,7 +5574,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// URI
 				URI = ((string)(encoder.ReadString()));
 			}
@@ -5587,7 +5587,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					long size = base.DataSize;
 					// URI
 					size -= encoder.BaseStream.Position;
@@ -5604,7 +5604,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// URI
 				encoder.Write(((string)(URI)) ?? "");
 			}
@@ -6525,7 +6525,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// SubType
 				SubType = ((AtomicCode)(reader.ReadUInt32()));
 				// SDPText
@@ -6557,7 +6557,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// SubType
 				writer.Write(((uint)(SubType)));
 				// SDPText
@@ -6576,7 +6576,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// SDPText
 				SDPText = new string(encoder.ReadChars(((int)(reader.Length()))));
 			}
@@ -6605,7 +6605,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// SDPText
 				if ((SDPText != null))
 				{
@@ -7327,7 +7327,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// PayloadCode
 				PayloadCode = ((int)(reader.ReadInt32()));
 				// PayloadString
@@ -7360,7 +7360,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// PayloadCode
 				writer.Write(((int)(PayloadCode)));
 				// PayloadString
@@ -7384,7 +7384,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// String
 				String = ((string)(encoder.ReadString()));
 			}
@@ -7397,7 +7397,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					long size = 0;
 					// String
 					size -= encoder.BaseStream.Position;
@@ -7413,7 +7413,7 @@ namespace MP4
 			public override void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// String
 				encoder.Write(((string)(String)) ?? "");
 			}
@@ -7464,7 +7464,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Reserved
 				Reserved = ((int)(reader.ReadInt32()));
 				// Data
@@ -7481,7 +7481,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// Reserved+Size
 					long size = (base.DataSize 
 								+ (4 + 4));
@@ -7500,7 +7500,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// Reserved
 				writer.Write(((int)(Reserved)));
 				// Data
@@ -7591,7 +7591,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				int count;
 				// EncryptionMethod
 				EncryptionMethod = ((byte)(reader.ReadByte()));
@@ -7624,7 +7624,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// EncryptionMethod+PaddingScheme+PlainTextLength
 					long size = (base.DataSize 
 								+ ((1 + 1) 
@@ -7660,7 +7660,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// EncryptionMethod
 				writer.Write(((byte)(EncryptionMethod)));
 				// PaddingScheme
@@ -7697,7 +7697,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// GKEncryptionMethod
 				GKEncryptionMethod = ((byte)(reader.ReadByte()));
 				// GroupID
@@ -7714,7 +7714,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// GKEncryptionMethod
 					long size = (base.DataSize + 1);
 					// GroupID
@@ -7738,7 +7738,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// GKEncryptionMethod
 				writer.Write(((byte)(GKEncryptionMethod)));
 				// GroupID
@@ -8537,7 +8537,7 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// Name
 				Name = ((string)(encoder.ReadString()));
 				// FileSize
@@ -8556,7 +8556,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// FileSize+BytePos
 					long size = (base.DataSize 
 								+ (8 + 8));
@@ -8579,7 +8579,7 @@ namespace MP4
 			{
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// Name
 				encoder.Write(((string)(Name)) ?? "");
 				// FileSize
@@ -8808,7 +8808,7 @@ namespace MP4
 			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 			public void ReadBinary(System.IO.BinaryReader reader)
 			{
-				var encoder = new BinStringReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
 				// HintType
 				HintType = ((byte)(reader.ReadByte()));
 				// Reserved
@@ -8829,7 +8829,7 @@ namespace MP4
 				get
 				{
 					var encoding = System.Text.Encoding.UTF8;
-					var encoder = new BinStringWriter(new System.IO.MemoryStream(), encoding);
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
 					// HintType+Reserved+DataLength+TransmissionTime
 					long size = (((1 + 2) 
 								+ 4) 
@@ -8848,7 +8848,7 @@ namespace MP4
 			public void WriteBinary(System.IO.BinaryWriter writer)
 			{
 				var encoding = System.Text.Encoding.UTF8;
-				var encoder = new BinStringWriter(writer.BaseStream, encoding);
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
 				// HintType
 				writer.Write(((byte)(HintType)));
 				// Reserved

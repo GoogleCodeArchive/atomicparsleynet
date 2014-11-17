@@ -39,20 +39,10 @@ namespace MP4
 	{
 		public abstract partial class ISOMFullBox: AtomicInfo
 		{
-			[XmlAttribute, DefaultValue(AtomFlags.Binary)]
-			public virtual AtomFlags AtomFlags
-			{
-				get { return Flags.ValidEnum(AtomFlags.Binary); }
-				set { Flags = (int)value; }
-			}
-
 			[XmlAttribute, DefaultValue(0)]
 			public virtual int ReservedFlags
 			{
-				get
-				{
-					return Flags.UnknownEnum<AtomFlags>();
-				}
+				get { return Flags; }
 				set { Flags = value; }
 			}
 		}
@@ -992,9 +982,6 @@ namespace MP4
 		public sealed partial class TrackFragmentHeaderBox : ISOMFullBox
 		{
 			[XmlAttribute]
-			public override AtomFlags AtomFlags { get { return MP4.AtomFlags.Binary; } set { } }
-
-			[XmlAttribute]
 			public override int ReservedFlags
 			{
 				get { return Flags.UnknownFlags<TrackFragmentFlags>(); }
@@ -1012,9 +999,6 @@ namespace MP4
 		// Track Header Atom
 		public sealed partial class TrackHeaderBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			public override AtomFlags AtomFlags { get { return MP4.AtomFlags.Binary; } set { } }
-
 			[XmlAttribute]
 			public override int ReservedFlags
 			{
@@ -1101,9 +1085,6 @@ namespace MP4
 
 		public sealed partial class TrackFragmentRunBox : ISOMFullBox
 		{
-			[XmlAttribute]
-			public override AtomFlags AtomFlags { get { return MP4.AtomFlags.Binary; } set { } }
-
 			[XmlAttribute]
 			public override int ReservedFlags
 			{
