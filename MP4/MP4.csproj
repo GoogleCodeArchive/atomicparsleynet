@@ -22,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +53,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ISOMedia.cs</DependentUpon>
     </Compile>
+    <Compile Include="ISOMedia\BoxApple.cs" />
     <Compile Include="ISOMedia\BoxDump.cs" />
     <Compile Include="ISOMedia\Hinting.cs" />
     <Compile Include="ISOMedia\SampleDescs.cs" />
@@ -121,6 +121,20 @@
     </ItemGroup>
     <GenFileVersion SourceFiles="@(Compile)" VersionFile="@(FileVersion)" />
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <Delete
+      Files="$(TargetDir)$(TargetName).XmlSerializers.dll"
+      ContinueOnError="true" />
+    <SGen
+      BuildAssemblyName="$(TargetFileName)"
+      BuildAssemblyPath="$(OutputPath)"
+      References="@(ReferencePath)"
+      ShouldGenerateSerializer="true"
+      UseProxyTypes="false"
+      ToolPath="$(TargetFrameworkSDKToolsDirectory)">
+      <Output
+        TaskParameter="SerializationAssembly"
+        ItemName="SerializationAssembly" />
+    </SGen>
   </Target>
 </Project>

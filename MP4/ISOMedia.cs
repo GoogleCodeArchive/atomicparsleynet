@@ -2894,7 +2894,9 @@ namespace MP4
 				ItemLocationBox,
 				ItemProtectionBox,
 				ItemInfoBox,
-				IPMPControlBox>(AllowUnknownBox);
+				IPMPControlBox,
+				TypedBoxList.Any<XMLBox, BinaryXMLBox, ItemListBox, UnknownBox, UnknownParentBox, UnknownUUIDBox>,
+				FreeSpaceBox>(AllowUnknownBox);
 		}
 
 /*V2 boxes - Movie Fragments*/
@@ -3582,31 +3584,76 @@ namespace MP4
 
 		/*Apple extension*/
 
+		/// <summary>
+		/// iTunes Data <c>'data'</c>
+		/// </summary>
+		[BinBlock(EncodingCustomMethod = "TextEncoding")]
 		public sealed partial class DataBox : ISOMFullBox
 		{
-			[XmlAttribute, DefaultValue(0)]
+			[XmlAttribute, DefaultValue(DataFlags.Binary)]
+			public DataFlags DataType { get { return Flags.ValidFlags<DataFlags>(); } set { Flags = (int)value; } }
+
+			[XmlAttribute, DefaultValue(0u)]
 			[BinData]
-			public int Reserved;
-			[XmlAttribute]
+			public uint Locale;
+			[BinCustom]
+			object data;
+		}
+
+		/// <summary>
+		/// iTunes Name <c>'name'</c>
+		/// </summary>
+		public sealed partial class DataNameBox : ISOMFullBox
+		{
+			internal const string DefaultID = "name";
+			public DataNameBox() : base(DefaultID) { }
+
+			[XmlAttribute("Name"), DefaultValue("")]
 			[BinData]
-			public string Data;
-			[XmlAttribute]
+			public string ItemName;
+		}
+
+		/// <summary>
+		/// iTunes Namespace <c>'mean'</c>
+		/// </summary>
+		public sealed partial class DataMeaningBox : ISOMFullBox
+		{
+			internal const string DefaultID = "mean";
+			public DataMeaningBox() : base(DefaultID) { }
+
+			[XmlAttribute, DefaultValue("")]
 			[BinData]
-			public int Size;
+			public string Meaning;
 		}
 
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class ListItemBox : AtomicInfo
 		{
+			[XmlIgnore]
+			public DataBox Namespace { get { return boxList.Get<DataBox>(false); } set { boxList.Set(value); } }
+			[XmlIgnore]
+			public DataBox DataName { get { return boxList.Get<DataBox>(false); } set { boxList.Set(value); } }
+			[XmlIgnore]
+			public DataBox Data { get { return boxList.Get<DataBox>(); } set { boxList.Set(value); } }
 			[BinCustom]
-			BoxCollection boxList = new BoxCollection();
+			TypedBoxList boxList = TypedBoxList.Create<
+				DataMeaningBox,
+				DataNameBox,
+				DataBox[]>(AllowUnknownBox);
 		}
 
+		/// <summary>
+		/// <c>'ilst'</c>
+		/// </summary>
 		[BinBlock(MethodMode = BinMethodMode.Abstract)]
 		public sealed partial class ItemListBox : AtomicInfo
 		{
+			internal const string DefaultID = "ilst";
+			public ItemListBox() : base(DefaultID) { }
+
 			[BinCustom]
-			BoxCollection boxList = new BoxCollection();
+			TypedBoxList boxList = TypedBoxList.Create<
+				ListItemBox[]>(AllowUnknownBox);
 		}
 
 		/*OMA (P)DCF extensions*/

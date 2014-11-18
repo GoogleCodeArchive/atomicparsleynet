@@ -283,10 +283,10 @@ namespace MP4
 
 			                                                                                                                                            //Pish! Seems that Nero is simply unable to register any atoms.
 
-			new AtomDefinition                                       ("ilst",  "meta",           AtomState.ParentAtom,      AtomRequirements.OptionalOnce,        BoxType.SimpleAtom ),        //iTunes metadata container
-			new AtomDefinition                                       ("----",  "ilst",           AtomState.ParentAtom,      AtomRequirements.OptionalMany,        BoxType.SimpleAtom ),        //reverse dns metadata
-			new AtomDefinition                                       ("mean",  "----",           AtomState.ChildAtom,       AtomRequirements.RequiredOne,         BoxType.VersionedAtom ),
-			new AtomDefinition                                       ("name",  "----",           AtomState.ChildAtom,       AtomRequirements.RequiredOne,         BoxType.VersionedAtom )
+			new AtomDefinition<ISOMediaBoxes.ItemListBox            >("ilst",  "meta",           AtomState.ParentAtom,      AtomRequirements.OptionalOnce,        BoxType.SimpleAtom ),        //iTunes metadata container
+			new AtomDefinition<ISOMediaBoxes.ListItemBox            >("----",  "ilst",           AtomState.ParentAtom,      AtomRequirements.OptionalMany,        BoxType.SimpleAtom ),        //reverse dns metadata
+			new AtomDefinition<ISOMediaBoxes.DataMeaningBox         >("mean",  "----",           AtomState.ChildAtom,       AtomRequirements.RequiredOne,         BoxType.VersionedAtom ),
+			new AtomDefinition<ISOMediaBoxes.DataNameBox            >("name",  "----",           AtomState.ChildAtom,       AtomRequirements.RequiredOne,         BoxType.VersionedAtom )
 			//gnrm - GenericSampleEntryBox
 			//gnrv - GenericVisualSampleEntryBox
 			//gnra - GenericAudioSampleEntryBox
@@ -309,7 +309,7 @@ namespace MP4
 		public static readonly AtomDefinition UnknownAtom = new AtomDefinition<ISOMediaBoxes.UnknownBox>(null, AtomState.ChildAtom, AtomRequirements.OptionalMany, BoxType.SimpleAtom); //multiple parents; keep 2nd from end; manual return
 		public static readonly AtomDefinition DataReferenceAtom = new AtomDefinition(null, "dref", AtomState.ChildAtom, AtomRequirements.OptionalMany, BoxType.VersionedAtom); //support any future named child to dref; keep 4th from end; manual return
 		public static readonly AtomDefinition ElementaryStreamDescriptionAtom = new AtomDefinition<ISOMediaBoxes.ESDBox>("esds", AtomState.ChildAtom, AtomRequirements.RequiredOne, BoxType.SimpleAtom); //multiple parents; keep 3rd from end; manual return
-		public static readonly AtomDefinition ListAtom = new AtomDefinition(null, "ilst", AtomState.ParentAtom, AtomRequirements.OptionalOne, BoxType.SimpleAtom); //multiple parents; keep 2nd from end; manual return
-		public static readonly AtomDefinition iTunesAtom = new AtomDefinition("data", AtomState.ChildAtom, AtomRequirements.ParentSpecific, BoxType.VersionedAtom); //multiple parents
+		public static readonly AtomDefinition ListAtom = new AtomDefinition<ISOMediaBoxes.ListItemBox>(null, "ilst", AtomState.ParentAtom, AtomRequirements.OptionalOne, BoxType.SimpleAtom); //multiple parents; keep 2nd from end; manual return
+		public static readonly AtomDefinition iTunesAtom = new AtomDefinition<ISOMediaBoxes.DataBox>("data", AtomState.ChildAtom, AtomRequirements.ParentSpecific, BoxType.VersionedAtom); //multiple parents
 	}
 }

@@ -193,17 +193,25 @@ namespace AtomicParsley
 
 					var unknowns = mp4.FindUnknownBoxes();
 					XmlSerializer writer;
-					if (unknowns.Count > 0)
+					bool overed = false;
+					if (unknowns.Any())
 					{
 						var over = new XmlAttributeOverrides();
 						foreach (var type in unknowns)
 						{
 							var attrs = new XmlAttributes(type.Key.GetProperty("Boxes"));
-							foreach(var elem in type.Value)
+							var types = attrs.XmlElements.Cast<XmlElementAttribute>().Select(e => e.Type).ToArray();
+							var elems = type.Value.Where(t => !types.Contains(t));
+							if (!elems.Any()) continue;
+							foreach (var elem in elems)
 								attrs.XmlElements.Add(new XmlElementAttribute(elem.Name, elem));
 							over.Add(type.Key, "Boxes", attrs);
+							overed = true;
 						}
-						writer = new XmlSerializer(typeof(Container), over);
+						if (overed)
+							writer = new XmlSerializer(typeof(Container), over);
+						else
+							writer = new XmlSerializer(typeof(Container));
 					}
 					else
 					{

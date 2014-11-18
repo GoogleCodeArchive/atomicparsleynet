@@ -96,7 +96,7 @@ namespace MP4
 		Genres = 18,
 		//for cpil, tmpo, rtng; iTMS atoms: cnID, atID, plID, geID, sfID, akID
 		/// <summary>
-		/// BE Signed Integer — a big-endian signed integer in 1,2,3 or 4 bytes 
+		/// BE Signed Integer — a big-endian signed integer in 1,2,3 or 4 bytes; size of value determines integer size
 		/// </summary>
 		Int = 21,
 		/// <summary>
@@ -735,6 +735,11 @@ namespace MP4
 			return String.Join(".", atom_path.Reverse<string>());
 		}
 
+		public override string ToString()
+		{
+			return ProvideAtomPath();
+		}
+
 		protected TBox[] BoxListSerialize<TBox>(ICollection<TBox> list)
 			where TBox: AtomicInfo
 		{
@@ -767,7 +772,11 @@ namespace MP4
 			private const string TypeEmptyEnum = "Empty";
 			private const string DataSizeXMLAttr = "DataSize";
 
+			public bool DetectUUID { get; set; }
+			public bool DetectUnicode { get; set; }
+
 			public DataXMLSerializer(byte[] data)
+				: this()
 			{
 				this.Data = data;
 			}
@@ -778,7 +787,11 @@ namespace MP4
 				return new DataXMLSerializer(data);
 			}
 
-			public DataXMLSerializer() { }
+			public DataXMLSerializer()
+			{
+				DetectUUID = true;
+				DetectUnicode = true;
+			}
 
 			System.Xml.Schema.XmlSchema IXmlSerializable.GetSchema()
 			{
@@ -839,23 +852,23 @@ namespace MP4
 					writer.WriteAttributeString(TypeXMLAttr, TypeEmptyEnum);
 					writer.WriteAttributeString(DataSizeXMLAttr, XmlConvert.ToString(this.Data.Length));
 				}
-				else if (this.Data.Length == 16)
+				else if (DetectUUID && this.Data.Length == 16)
 				{
 					var guid = new Guid(this.Data);
 					writer.WriteAttributeString(TypeXMLAttr, TypeGuidXMLEnum);
 					writer.WriteString(XmlConvert.ToString(guid));
 				}
-				else if (IsUTF16BE(this.Data))
+				else if (DetectUnicode && IsUTF16BE(this.Data))
 				{
 					writer.WriteAttributeString(TypeXMLAttr, TypeUTF16BEXMLEnum);
 					writer.WriteString(Encoding.BigEndianUnicode.GetString(this.Data, 2, this.Data.Length - 2));
 				}
-				else if (IsUTF16LE(this.Data))
+				else if (DetectUnicode && IsUTF16LE(this.Data))
 				{
 					writer.WriteAttributeString(TypeXMLAttr, TypeUTF16LEXMLEnum);
 					writer.WriteString(Encoding.Unicode.GetString(this.Data, 2, this.Data.Length - 2));
 				}
-				else if (IsUTF8(this.Data))
+				else if (DetectUnicode && IsUTF8(this.Data))
 				{
 					writer.WriteAttributeString(TypeXMLAttr, TypeUTF8XMLEnum);
 					writer.WriteString(Encoding.UTF8.GetString(this.Data, 0, this.Data.Length));
