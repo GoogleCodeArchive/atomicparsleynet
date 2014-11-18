@@ -114,6 +114,9 @@ namespace MP4
 		{
 			[XmlElement(typeof(Box))]
 			[XmlElement(typeof(UUIDBox))]
+			[XmlElement("NamespaceBox", typeof(DataMeaningBox))]
+			[XmlElement("NameBox", typeof(DataNameBox))]
+			[XmlElement(typeof(DataBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return this.boxList; }
@@ -295,7 +298,7 @@ namespace MP4
 		// Metadata Atom
 		public sealed partial class MetaBox : ISOMFullBox, IBoxContainer
 		{
-#warning Looking forward to 'ID32', 'data'
+#warning Looking forward to 'ID32'
 			/// <summary>
 			/// <para>
 			/// The container for metadata is an atom of type <c>‘meta’</c>. The metadata atom must contain the following
@@ -1259,6 +1262,221 @@ namespace MP4
 			[XmlElement("KMSBox", typeof(ISMAKMSBox))]
 			[XmlElement(typeof(ISMASampleFormatBox))]
 			[XmlElement("OMADRMAUFormatBox", typeof(OMADRMKMSBox))]
+			public Collection<AtomicInfo> Boxes
+			{
+				get { return boxList; }
+			}
+		}
+
+		public sealed partial class DataBox : ISOMFullBox
+		{
+			private int valueSize;
+
+			[XmlAttribute]
+			public override int ReservedFlags
+			{
+				get { return Flags.UnknownFlags<DataFlags>(); }
+				set { Flags = value; }
+			}
+
+			public bool ValueAsTextSpecified
+			{
+				get
+				{
+					ResolveData();
+					if (ValueIsText)
+					{
+						string str = (string)data;
+						return
+							str != null && str.Length < 256 && str.IndexOfAny(new char[] { '\r', '\n', '\t' }) < 0;
+					}
+					else
+						return !ValueIsBinary;
+				}
+			}
+
+			public bool ValueSizeSpecified
+			{
+				get
+				{
+					switch(DataType)
+					{
+						case DataFlags.Int:
+						case DataFlags.UInt:
+							return true;
+						case DataFlags.Double:
+						//case DataFlags.RIAAPA:
+							return data is byte;
+						default:
+							return false;
+					}
+				}
+			}
+
+			[XmlAttribute("Value")]
+			public string ValueAsText
+			{
+				get
+				{
+					ResolveData();
+					switch (DataType)
+					{
+						case DataFlags.UUID:
+							return XmlConvert.ToString((Guid)data);
+						case DataFlags.Duration:
+							return XmlConvert.ToString((TimeSpan)data);
+						case DataFlags.DateTime:
+							return XmlConvert.ToString((DateTime)data, XmlDateTimeSerializationMode.Utc);
+						case DataFlags.Int:
+							return XmlConvert.ToString(Convert.ToInt64(data));
+						case DataFlags.UInt:
+							return XmlConvert.ToString(Convert.ToUInt64(data));
+						case DataFlags.Single:
+							return XmlConvert.ToString((float)data);
+						case DataFlags.Double:
+						//case DataFlags.RIAAPA:
+							if (data is byte)
+								return XmlConvert.ToString((byte)data);
+							else
+								return XmlConvert.ToString((double)data);
+						default:
+							if (ValueIsText) return (string)data;
+							return Convert.ToBase64String((byte[])data ?? new byte[0]);
+					}
+				}
+				set { data = value; }
+			}
+
+			private void ResolveData()
+			{
+				string xml = data as string;
+				if (xml == null) return;
+				switch (DataType)
+				{
+					case DataFlags.UUID:
+						data = XmlConvert.ToGuid(xml);
+						break;
+					case DataFlags.Duration:
+						data = XmlConvert.ToTimeSpan(xml);
+						break;
+					case DataFlags.DateTime:
+						data = XmlConvert.ToDateTime(xml, XmlDateTimeSerializationMode.Utc);
+						break;
+					case DataFlags.Int:
+						switch (valueSize)
+						{
+							case 8:
+								data = XmlConvert.ToInt64(xml);
+								break;
+							case 4:
+								data = XmlConvert.ToInt32(xml);
+								break;
+							case 2:
+								data = XmlConvert.ToInt16(xml);
+								break;
+							case 1:
+								data = XmlConvert.ToSByte(xml);
+								break;
+						}
+						valueSize = 0;
+						break;
+					case DataFlags.UInt:
+						switch (valueSize)
+						{
+							case 8:
+								data = XmlConvert.ToUInt64(xml);
+								break;
+							case 4:
+								data = XmlConvert.ToUInt32(xml);
+								break;
+							case 2:
+								data = XmlConvert.ToUInt16(xml);
+								break;
+							case 1:
+								data = XmlConvert.ToByte(xml);
+								break;
+						}
+						valueSize = 0;
+						break;
+					case DataFlags.Single:
+						data = XmlConvert.ToSingle(xml);
+						break;
+					case DataFlags.Double:
+					//case DataFlags.RIAAPA:
+						if (valueSize == 1)
+							data = XmlConvert.ToByte(xml);
+						else
+							data = XmlConvert.ToDouble(xml);
+						break;
+					default:
+						if (ValueIsText) return;
+						data = Convert.FromBase64String(xml);
+						break;
+				}
+			}
+
+			[XmlAttribute]
+			public int ValueSize
+			{
+				get
+				{
+					switch (DataType)
+					{
+						case DataFlags.Int:
+						case DataFlags.UInt:
+						case DataFlags.Double:
+						//case DataFlags.RIAAPA:
+							return (int)Size_data();
+						default:
+							return 0;
+					}
+				}
+				set { valueSize = value; }
+			}
+
+			[XmlElement("Data")]
+			public DataXMLSerializer BinaryDataSerializer
+			{
+				get
+				{
+					ResolveData();
+					if (data == null || !ValueIsBinary) return null;
+					return new DataXMLSerializer((byte[])data)
+					{
+						DetectUUID = false,
+						DetectUnicode = false
+					};
+				}
+				set { data = value.Data; }
+			}
+
+			[XmlElement("Text")]
+			public XmlNode TextSerializer
+			{
+				get
+				{
+					if (data == null || !ValueIsText || ValueAsTextSpecified) return null;
+					XmlDocument doc = new XmlDocument();
+					return doc.CreateCDataSection((string)data);
+				}
+				set { data = value.Value; }
+			}
+		}
+
+		public sealed partial class ListItemBox : AtomicInfo, IBoxContainer
+		{
+			[XmlElement("NamespaceBox", typeof(DataMeaningBox))]
+			[XmlElement("NameBox", typeof(DataNameBox))]
+			[XmlElement(typeof(DataBox))]
+			public Collection<AtomicInfo> Boxes
+			{
+				get { return boxList; }
+			}
+		}
+
+		public sealed partial class ItemListBox : AtomicInfo, IBoxContainer
+		{
+			[XmlElement("ListItemBox", typeof(ListItemBox))]
 			public Collection<AtomicInfo> Boxes
 			{
 				get { return boxList; }

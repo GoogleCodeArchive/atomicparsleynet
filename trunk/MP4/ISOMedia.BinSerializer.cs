@@ -7464,13 +7464,52 @@ namespace MP4
 			public override void ReadBinary(System.IO.BinaryReader reader)
 			{
 				base.ReadBinary(reader);
+				// Locale
+				Locale = ((uint)(reader.ReadUInt32()));
+				// data
+				Read_data(reader);
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
+				{
+					// Locale
+					long size = (base.DataSize + 4);
+					// data
+					size += Size_data();
+					return size;
+				}
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				base.WriteBinary(writer);
+				// Locale
+				writer.Write(((uint)(Locale)));
+				// data
+				Write_data(writer);
+			}
+		}
+		
+		public partial class DataNameBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				base.ReadBinary(reader);
 				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
-				// Reserved
-				Reserved = ((int)(reader.ReadInt32()));
-				// Data
-				Data = ((string)(encoder.ReadString()));
-				// Size
-				Size = ((int)(reader.ReadInt32()));
+				// ItemName
+				ItemName = ((string)(encoder.ReadString()));
 			}
 			
 			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
@@ -7482,12 +7521,10 @@ namespace MP4
 				{
 					var encoding = System.Text.Encoding.UTF8;
 					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
-					// Reserved+Size
-					long size = (base.DataSize 
-								+ (4 + 4));
-					// Data
+					long size = base.DataSize;
+					// ItemName
 					size -= encoder.BaseStream.Position;
-					encoder.Write(((string)(Data)) ?? "");
+					encoder.Write(((string)(ItemName)) ?? "");
 					size += encoder.BaseStream.Position;
 					return size;
 				}
@@ -7501,12 +7538,53 @@ namespace MP4
 				base.WriteBinary(writer);
 				var encoding = System.Text.Encoding.UTF8;
 				var encoder = new BOMWriter(writer.BaseStream, encoding);
-				// Reserved
-				writer.Write(((int)(Reserved)));
-				// Data
-				encoder.Write(((string)(Data)) ?? "");
-				// Size
-				writer.Write(((int)(Size)));
+				// ItemName
+				encoder.Write(((string)(ItemName)) ?? "");
+			}
+		}
+		
+		public partial class DataMeaningBox
+		{
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void ReadBinary(System.IO.BinaryReader reader)
+			{
+				base.ReadBinary(reader);
+				var encoder = new BOMReader(reader.BaseStream, System.Text.Encoding.UTF8);
+				// Meaning
+				Meaning = ((string)(encoder.ReadString()));
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override long DataSize
+			{
+				get
+				{
+					var encoding = System.Text.Encoding.UTF8;
+					var encoder = new BOMWriter(new System.IO.MemoryStream(), encoding);
+					long size = base.DataSize;
+					// Meaning
+					size -= encoder.BaseStream.Position;
+					encoder.Write(((string)(Meaning)) ?? "");
+					size += encoder.BaseStream.Position;
+					return size;
+				}
+			}
+			
+			[System.CodeDom.Compiler.GeneratedCodeAttribute("FRAFV.Binary.Serialization.BinSerializer", "1.0")]
+			[System.Diagnostics.DebuggerNonUserCodeAttribute()]
+			[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+			public override void WriteBinary(System.IO.BinaryWriter writer)
+			{
+				base.WriteBinary(writer);
+				var encoding = System.Text.Encoding.UTF8;
+				var encoder = new BOMWriter(writer.BaseStream, encoding);
+				// Meaning
+				encoder.Write(((string)(Meaning)) ?? "");
 			}
 		}
 		

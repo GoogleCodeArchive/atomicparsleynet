@@ -222,7 +222,6 @@ namespace MP4
 			case "3ge6" : //extended presentations (jpeg images)
 			case "3gg6" : //general (not yet suitable; superset)
 				return MetadataStyle.ThirdGenPartnerVer1Rel6;
-				break;
 
 			case "3gp4" : //                                //3gp assets (the full complement) are available: source clause is S5.5 of TS26.244 (Rel6.4 & later):
 			case "3gp5" : //                                //"that the file conforms to the specification; it includes everything required by,

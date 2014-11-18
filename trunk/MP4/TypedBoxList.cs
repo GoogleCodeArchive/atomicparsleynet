@@ -142,7 +142,7 @@ namespace MP4
 			}
 		}
 
-		private class UnknownTypeBag:TypeBag
+		private class UnknownTypeBag : TypeBag
 		{
 			public UnknownTypeBag() : base(typeof(object), true) { }
 
@@ -158,7 +158,7 @@ namespace MP4
 
 			protected override void Add(List<TBase> list, int index, TBase element)
 			{
-				log.Warn("Box {0} unknown type", element.GetType());
+				log.Warn("{0} has unknown type for {1}", element.GetType(), element);
 				base.Add(list, index, element);
 			}
 		}
@@ -167,8 +167,8 @@ namespace MP4
 		{
 			private Type[] types;
 
-			public AnyTypeBag(Type[] types)
-				: base(null, false)
+			public AnyTypeBag(Type[] types, bool multi)
+				: base(null, multi)
 			{
 				this.types = types;
 			}
@@ -187,6 +187,11 @@ namespace MP4
 		public abstract class OrBase
 		{
 			internal OrBase() { }
+		}
+
+		public abstract class AnyBase
+		{
+			internal AnyBase() { }
 		}
 
 		private readonly TypeBag[] types;
@@ -210,10 +215,12 @@ namespace MP4
 			{
 				if (type.IsArray)
 					types.Add(new TypeBag(type.GetElementType(), true));
-				else if (!typeof(OrBase).IsAssignableFrom(type))
-					types.Add(new TypeBag(type, false));
+				else if (typeof(OrBase).IsAssignableFrom(type))
+					types.Add(new AnyTypeBag(type.GetGenericArguments(), false));
+				else if (typeof(AnyBase).IsAssignableFrom(type))
+					types.Add(new AnyTypeBag(type.GetGenericArguments(), true));
 				else
-					types.Add(new AnyTypeBag(type.GetGenericArguments()));
+					types.Add(new TypeBag(type, false));
 			}
 			types.Add(new UnknownTypeBag());
 			this.types = types.ToArray();
@@ -288,6 +295,33 @@ namespace MP4
 		}
 		#endregion
 
+		#region Any statements
+		public sealed class Any<TBox1, TBox2> : AnyBase
+		{
+			private Any() { }
+		}
+
+		public sealed class Any<TBox1, TBox2, TBox3> : AnyBase
+		{
+			private Any() { }
+		}
+
+		public sealed class Any<TBox1, TBox2, TBox3, TBox4> : AnyBase
+		{
+			private Any() { }
+		}
+
+		public sealed class Any<TBox1, TBox2, TBox3, TBox4, TBox5> : AnyBase
+		{
+			private Any() { }
+		}
+
+		public sealed class Any<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6> : AnyBase
+		{
+			private Any() { }
+		}
+		#endregion
+
 		#region Constructors
 		public TypedBoxList(bool unknown, params Type[] order)
 			: base(unknown, order) { }
@@ -330,6 +364,36 @@ namespace MP4
 		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8>(bool unknown = true)
 		{
 			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9), typeof(TBox10));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10, TBox11>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9), typeof(TBox10), typeof(TBox11));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10, TBox11, TBox12>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9), typeof(TBox10), typeof(TBox11), typeof(TBox12));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10, TBox11, TBox12, TBox13>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9), typeof(TBox10), typeof(TBox11), typeof(TBox12), typeof(TBox13));
+		}
+
+		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10, TBox11, TBox12, TBox13, TBox14>(bool unknown = true)
+		{
+			return new TypedBoxList(unknown, typeof(TBox1), typeof(TBox2), typeof(TBox3), typeof(TBox4), typeof(TBox5), typeof(TBox6), typeof(TBox7), typeof(TBox8), typeof(TBox9), typeof(TBox10), typeof(TBox11), typeof(TBox12), typeof(TBox13), typeof(TBox14));
 		}
 
 		public static TypedBoxList Create<TBox1, TBox2, TBox3, TBox4, TBox5, TBox6, TBox7, TBox8, TBox9, TBox10, TBox11, TBox12, TBox13, TBox14, TBox15>(bool unknown = true)
